@@ -1,0 +1,2 @@
+# Sin dependencias externas: el proyecto usa solo la libreria estandar.
+# Si se agregan, fijar version exacta aqui.

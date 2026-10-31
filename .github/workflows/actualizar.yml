@@ -1,0 +1,39 @@
+name: Actualizar datos del monitor
+
+on:
+  schedule:
+    - cron: "17 11 * * *"   # 06:17 hora de Lima, todos los dias
+  workflow_dispatch:         # permite correrlo a mano desde la pestana Actions
+
+permissions:
+  contents: write
+
+jobs:
+  actualizar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Descargar indice ONI
+        run: python scripts/fetch_oni.py
+        working-directory: .
+        env:
+          PYTHONPATH: scripts
+
+      - name: Construir estado por departamento
+        run: python scripts/actualizar.py
+        env:
+          PYTHONPATH: scripts
+
+      - name: Publicar cambios
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          cp data/*.json docs/data/
+          git add data/ docs/data/
+          git diff --staged --quiet || git commit -m "datos: actualizacion automatica $(date -u +%Y-%m-%d)"
+          git push

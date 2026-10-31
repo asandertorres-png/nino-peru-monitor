@@ -1,0 +1,373 @@
+{
+  "fuente": "NOAA CPC - Oceanic Nino Index (region Nino 3.4)",
+  "url": "https://www.cpc.ncep.noaa.gov/data/indices/oni.ascii.txt",
+  "ultimo": {
+    "trimestre": "JAS",
+    "anio": 2026,
+    "tsm": 29.12,
+    "oni": 2.16,
+    "estado": "El Nino muy fuerte"
+  },
+  "serie": [
+    {
+      "trimestre": "ASO",
+      "anio": 2021,
+      "tsm": 26.13,
+      "oni": -0.64
+    },
+    {
+      "trimestre": "SON",
+      "anio": 2021,
+      "tsm": 25.94,
+      "oni": -0.77
+    },
+    {
+      "trimestre": "OND",
+      "anio": 2021,
+      "tsm": 25.74,
+      "oni": -0.91
+    },
+    {
+      "trimestre": "NDJ",
+      "anio": 2021,
+      "tsm": 25.73,
+      "oni": -0.83
+    },
+    {
+      "trimestre": "DJF",
+      "anio": 2022,
+      "tsm": 25.79,
+      "oni": -0.76
+    },
+    {
+      "trimestre": "JFM",
+      "anio": 2022,
+      "tsm": 26.09,
+      "oni": -0.68
+    },
+    {
+      "trimestre": "FMA",
+      "anio": 2022,
+      "tsm": 26.46,
+      "oni": -0.77
+    },
+    {
+      "trimestre": "MAM",
+      "anio": 2022,
+      "tsm": 26.77,
+      "oni": -0.86
+    },
+    {
+      "trimestre": "AMJ",
+      "anio": 2022,
+      "tsm": 26.96,
+      "oni": -0.83
+    },
+    {
+      "trimestre": "MJJ",
+      "anio": 2022,
+      "tsm": 26.9,
+      "oni": -0.73
+    },
+    {
+      "trimestre": "JJA",
+      "anio": 2022,
+      "tsm": 26.59,
+      "oni": -0.7
+    },
+    {
+      "trimestre": "JAS",
+      "anio": 2022,
+      "tsm": 26.18,
+      "oni": -0.78
+    },
+    {
+      "trimestre": "ASO",
+      "anio": 2022,
+      "tsm": 25.89,
+      "oni": -0.87
+    },
+    {
+      "trimestre": "SON",
+      "anio": 2022,
+      "tsm": 25.82,
+      "oni": -0.89
+    },
+    {
+      "trimestre": "OND",
+      "anio": 2022,
+      "tsm": 25.83,
+      "oni": -0.82
+    },
+    {
+      "trimestre": "NDJ",
+      "anio": 2022,
+      "tsm": 25.86,
+      "oni": -0.7
+    },
+    {
+      "trimestre": "DJF",
+      "anio": 2023,
+      "tsm": 26.0,
+      "oni": -0.55
+    },
+    {
+      "trimestre": "JFM",
+      "anio": 2023,
+      "tsm": 26.45,
+      "oni": -0.33
+    },
+    {
+      "trimestre": "FMA",
+      "anio": 2023,
+      "tsm": 27.12,
+      "oni": -0.11
+    },
+    {
+      "trimestre": "MAM",
+      "anio": 2023,
+      "tsm": 27.82,
+      "oni": 0.19
+    },
+    {
+      "trimestre": "AMJ",
+      "anio": 2023,
+      "tsm": 28.25,
+      "oni": 0.46
+    },
+    {
+      "trimestre": "MJJ",
+      "anio": 2023,
+      "tsm": 28.36,
+      "oni": 0.73
+    },
+    {
+      "trimestre": "JJA",
+      "anio": 2023,
+      "tsm": 28.29,
+      "oni": 1.0
+    },
+    {
+      "trimestre": "JAS",
+      "anio": 2023,
+      "tsm": 28.21,
+      "oni": 1.25
+    },
+    {
+      "trimestre": "ASO",
+      "anio": 2023,
+      "tsm": 28.26,
+      "oni": 1.5
+    },
+    {
+      "trimestre": "SON",
+      "anio": 2023,
+      "tsm": 28.45,
+      "oni": 1.74
+    },
+    {
+      "trimestre": "OND",
+      "anio": 2023,
+      "tsm": 28.55,
+      "oni": 1.9
+    },
+    {
+      "trimestre": "NDJ",
+      "anio": 2023,
+      "tsm": 28.55,
+      "oni": 1.99
+    },
+    {
+      "trimestre": "DJF",
+      "anio": 2024,
+      "tsm": 28.38,
+      "oni": 1.84
+    },
+    {
+      "trimestre": "JFM",
+      "anio": 2024,
+      "tsm": 28.3,
+      "oni": 1.53
+    },
+    {
+      "trimestre": "FMA",
+      "anio": 2024,
+      "tsm": 28.4,
+      "oni": 1.18
+    },
+    {
+      "trimestre": "MAM",
+      "anio": 2024,
+      "tsm": 28.4,
+      "oni": 0.77
+    },
+    {
+      "trimestre": "AMJ",
+      "anio": 2024,
+      "tsm": 28.23,
+      "oni": 0.43
+    },
+    {
+      "trimestre": "MJJ",
+      "anio": 2024,
+      "tsm": 27.8,
+      "oni": 0.18
+    },
+    {
+      "trimestre": "JJA",
+      "anio": 2024,
+      "tsm": 27.35,
+      "oni": 0.06
+    },
+    {
+      "trimestre": "JAS",
+      "anio": 2024,
+      "tsm": 26.92,
+      "oni": -0.04
+    },
+    {
+      "trimestre": "ASO",
+      "anio": 2024,
+      "tsm": 26.64,
+      "oni": -0.12
+    },
+    {
+      "trimestre": "SON",
+      "anio": 2024,
+      "tsm": 26.52,
+      "oni": -0.19
+    },
+    {
+      "trimestre": "OND",
+      "anio": 2024,
+      "tsm": 26.35,
+      "oni": -0.29
+    },
+    {
+      "trimestre": "NDJ",
+      "anio": 2024,
+      "tsm": 26.13,
+      "oni": -0.43
+    },
+    {
+      "trimestre": "DJF",
+      "anio": 2025,
+      "tsm": 26.09,
+      "oni": -0.46
+    },
+    {
+      "trimestre": "JFM",
+      "anio": 2025,
+      "tsm": 26.56,
+      "oni": -0.22
+    },
+    {
+      "trimestre": "FMA",
+      "anio": 2025,
+      "tsm": 27.15,
+      "oni": -0.08
+    },
+    {
+      "trimestre": "MAM",
+      "anio": 2025,
+      "tsm": 27.65,
+      "oni": 0.02
+    },
+    {
+      "trimestre": "AMJ",
+      "anio": 2025,
+      "tsm": 27.76,
+      "oni": -0.04
+    },
+    {
+      "trimestre": "MJJ",
+      "anio": 2025,
+      "tsm": 27.61,
+      "oni": -0.02
+    },
+    {
+      "trimestre": "JJA",
+      "anio": 2025,
+      "tsm": 27.18,
+      "oni": -0.11
+    },
+    {
+      "trimestre": "JAS",
+      "anio": 2025,
+      "tsm": 26.7,
+      "oni": -0.26
+    },
+    {
+      "trimestre": "ASO",
+      "anio": 2025,
+      "tsm": 26.33,
+      "oni": -0.43
+    },
+    {
+      "trimestre": "SON",
+      "anio": 2025,
+      "tsm": 26.14,
+      "oni": -0.57
+    },
+    {
+      "trimestre": "OND",
+      "anio": 2025,
+      "tsm": 26.04,
+      "oni": -0.61
+    },
+    {
+      "trimestre": "NDJ",
+      "anio": 2025,
+      "tsm": 25.96,
+      "oni": -0.6
+    },
+    {
+      "trimestre": "DJF",
+      "anio": 2026,
+      "tsm": 26.15,
+      "oni": -0.39
+    },
+    {
+      "trimestre": "JFM",
+      "anio": 2026,
+      "tsm": 26.57,
+      "oni": -0.21
+    },
+    {
+      "trimestre": "FMA",
+      "anio": 2026,
+      "tsm": 27.34,
+      "oni": 0.11
+    },
+    {
+      "trimestre": "MAM",
+      "anio": 2026,
+      "tsm": 28.09,
+      "oni": 0.46
+    },
+    {
+      "trimestre": "AMJ",
+      "anio": 2026,
+      "tsm": 28.74,
+      "oni": 0.95
+    },
+    {
+      "trimestre": "MJJ",
+      "anio": 2026,
+      "tsm": 29.02,
+      "oni": 1.39
+    },
+    {
+      "trimestre": "JJA",
+      "anio": 2026,
+      "tsm": 29.09,
+      "oni": 1.8
+    },
+    {
+      "trimestre": "JAS",
+      "anio": 2026,
+      "tsm": 29.12,
+      "oni": 2.16
+    }
+  ]
+}

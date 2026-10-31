@@ -1,0 +1,38 @@
+:root{
+  --fondo:#0f1419; --panel:#161d24; --borde:#243039;
+  --texto:#e6edf3; --tenue:#8b9aa7; --acento:#4aa3df;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fondo);color:var(--texto);
+     font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
+header{padding:1.4rem 1.6rem .6rem}
+h1{margin:0;font-size:1.45rem;letter-spacing:-.01em}
+.sub{margin:.3rem 0 0;color:var(--tenue);font-size:.9rem}
+#estado-enso{display:flex;gap:1rem;flex-wrap:wrap;padding:1rem 1.6rem}
+.tarjeta{background:var(--panel);border:1px solid var(--borde);border-radius:10px;
+         padding:.8rem 1rem;min-width:230px;display:flex;flex-direction:column;gap:.25rem}
+.etiqueta{font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;color:var(--tenue)}
+.tarjeta strong{font-size:1.5rem;font-variant-numeric:tabular-nums}
+.pill{align-self:flex-start;background:#2a3540;border-radius:999px;
+      padding:.15rem .6rem;font-size:.78rem}
+.nota{font-size:.75rem;color:var(--tenue)}
+main{display:grid;grid-template-columns:1fr 340px;gap:1rem;padding:0 1.6rem 1.6rem}
+#mapa{height:70vh;min-height:460px;border-radius:12px;border:1px solid var(--borde);
+      background:#0b0f13}
+#panel{background:var(--panel);border:1px solid var(--borde);border-radius:12px;
+       padding:1rem;display:flex;flex-direction:column;gap:1rem;overflow:auto}
+#controles{display:flex;flex-direction:column;gap:.4rem;font-size:.85rem}
+#detalle h2{margin:0 0 .4rem;font-size:1.05rem}
+#detalle dl{display:grid;grid-template-columns:1fr auto;gap:.3rem .8rem;
+            margin:0;font-size:.85rem}
+#detalle dt{color:var(--tenue)}
+#detalle dd{margin:0;text-align:right;font-variant-numeric:tabular-nums}
+.vacio{color:var(--tenue);font-size:.85rem}
+#leyenda{font-size:.78rem;color:var(--tenue);display:flex;flex-direction:column;gap:.25rem}
+.fila-leyenda{display:flex;align-items:center;gap:.5rem}
+.muestra{width:16px;height:12px;border-radius:3px;display:inline-block}
+footer{padding:0 1.6rem 2rem;color:var(--tenue);font-size:.78rem;max-width:70ch}
+footer a{color:var(--acento)}
+.leaflet-popup-content-wrapper,.leaflet-tooltip{background:#1b232b;color:var(--texto);
+    border:1px solid var(--borde)}
+@media (max-width:900px){main{grid-template-columns:1fr}#mapa{height:55vh}}

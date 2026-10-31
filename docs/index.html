@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Monitor El Niño — Perú</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>Monitor El Niño · Perú</h1>
+  <p class="sub">Anomalías climáticas por departamento frente a la normal 1991–2020</p>
+</header>
+
+<section id="estado-enso">
+  <div class="tarjeta">
+    <span class="etiqueta">Índice ONI (Niño 3.4)</span>
+    <strong id="oni-valor">—</strong>
+    <span id="oni-estado" class="pill">—</span>
+    <span id="oni-trimestre" class="nota">—</span>
+  </div>
+  <div class="tarjeta">
+    <span class="etiqueta">Última actualización</span>
+    <strong id="actualizado">—</strong>
+    <span class="nota">se actualiza de forma automática cada día</span>
+  </div>
+</section>
+
+<main>
+  <div id="mapa"></div>
+  <aside id="panel">
+    <div id="controles">
+      <label><input type="radio" name="capa" value="nivel_alerta" checked> Nivel de alerta</label>
+      <label><input type="radio" name="capa" value="anomalia_precipitacion_pct"> Anomalía de lluvia (%)</label>
+      <label><input type="radio" name="capa" value="anomalia_tmax_c"> Anomalía de temperatura (°C)</label>
+    </div>
+    <div id="detalle"><p class="vacio">Pasa el cursor sobre un departamento para ver su detalle.</p></div>
+    <div id="leyenda"></div>
+  </aside>
+</main>
+
+<footer>
+  <p>Fuentes: NOAA/CPC (índice ONI) y ERA5 / Open-Meteo (clima observado y normales).
+     Los niveles de alerta son indicativos y no sustituyen los avisos oficiales de
+     SENAMHI, ENFEN ni INDECI. Metodología en <a href="METODOLOGIA.md">METODOLOGIA.md</a>.</p>
+</footer>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
