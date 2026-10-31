@@ -70,8 +70,14 @@ def _con_jitter(espera: int) -> int:
     return max(1, min(ESPERA_MAX, round(espera * random.uniform(0.85, 1.15))))
 
 
-def descargar(url, intentos=INTENTOS, timeout=TIMEOUT, sangria="    "):
-    """Descarga una URL como texto, reintentando segun la politica de arriba."""
+def descargar(url, intentos=INTENTOS, timeout=TIMEOUT, sangria="    ",
+              validar=None):
+    """Descarga una URL y reintenta segun la politica de arriba.
+
+    Si se pasa `validar`, se aplica al cuerpo dentro del bucle de reintentos:
+    un ValueError de `validar` (cuerpo truncado, HTML en lugar de JSON) se
+    reintenta como una falla de red; un ErrorApi se propaga sin reintentar.
+    """
     global _429_VISTOS
     espera_429 = ESPERA_BASE_429
     espera_red = ESPERA_BASE_RED
@@ -80,7 +86,11 @@ def descargar(url, intentos=INTENTOS, timeout=TIMEOUT, sangria="    "):
     for intento in range(1, intentos + 1):
         try:
             with urllib.request.urlopen(url, timeout=timeout) as r:
-                return r.read().decode("utf-8")
+                crudo = r.read().decode("utf-8")
+            return validar(crudo) if validar else crudo
+
+        except ErrorApi:
+            raise
 
         except urllib.error.HTTPError as e:
             ultimo = e
@@ -114,16 +124,23 @@ def descargar(url, intentos=INTENTOS, timeout=TIMEOUT, sangria="    "):
         time.sleep(espera)
 
 
+def _validar_json(crudo):
+    """Convierte el cuerpo en JSON. Un cuerpo que no es JSON es transitorio
+    (corte o pagina de error con HTTP 200): se reintenta."""
+    try:
+        datos = json.loads(crudo)
+    except json.JSONDecodeError as e:
+        raise ValueError(f"respuesta no es JSON valido: {e}") from e
+    # Open-Meteo tambien puede devolver 200 con un error dentro del cuerpo;
+    # ese error es de pedido, no de red: no se reintenta.
+    if isinstance(datos, dict) and datos.get("error"):
+        raise ErrorApi(f"Open-Meteo: {datos.get('reason', 'error sin motivo')}")
+    return datos
+
+
 def pedir_json(url_base, params, intentos=INTENTOS, timeout=TIMEOUT,
                sangria="    "):
     """Pide un JSON a una API de Open-Meteo con la politica de reintentos."""
     url = f"{url_base}?{urllib.parse.urlencode(params)}"
-    crudo = descargar(url, intentos=intentos, timeout=timeout, sangria=sangria)
-    try:
-        datos = json.loads(crudo)
-    except json.JSONDecodeError as e:
-        raise ErrorApi(f"respuesta no es JSON valido: {e}") from e
-    # Open-Meteo tambien puede devolver 200 con un error dentro del cuerpo
-    if isinstance(datos, dict) and datos.get("error"):
-        raise ErrorApi(f"Open-Meteo: {datos.get('reason', 'error sin motivo')}")
-    return datos
+    return descargar(url, intentos=intentos, timeout=timeout,
+                     sangria=sangria, validar=_validar_json)
