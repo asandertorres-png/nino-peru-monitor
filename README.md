@@ -3,13 +3,17 @@
 Mapa interactivo que muestra, departamento por departamento, cómo se están
 desviando las condiciones climáticas actuales respecto de su normal
 1991–2020, en el contexto del estado del ENSO (El Niño–Oscilación del Sur).
-Los datos se actualizan solos todos los días mediante GitHub Actions.
+Los datos se actualizan solos cada 6 horas mediante GitHub Actions. No es tiempo
+real: cada fuente tiene su propio rezago, y la interfaz muestra la fecha del dato
+más reciente de cada una (ver docs/METODOLOGIA.md, sección de frescura).
 
 ## Qué hace
 
-- Descarga el índice **ONI** de la NOAA/CPC (anomalía de TSM en la región Niño 3.4).
+- Descarga el índice **ONI** de la NOAA/CPC (trimestral) y la **TSM semanal** de la
+  región Niño 3.4 (semanal, los lunes).
 - Consulta, para la capital de cada uno de los 25 departamentos, la lluvia y la
-  temperatura de los últimos 30 días más el pronóstico a 7 días (Open-Meteo).
+  temperatura de los últimos 30 días, las condiciones de hoy y el pronóstico a 7
+  días (Open-Meteo).
 - Compara esos valores con las normales climáticas 1991–2020 calculadas a
   partir del reanálisis ERA5.
 - Publica `data/estado.json` y lo pinta en un mapa Leaflet con tres capas:
@@ -19,7 +23,7 @@ Los datos se actualizan solos todos los días mediante GitHub Actions.
 
 ```
 scripts/config.py             departamentos, umbrales y endpoints
-scripts/fetch_oni.py          índice ONI de la NOAA
+scripts/fetch_oni.py          índice ONI y TSM semanal de la NOAA
 scripts/calcular_normales.py  normales 1991-2020 (se corre una sola vez)
 scripts/actualizar.py         construye data/estado.json (corre a diario)
 docs/                         sitio publicado en GitHub Pages

@@ -16,6 +16,12 @@ h1{margin:0;font-size:1.45rem;letter-spacing:-.01em}
 .pill{align-self:flex-start;background:#2a3540;border-radius:999px;
       padding:.15rem .6rem;font-size:.78rem}
 .nota{font-size:.75rem;color:var(--tenue)}
+.lista-fuentes{list-style:none;margin:.3rem 0 0;padding:0;font-size:.74rem;color:var(--tenue);
+               display:flex;flex-direction:column;gap:.2rem}
+.lista-fuentes li{display:grid;grid-template-columns:1fr auto;gap:0 .6rem}
+.lista-fuentes li em{grid-column:1 / -1;font-style:normal;font-size:.68rem;opacity:.8}
+.lista-fuentes strong{color:var(--texto);font-weight:500;font-size:.74rem;text-align:right}
+.sub-leyenda{display:block;margin-top:.5rem;color:var(--texto)}
 main{display:grid;grid-template-columns:1fr 340px;gap:1rem;padding:0 1.6rem 1.6rem}
 #mapa{height:70vh;min-height:460px;border-radius:12px;border:1px solid var(--borde);
       background:#0b0f13}

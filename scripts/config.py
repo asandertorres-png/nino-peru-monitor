@@ -53,6 +53,32 @@ DEPARTAMENTOS = [
 API_ACTUAL = "https://api.open-meteo.com/v1/forecast"
 API_ARCHIVO = "https://archive-api.open-meteo.com/v1/archive"
 URL_ONI = "https://www.cpc.ncep.noaa.gov/data/indices/oni.ascii.txt"
+# TSM semanal de la region Nino 3.4 (NOAA/CPC, serie 1991-2020). Se actualiza
+# los lunes. Formato del archivo pendiente de verificar: ver fetch_oni.py.
+URL_WKSST = "https://www.cpc.ncep.noaa.gov/data/indices/wksst9120.for"
+
+# Umbral PROVISIONAL de normal mensual de lluvia (mm). Por debajo, la anomalia
+# porcentual no es informativa (la normal es casi nula y cualquier lluvia da
+# un porcentaje enorme). En ese caso el mapa muestra el acumulado en mm y el
+# nivel de alerta no usa la anomalia de lluvia. Ver docs/METODOLOGIA.md,
+# limitacion 4. No calibrado: fijar con criterio y revisar con datos de
+# SENAMHI cuando esten disponibles.
+UMBRAL_NORMAL_BAJA_MM = 5.0
+
+# Altitud de referencia de cada capital (m s.n.m.). Valores APROXIMADOS, de
+# referencia cartografica; no son una medicion. Sirven para cuantificar cuanto
+# difiere del relieve que promedia el modelo en el punto de la capital (ver
+# METODOLOGIA.md, sesgo de representacion puntual). Verificar contra IGN o
+# SENAMHI antes de citar cifras.
+ALTITUD_CAPITAL_M = {
+    "Amazonas": 2334, "Ancash": 3052, "Apurimac": 2378, "Arequipa": 2335,
+    "Ayacucho": 2761, "Cajamarca": 2750, "Callao": 5, "Cusco": 3399,
+    "Huancavelica": 3676, "Huanuco": 1894, "Ica": 406, "Junin": 3259,
+    "La Libertad": 34, "Lambayeque": 29, "Lima": 154, "Loreto": 106,
+    "Madre de Dios": 183, "Moquegua": 1410, "Pasco": 4330, "Piura": 29,
+    "Puno": 3830, "San Martin": 860, "Tacna": 562, "Tumbes": 7,
+    "Ucayali": 154,
+}
 
 
 def clasificar_oni(valor: float) -> str:

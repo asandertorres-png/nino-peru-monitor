@@ -10,20 +10,26 @@
 <body>
 <header>
   <h1>Monitor El Niño · Perú</h1>
-  <p class="sub">Anomalías climáticas por departamento frente a la normal 1991–2020</p>
+  <p class="sub">Anomalías climáticas por departamento frente a la normal 1991–2020.
+     Actualización cada 6 horas. No es tiempo real: cada fuente tiene su propio rezago.</p>
 </header>
 
 <section id="estado-enso">
   <div class="tarjeta">
-    <span class="etiqueta">Índice ONI (Niño 3.4)</span>
+    <span class="etiqueta">ONI · Niño 3.4 · trimestral</span>
     <strong id="oni-valor">—</strong>
     <span id="oni-estado" class="pill">—</span>
     <span id="oni-trimestre" class="nota">—</span>
   </div>
   <div class="tarjeta">
-    <span class="etiqueta">Última actualización</span>
+    <span class="etiqueta">TSM Niño 3.4 · semanal</span>
+    <strong id="semanal-valor">—</strong>
+    <span id="semanal-nota" class="nota">—</span>
+  </div>
+  <div class="tarjeta">
+    <span class="etiqueta">Última actualización del monitor</span>
     <strong id="actualizado">—</strong>
-    <span class="nota">se actualiza de forma automática cada día</span>
+    <ul id="fuentes" class="lista-fuentes"></ul>
   </div>
 </section>
 
@@ -41,7 +47,10 @@
 </main>
 
 <footer>
-  <p>Fuentes: NOAA/CPC (índice ONI) y ERA5 / Open-Meteo (clima observado y normales).
+  <p><strong>No es tiempo real.</strong> La normal (ERA5) tiene varios días de rezago,
+     el ONI es mensual y la TSM semanal sale los lunes. Lo más reciente es la lluvia
+     y la temperatura de hoy, que vienen de la API de Open-Meteo y se refrescan cada hora.</p>
+  <p>Fuentes: NOAA/CPC (índice ONI y TSM semanal) y ERA5 / Open-Meteo (clima observado y normales).
      Los niveles de alerta son indicativos y no sustituyen los avisos oficiales de
      SENAMHI, ENFEN ni INDECI. Metodología en <a href="METODOLOGIA.md">METODOLOGIA.md</a>.</p>
 </footer>
