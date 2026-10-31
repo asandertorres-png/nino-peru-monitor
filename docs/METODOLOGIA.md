@@ -27,6 +27,25 @@ Se comparan con la normal **1991–2020** —periodo estándar de la OMM— del 
 en curso, calculada con el reanálisis ERA5. La anomalía de lluvia se expresa
 en porcentaje respecto de la normal, y la térmica en grados de diferencia.
 
+La normal mensual de lluvia es la **media de los acumulados mensuales** de los
+30 años del periodo, no la media diaria multiplicada por el largo del mes. Un
+mes-año entra en esa media solo si la serie diaria cubre al menos el 90 % de
+sus días, y su acumulado se escala al largo completo del mes; los meses con
+menos cobertura se descartan. Cada normal registra en
+`data/normales.json` cuántos años quedaron detrás de ella
+(`anios_usados_precipitacion`), de modo que una normal construida con menos de
+los 30 años del periodo quede visible y no se confunda con una completa. Las
+normales térmicas son la media de las máximas y de las mínimas diarias del
+mes a lo largo del periodo.
+
+`scripts/verificar_normales.py` controla el producto antes de usarlo: que estén
+los 25 departamentos con sus 12 meses, que los valores caigan en rangos
+físicamente posibles, y tres contrastes de plausibilidad climática —que la
+selva norte sea mucho más lluviosa que el desierto de Ica, que Ica resulte
+prácticamente seca, y que en la sierra el máximo de lluvia caiga entre
+diciembre y marzo—. Es un control de errores gruesos de descarga, no una
+validación contra observaciones de SENAMHI.
+
 La normal mensual se escala proporcionalmente a la ventana de 30 días. Es una
 aproximación: cuando la ventana cruza dos meses con regímenes de lluvia muy
 distintos (típicamente el inicio y el fin de la temporada húmeda en la sierra),
@@ -57,6 +76,15 @@ herramienta de exploración, no un instrumento de alerta operativa.
 3. **Rezagos.** El impacto de El Niño sobre la lluvia en el Perú no es
    instantáneo y varía por región; comparar el estado del océano con el clima
    del mismo mes subestima relaciones rezagadas.
+4. **La anomalía porcentual pierde sentido con normales casi nulas.** En el
+   desierto costero la normal mensual de lluvia es de décimas de milímetro:
+   con una normal de 0,4 mm en la ventana de 30 días, 5 mm de garúa arrojan
+   una anomalía de +1200 %, que el mapa pinta como extrema aunque el
+   acumulado absoluto sea trivial. Afecta a Ica, Lima, Callao, Moquegua y
+   Tacna buena parte del año. En esas zonas conviene leer el acumulado
+   absoluto y la anomalía térmica antes que el porcentaje. El código solo
+   descarta el caso de normal exactamente cero, donde el porcentaje no está
+   definido.
 
 ## Fuentes
 

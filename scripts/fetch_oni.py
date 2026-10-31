@@ -6,17 +6,16 @@ Para el Peru conviene complementarlo con el ICEN del ENFEN (region Nino 1+2),
 que captura mejor el Nino costero; ver docs/METODOLOGIA.md.
 """
 import json
-import urllib.request
 from pathlib import Path
 
+from clima_api import descargar
 from config import URL_ONI, clasificar_oni
 
 RAIZ = Path(__file__).resolve().parent.parent
 
 
 def descargar_oni():
-    with urllib.request.urlopen(URL_ONI, timeout=60) as r:
-        texto = r.read().decode("utf-8")
+    texto = descargar(URL_ONI, timeout=60, sangria="  ")
 
     serie = []
     for linea in texto.strip().splitlines()[1:]:
@@ -30,6 +29,8 @@ def descargar_oni():
             "tsm": float(tsm),
             "oni": float(anomalia),
         })
+    if not serie:
+        raise SystemExit(f"no pude interpretar ninguna fila de {URL_ONI}")
     return serie
 
 

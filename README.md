@@ -30,13 +30,24 @@ data/                         salidas en JSON, versionadas
 ## Uso local
 
 ```bash
-PYTHONPATH=scripts python scripts/calcular_normales.py   # una sola vez, ~5 min
+PYTHONPATH=scripts python scripts/calcular_normales.py   # una sola vez, 30-90 min
+PYTHONPATH=scripts python scripts/verificar_normales.py  # controla el resultado
 PYTHONPATH=scripts python scripts/fetch_oni.py
 PYTHONPATH=scripts python scripts/actualizar.py
 python -m http.server 8000 --directory docs              # abrir localhost:8000
 ```
 
 Solo necesita Python 3.9 o superior; no usa dependencias externas ni API keys.
+
+`calcular_normales.py` baja 30 anios de serie diaria para cada una de las 25
+capitales, en tramos de 5 anios y con pausas entre pedidos: la API de archivo
+de Open-Meteo corta las transferencias largas y responde HTTP 429 cuando se la
+consulta seguido. Es lento por diseno. Si la corrida se interrumpe, el avance
+queda en `data/.normales_parcial.json` y la siguiente invocacion retoma donde
+quedo; `--reiniciar` descarta ese avance.
+
+Las fuentes deben estar accesibles desde la red donde se corra:
+`archive-api.open-meteo.com`, `api.open-meteo.com` y `www.cpc.ncep.noaa.gov`.
 
 ## Publicación
 

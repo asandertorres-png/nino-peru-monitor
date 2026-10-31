@@ -5,3 +5,6 @@ venv/
 .DS_Store
 .ipynb_checkpoints/
 *.log
+
+# avance parcial de calcular_normales.py: no es un producto
+data/.normales_parcial.json

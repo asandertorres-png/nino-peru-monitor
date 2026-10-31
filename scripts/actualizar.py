@@ -5,34 +5,34 @@ Es el script que corre el flujo automatico diario.
 """
 import json
 import time
-import urllib.parse
-import urllib.request
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
+from clima_api import pedir_json
 from config import API_ACTUAL, DEPARTAMENTOS
 
 RAIZ = Path(__file__).resolve().parent.parent
 LIMA = timezone(timedelta(hours=-5))
 
 VENTANA_DIAS = 30  # dias previos usados para comparar contra la normal
+PAUSA_DEPARTAMENTO = 3  # s de cortesia con la API publica
 
 
 def pedir(lat, lon):
-    params = urllib.parse.urlencode({
+    return pedir_json(API_ACTUAL, {
         "latitude": lat,
         "longitude": lon,
         "daily": "precipitation_sum,temperature_2m_max,temperature_2m_min",
         "timezone": "America/Lima",
         "past_days": VENTANA_DIAS,
         "forecast_days": 7,
-    })
-    with urllib.request.urlopen(f"{API_ACTUAL}?{params}", timeout=90) as r:
-        return json.loads(r.read().decode("utf-8"))
+    }, timeout=90)
 
 
 def anomalia_pct(observado, normal):
-    if not normal:
+    """Anomalia en % de la normal. Sin normal, o con normal cero (meses secos
+    del desierto costero), el porcentaje no esta definido."""
+    if normal is None or normal <= 0:
         return None
     return round((observado - normal) / normal * 100, 1)
 
@@ -65,7 +65,18 @@ def nivel_alerta(anom_pp, anom_temp, zona):
 
 
 def main():
-    normales = json.loads((RAIZ / "data" / "normales.json").read_text())["normales"]
+    archivo_normales = RAIZ / "data" / "normales.json"
+    if not archivo_normales.exists():
+        raise SystemExit(
+            f"falta {archivo_normales}: correr primero "
+            "PYTHONPATH=scripts python3 scripts/calcular_normales.py")
+    normales = json.loads(archivo_normales.read_text())["normales"]
+
+    sin_normal = [d["nombre"] for d in DEPARTAMENTOS if d["nombre"] not in normales]
+    if sin_normal:
+        print(f"aviso: sin normal climatica para {', '.join(sin_normal)}; "
+              "sus anomalias saldran nulas", flush=True)
+
     hoy = datetime.now(LIMA)
     mes = f"{hoy.month:02d}"
 
@@ -84,16 +95,19 @@ def main():
 
         norm = normales.get(dep["nombre"], {}).get(mes, {})
         # normal mensual escalada a la ventana usada
-        pp_norm = norm.get("precipitacion_mensual_mm", 0) * VENTANA_DIAS / 30
+        pp_mes = norm.get("precipitacion_mensual_mm")
+        pp_norm = pp_mes * VENTANA_DIAS / 30 if pp_mes is not None else None
         tx_norm = norm.get("tmax_media_c")
 
         a_pp = anomalia_pct(pp_obs, pp_norm)
-        a_tx = round(tx_obs - tx_norm, 2) if (tx_obs and tx_norm) else None
+        a_tx = (round(tx_obs - tx_norm, 2)
+                if tx_obs is not None and tx_norm is not None else None)
 
         registros.append({
             **dep,
             "precipitacion_obs_mm": pp_obs,
-            "precipitacion_normal_mm": round(pp_norm, 1),
+            "precipitacion_normal_mm": (round(pp_norm, 1)
+                                        if pp_norm is not None else None),
             "anomalia_precipitacion_pct": a_pp,
             "tmax_obs_c": tx_obs,
             "tmax_normal_c": tx_norm,
@@ -102,7 +116,7 @@ def main():
                 x for x in d["precipitation_sum"][VENTANA_DIAS:] if x is not None), 1),
             "nivel_alerta": nivel_alerta(a_pp, a_tx, dep["zona"]),
         })
-        time.sleep(1)
+        time.sleep(PAUSA_DEPARTAMENTO)
 
     oni = json.loads((RAIZ / "data" / "oni.json").read_text())
     salida = {

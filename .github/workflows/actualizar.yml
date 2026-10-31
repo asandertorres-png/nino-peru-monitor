@@ -24,6 +24,11 @@ jobs:
         env:
           PYTHONPATH: scripts
 
+      - name: Verificar normales climaticas
+        run: python scripts/verificar_normales.py
+        env:
+          PYTHONPATH: scripts
+
       - name: Construir estado por departamento
         run: python scripts/actualizar.py
         env:
