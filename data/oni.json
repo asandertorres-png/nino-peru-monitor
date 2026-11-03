@@ -3,21 +3,38 @@
   "url": "https://www.cpc.ncep.noaa.gov/data/indices/oni.ascii.txt",
   "frecuencia": "trimestral (media movil de 3 meses)",
   "ultimo": {
-    "trimestre": "JAS",
+    "trimestre": "ASO",
     "anio": 2026,
-    "tsm": 29.12,
-    "oni": 2.16,
+    "tsm": 29.23,
+    "oni": 2.46,
     "estado": "El Nino muy fuerte"
   },
-  "semanal": null,
-  "semanal_error": "ValueError: no encontre filas con fecha y valores numericos",
-  "serie": [
-    {
-      "trimestre": "ASO",
-      "anio": 2021,
-      "tsm": 26.13,
-      "oni": -0.64
+  "semanal": {
+    "semana_centrada": "2026-10-28",
+    "tsm": 30.2,
+    "anomalia": 3.4,
+    "regiones": {
+      "nino12": {
+        "tsm": 26.7,
+        "anomalia": 5.4
+      },
+      "nino3": {
+        "tsm": 29.5,
+        "anomalia": 4.4
+      },
+      "nino34": {
+        "tsm": 30.2,
+        "anomalia": 3.4
+      },
+      "nino4": {
+        "tsm": 30.1,
+        "anomalia": 1.4
+      }
     },
+    "fuente": "NOAA CPC - wksst, TSM semanal por region Nino (base 1991-2020)"
+  },
+  "semanal_error": null,
+  "serie": [
     {
       "trimestre": "SON",
       "anio": 2021,
@@ -371,6 +388,12 @@
       "anio": 2026,
       "tsm": 29.12,
       "oni": 2.16
+    },
+    {
+      "trimestre": "ASO",
+      "anio": 2026,
+      "tsm": 29.23,
+      "oni": 2.46
     }
   ]
 }
