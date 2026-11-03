@@ -26,6 +26,7 @@ from config import URL_ONI, URL_WKSST, clasificar_oni
 RAIZ = Path(__file__).resolve().parent.parent
 
 # Orden de columnas tras la fecha: SST/SSTA de Nino 1+2, 3, 3.4 y 4.
+REGIONES = (("nino12", 0), ("nino3", 2), ("nino34", 4), ("nino4", 6))
 IDX_SST_34, IDX_ANOM_34 = 4, 5
 N_COLUMNAS_MIN = 8
 _FILA_FECHA = re.compile(r"^\s*(\d{2}[A-Z]{3}\d{4})\s+(.*\S)\s*$")
@@ -68,15 +69,20 @@ def parsear_semanal(texto):
 
     fecha_txt, nums = filas[-1]
     fecha = datetime.strptime(fecha_txt, "%d%b%Y").date().isoformat()
-    sst, anom = nums[IDX_SST_34], nums[IDX_ANOM_34]
-    # Guardas de plausibilidad: si el orden de columnas no es el supuesto, la
-    # SST no caera en 20-33 °C o la anomalia no sera de pocos grados.
-    if not 20.0 <= sst <= 33.0:
-        raise ValueError(f"SST Nino 3.4 implausible ({sst}); revisar columnas")
-    if not -6.0 <= anom <= 6.0:
-        raise ValueError(f"anomalia Nino 3.4 implausible ({anom}); revisar columnas")
-    return {"semana_centrada": fecha, "tsm": sst, "anomalia": anom,
-            "fuente": "NOAA CPC - wksst, Nino 3.4 semanal (base 1991-2020)"}
+    # Guardas de plausibilidad: si el orden de columnas no es el supuesto, una
+    # SST no caera en 15-33 °C o una anomalia no sera de pocos grados.
+    regiones = {}
+    for nombre, i in REGIONES:
+        sst, anom = nums[i], nums[i + 1]
+        if not 15.0 <= sst <= 33.0:
+            raise ValueError(f"SST {nombre} implausible ({sst}); revisar columnas")
+        if not -6.0 <= anom <= 6.0:
+            raise ValueError(f"anomalia {nombre} implausible ({anom}); revisar columnas")
+        regiones[nombre] = {"tsm": sst, "anomalia": anom}
+    # tsm/anomalia a secas siguen siendo Nino 3.4 (compatibilidad con la interfaz)
+    return {"semana_centrada": fecha, "tsm": nums[IDX_SST_34], "anomalia": nums[IDX_ANOM_34],
+            "regiones": regiones,
+            "fuente": "NOAA CPC - wksst, TSM semanal por region Nino (base 1991-2020)"}
 
 
 def obtener_semanal():
@@ -111,8 +117,10 @@ def main():
     print(f"ONI {ultimo['trimestre']} {ultimo['anio']}: {ultimo['oni']:+.2f} "
           f"({salida['ultimo']['estado']})")
     if semanal:
-        print(f"TSM semanal Nino 3.4, semana centrada en {semanal['semana_centrada']}: "
-              f"{semanal['anomalia']:+.2f} °C")
+        r = semanal["regiones"]
+        print(f"TSM semanal, semana centrada en {semanal['semana_centrada']}: "
+              f"Nino 1+2 {r['nino12']['anomalia']:+.1f} | Nino 3 {r['nino3']['anomalia']:+.1f} | "
+              f"Nino 3.4 {r['nino34']['anomalia']:+.1f} | Nino 4 {r['nino4']['anomalia']:+.1f} °C")
 
 
 if __name__ == "__main__":

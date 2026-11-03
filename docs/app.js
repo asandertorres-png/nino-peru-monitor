@@ -206,6 +206,51 @@ function mostrarDetalle(d) {
     ${d.normal_baja ? `<p class="nota" style="margin:.5rem 0 0">Normal mensual menor a ${umbralNormalBaja ?? "—"} mm: el porcentaje exageraría cualquier lluvia; se muestra la diferencia en mm.</p>` : ""}`;
 }
 
+/* ---------- mapa de regiones Nino ---------- */
+// Recuadros oficiales (NOAA). Longitudes en 0-360 para que el Pacifico no se parta
+// en el antimeridiano: 160E = 160, 150W = 210, 90W = 270, 80W = 280.
+const REGIONES_NINO = {
+  nino4:  { nombre: "Niño 4",   bounds: [[-5, 160], [5, 210]],  dir: "top" },
+  nino34: { nombre: "Niño 3.4", bounds: [[-5, 190], [5, 240]],  dir: "bottom" },
+  nino3:  { nombre: "Niño 3",   bounds: [[-5, 210], [5, 270]],  dir: "top" },
+  nino12: { nombre: "Niño 1+2", bounds: [[-10, 270], [0, 280]], dir: "bottom" }
+};
+let mapaEnso = null;
+const rectEnso = {};
+
+function pintarEnso(estado) {
+  const s = estado.tsm_semanal, reg = s && s.regiones;
+  const nota = document.getElementById("enso-mapa-nota");
+  if (!mapaEnso) {
+    mapaEnso = L.map("mapa-enso", {
+      zoomControl: false, dragging: false, scrollWheelZoom: false, doubleClickZoom: false,
+      touchZoom: false, boxZoom: false, keyboard: false, attributionControl: false, zoomSnap: 0.25
+    });
+    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 4 }).addTo(mapaEnso);
+    mapaEnso.fitBounds([[-30, 135], [25, 305]]);
+    // contorno del Peru, desplazado 360 grados a esta copia del mundo
+    (geoCache.departamento || (geoCache.departamento = fetch(NIVELES.departamento.geo).then(r => r.json())))
+      .then(geo => L.geoJSON(geo, {
+        coordsToLatLng: p => L.latLng(p[1], p[0] + 360),
+        style: { color: "#f0efec", weight: 1, fillColor: "#f0efec", fillOpacity: 0.12 }, interactive: false
+      }).addTo(mapaEnso)).catch(() => {});
+    for (const [k, r] of Object.entries(REGIONES_NINO)) {
+      rectEnso[k] = L.rectangle(r.bounds, { color: "#f0efec", weight: 1, fillColor: NEUTRO, fillOpacity: 0.3, interactive: false }).addTo(mapaEnso);
+      rectEnso[k].bindTooltip(r.nombre, { permanent: true, direction: r.dir, className: "etq-region", opacity: 1 });
+    }
+  }
+  const e = ESCALAS.anomalia_tmax_c;
+  for (const [k, r] of Object.entries(REGIONES_NINO)) {
+    const v = reg?.[k]?.anomalia;
+    rectEnso[k].setStyle(v == null ? { fillColor: NEUTRO, fillOpacity: 0.3 }
+                                   : { fillColor: e.colores[claseEscalonada(v, e)], fillOpacity: 0.78 });
+    rectEnso[k].setTooltipContent(v == null ? r.nombre : `${r.nombre} <b>${v > 0 ? "+" : ""}${v.toFixed(1)} °C</b>`);
+  }
+  nota.textContent = reg
+    ? `Anomalía semanal de la temperatura del mar por región Niño (°C), semana centrada en ${fmtDia(s.semana_centrada)}. Niño 1+2, frente a la costa, es la región del Niño costero; Niño 3.4 es la del ONI.`
+    : "El detalle por región Niño aparece con la próxima actualización del monitor.";
+}
+
 /* ---------- cabecera ENSO y frescura ---------- */
 const CENTRO_TRIMESTRE = { DJF: 1, JFM: 2, FMA: 3, MAM: 4, AMJ: 5, MJJ: 6, JJA: 7, JAS: 8, ASO: 9, SON: 10, OND: 11, NDJ: 12 };
 
@@ -219,6 +264,7 @@ function pintarCabecera(estado) {
   document.getElementById("semanal-nota").textContent = s ? `semana centrada en ${fmtDia(s.semana_centrada)}` : "no publicada en la última corrida";
   document.getElementById("actualizado").textContent = fmtFecha(estado.actualizado);
   pintarFrescura(estado);
+  pintarEnso(estado);
 }
 
 function pintarFrescura(estado) {

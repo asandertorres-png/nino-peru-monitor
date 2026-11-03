@@ -153,6 +153,13 @@ details.tabla .scroll{max-height:360px;overflow:auto}
 .tile .pill{align-self:flex-start;margin-top:.15rem;padding:.12rem .5rem;border-radius:999px;
             background:rgba(255,255,255,.08);font-size:.72rem;color:var(--tinta)}
 .tile .nota{margin-top:.1rem}
+.enso-mapa{margin-top:.6rem}
+#mapa-enso{height:160px;border-radius:8px;border:1px solid var(--linea);background:#0b0e12;overflow:hidden}
+#mapa-enso .leaflet-tile-pane{filter:brightness(.55) saturate(.5)}
+.leaflet-tooltip.etq-region{background:rgba(13,15,18,.88);border:1px solid var(--linea);color:var(--tinta);
+  font-family:var(--cuerpo);font-size:.66rem;padding:.08rem .35rem;border-radius:4px;box-shadow:none;white-space:nowrap}
+.leaflet-tooltip.etq-region b{font-family:var(--datos);font-weight:500}
+#enso-mapa-nota{margin:.35rem 0 0}
 
 #detalle h2{margin:0;font-family:var(--display);font-size:1.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.02em;line-height:1.05;overflow-wrap:anywhere}
 #detalle .sub{margin:.1rem 0 .6rem;color:var(--tenue);font-size:.8rem}
