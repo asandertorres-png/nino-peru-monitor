@@ -14,10 +14,10 @@ const ESCALAS = {
     titulo: "Nivel de alerta", nota: "Indicativo y provisional; no sustituye avisos oficiales.",
     tipo: "estado",
     clases: [
-      { v: 0, color: NEUTRO,    op: 0.35, etq: "Sin señal" },
-      { v: 1, color: "#fab219", op: 0.82, etq: "Leve" },
-      { v: 2, color: "#ec835a", op: 0.82, etq: "Moderada" },
-      { v: 3, color: "#d03b3b", op: 0.86, etq: "Alta" }
+      { v: 0, color: NEUTRO,    op: 0.25, etq: "Sin señal" },
+      { v: 1, color: "#fab219", op: 0.6, etq: "Leve" },
+      { v: 2, color: "#ec835a", op: 0.62, etq: "Moderada" },
+      { v: 3, color: "#d03b3b", op: 0.66, etq: "Alta" }
     ],
     formato: v => v == null ? "s/d" : ESCALAS.nivel_alerta.clases[v].etq
   },
@@ -81,7 +81,7 @@ const NIVELES = {
 };
 
 /* ---------- mapa ---------- */
-const mapa = L.map("mapa", { zoomControl: true, attributionControl: true, zoomSnap: 0.5 })
+const mapa = L.map("mapa", { zoomControl: true, attributionControl: true })
   .setView([-9.8, -75.2], 5);
 L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
   maxZoom: 11, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
@@ -117,20 +117,20 @@ function claseDe(d) {
   }
   if (capaActual === "anomalia_precipitacion_pct" && d.normal_baja) {
     const e = ESCALAS.precipitacion_mm, v = d.precipitacion_obs_mm;
-    return v == null ? { color: SIN_DATOS, op: 0.55 } : { color: e.colores[claseEscalonada(v, e)], op: 0.8 };
+    return v == null ? { color: SIN_DATOS, op: 0.5 } : { color: e.colores[claseEscalonada(v, e)], op: 0.62 };
   }
   const e = ESCALAS[capaActual], v = d[capaActual];
   if (v == null) return { color: SIN_DATOS, op: 0.55 };
   const i = claseEscalonada(v, e);
-  return { color: e.colores[i], op: e.colores[i] === NEUTRO ? 0.35 : 0.8 };
+  return { color: e.colores[i], op: e.colores[i] === NEUTRO ? 0.25 : 0.62 };
 }
 
 function estilo(feature) {
   const d = porUnidad[NIVELES[nivelActual].claveGeo(feature)];
   const c = claseDe(d);
-  if (sinInfo(d)) return { fillColor: "#5a5f66", fillOpacity: 0.55, color: "#898781", weight: 1, dashArray: "4 3" };
-  // el trazo lleva el color del plano: es la separacion de 2 px entre rellenos vecinos
-  return { fillColor: c.color, fillOpacity: c.op, color: "#0d0f12", weight: nivelActual === "provincia" ? 0.8 : 1.2 };
+  if (sinInfo(d)) return { fillColor: "#5a5f66", fillOpacity: 0.5, color: "#898781", weight: 1, dashArray: "4 3" };
+  // el trazo lleva el color del plano: separa los rellenos vecinos ahora que son translucidos
+  return { fillColor: c.color, fillOpacity: c.op, color: "#0d0f12", weight: nivelActual === "provincia" ? 1 : 1.5 };
 }
 
 function valorCapa(d) {
