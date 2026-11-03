@@ -7,4 +7,4 @@ venv/
 *.log
 
 # avance parcial de calcular_normales.py: no es un producto
-data/.normales_parcial.json
+data/.normales*_parcial.json

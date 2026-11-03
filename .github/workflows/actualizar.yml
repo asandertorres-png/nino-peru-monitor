@@ -35,6 +35,16 @@ jobs:
         env:
           PYTHONPATH: scripts
 
+      # El nivel provincial se publica solo cuando sus normales ya existen
+      # (se calculan a mano con el workflow "Calcular normales 1991-2020").
+      - name: Verificar y construir estado por provincia
+        if: hashFiles('data/normales_provincias.json') != ''
+        run: |
+          python scripts/verificar_normales.py --nivel provincia
+          python scripts/actualizar.py --nivel provincia
+        env:
+          PYTHONPATH: scripts
+
       - name: Publicar cambios
         run: |
           git config user.name "github-actions[bot]"

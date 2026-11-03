@@ -107,6 +107,48 @@ licencia CC BY-NC-ND, que no permite redistribuirlo en este repositorio. Por eso
 la validación se limita a los controles internos, y una comparación con
 estaciones queda como pendiente aparte, para hacerla fuera del repositorio.
 
+## Nivel provincial
+
+Además de los 25 departamentos, el monitor calcula el mismo producto para las
+provincias. Solo se publican las provincias **que tienen información**; las
+demás aparecen en gris, con el motivo.
+
+**Límites.** `docs/peru_provincias.geojson`, de
+[juaneladio/peru-geojson](https://github.com/juaneladio/peru-geojson)
+(licencia MPL-2.0). El archivo trae 197 polígonos: dos provincias (Piura y
+Víctor Fajardo) vienen partidas en dos, con el fragmento menor mal escrito
+("PUIRA", "VICTOR FAFARDO") y el mismo código ubigeo; se agrupan por ubigeo.
+Quedan **195 provincias**: el archivo es anterior a la creación de Putumayo
+(2014), que figura dentro de Maynas. Es un límite de la fuente, no del método.
+
+**Punto por provincia.** No es la capital: es el centroide del polígono mayor
+de cada provincia (si cae fuera, por una forma cóncava, el vértice más
+cercano). Las coordenadas se calculan en `scripts/provincias.py` a partir del
+GeoJSON; no hay una lista tipeada a mano.
+
+**Modelo.** Para provincias las normales se piden a **ERA5-Land** (~9 km), no
+a ERA5 (~25 km) como en departamentos: muchas provincias de costa y sierra son
+más chicas que una celda de ERA5, y a esa resolución provincias vecinas
+compartirían el mismo valor. ERA5-Land no cubre el mar, así que un punto
+costero puede quedar sin serie: esa provincia queda registrada en `sin_datos`
+con el motivo, y nunca se le inventa un valor. Por la diferencia de modelo,
+**los valores provinciales y departamentales no son directamente comparables**
+entre sí; cada nivel se compara con su propia normal.
+
+**Zona de impacto.** Cada provincia hereda la zona de su departamento. Es una
+asignación **provisional**: una provincia de sierra dentro de un departamento
+costero heredaría "costa_norte". Para atenuarlo, si la altitud que reporta el
+modelo para el punto supera los 2000 m y la zona heredada es costera, se
+reclasifica como sierra (norte o sur según la latitud). El estado publica la
+zona usada y la heredada, para que el cambio sea visible. La asignación fina
+por provincia es trabajo pendiente.
+
+**Verificación.** Los mismos controles internos, adaptados: las unidades en
+`sin_datos` se aceptan como aviso mientras no pasen del 20 %; el contraste
+Loreto frente a Ica se hace con el promedio de sus provincias; y la regla del
+máximo de lluvia en diciembre–marzo debe cumplirla al menos el 90 % de las
+provincias de sierra (el resto se lista como aviso, no como fallo).
+
 ## Sesgo de representación puntual: cuantificación
 
 Un punto por departamento ignora el relieve. Para cuantificarlo, el monitor
@@ -214,6 +256,9 @@ herramienta de exploración, no un instrumento de alerta operativa.
 - ERA5 (ECMWF), servido a través de la API de archivo de Open-Meteo.
 - Open-Meteo, API de pronóstico: observación de los últimos 30 días, condiciones
   actuales y pronóstico a 7 días.
-- Límites departamentales: datos públicos de contornos del Perú.
+- Límites departamentales y provinciales: juaneladio/peru-geojson (MPL-2.0),
+  derivados de los límites oficiales.
+- ERA5-Land (ECMWF), vía la API de archivo de Open-Meteo, para las normales
+  provinciales.
 - Altitudes de referencia de las capitales: aproximadas, de referencia
   cartográfica; pendiente de verificar contra IGN.

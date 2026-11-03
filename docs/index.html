@@ -37,6 +37,12 @@
   <div id="mapa"></div>
   <aside id="panel">
     <div id="controles">
+      <div class="grupo"><span class="etiqueta">Unidad</span>
+        <label><input type="radio" name="nivel" value="departamento" checked> Departamentos (25)</label>
+        <label><input type="radio" name="nivel" value="provincia"> Provincias</label>
+      </div>
+      <p id="aviso-nivel" class="nota"></p>
+      <span class="etiqueta">Capa</span>
       <label><input type="radio" name="capa" value="nivel_alerta" checked> Nivel de alerta</label>
       <label><input type="radio" name="capa" value="anomalia_precipitacion_pct"> Anomalía de lluvia (%)</label>
       <label><input type="radio" name="capa" value="anomalia_tmax_c"> Anomalía de temperatura (°C)</label>
@@ -50,7 +56,8 @@
   <p><strong>No es tiempo real.</strong> La normal (ERA5) tiene varios días de rezago,
      el ONI es mensual y la TSM semanal sale los lunes. Lo más reciente es la lluvia
      y la temperatura de hoy, que vienen de la API de Open-Meteo y se refrescan cada hora.</p>
-  <p>Fuentes: NOAA/CPC (índice ONI y TSM semanal) y ERA5 / Open-Meteo (clima observado y normales).
+  <p>Fuentes: NOAA/CPC (índice ONI y TSM semanal), ERA5 y ERA5-Land / Open-Meteo (clima observado y normales).
+     Límites departamentales y provinciales: <a href="https://github.com/juaneladio/peru-geojson">juaneladio/peru-geojson</a> (MPL-2.0).
      Los niveles de alerta son indicativos y no sustituyen los avisos oficiales de
      SENAMHI, ENFEN ni INDECI. Metodología en <a href="METODOLOGIA.md">METODOLOGIA.md</a>.</p>
 </footer>

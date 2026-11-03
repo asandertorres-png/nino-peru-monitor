@@ -16,6 +16,11 @@ name: Calcular normales 1991-2020
 on:
   workflow_dispatch:
     inputs:
+      nivel:
+        description: "Nivel: departamento (25 puntos, ~1 h) o provincia (195 puntos, varias horas; relanzar si se corta)"
+        type: choice
+        options: [departamento, provincia]
+        default: departamento
       reiniciar:
         description: "Descartar el avance parcial y empezar de cero"
         type: boolean
@@ -42,17 +47,15 @@ jobs:
           PYTHONPATH: scripts
           PYTHONUNBUFFERED: "1"
         run: |
-          if [ "${{ inputs.reiniciar }}" = "true" ]; then
-            python scripts/calcular_normales.py --reiniciar
-          else
-            python scripts/calcular_normales.py
-          fi
+          ARGS="--nivel ${{ inputs.nivel }}"
+          if [ "${{ inputs.reiniciar }}" = "true" ]; then ARGS="$ARGS --reiniciar"; fi
+          python scripts/calcular_normales.py $ARGS
 
       - name: Verificar el producto
         if: success()
         env:
           PYTHONPATH: scripts
-        run: python scripts/verificar_normales.py
+        run: python scripts/verificar_normales.py --nivel ${{ inputs.nivel }}
 
       - name: Publicar resultado
         if: always()   # tambien cuando la corrida se corta: el parcial sirve para retomar
@@ -60,12 +63,18 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           mkdir -p docs/data
-          if [ -f data/normales.json ]; then cp data/normales.json docs/data/; fi
+          for f in data/normales.json data/normales_provincias.json; do
+            if [ -f "$f" ]; then cp "$f" docs/data/; fi
+          done
           git add -A data/ docs/data/
+          # el checkpoint esta en .gitignore para corridas locales, pero en el
+          # runner se pierde al terminar el trabajo: se commitea a la fuerza
+          # para que el siguiente lanzamiento retome desde donde quedo
+          git add -f data/.normales*_parcial.json 2>/dev/null || true
           if git diff --staged --quiet; then
             echo "Sin cambios que publicar."
           else
-            git commit -m "datos: normales climaticas 1991-2020 (corrida automatica)"
+            git commit -m "datos: normales climaticas 1991-2020, nivel ${{ inputs.nivel }} (corrida automatica)"
             git pull --rebase origin "${GITHUB_REF_NAME}"
             git push origin "HEAD:${GITHUB_REF_NAME}"
           fi

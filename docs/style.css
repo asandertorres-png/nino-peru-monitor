@@ -45,3 +45,4 @@ footer a{color:var(--acento)}
 
 .leaflet-control-attribution{background:rgba(15,20,25,.75);color:var(--tenue);font-size:.68rem}
 .leaflet-control-attribution a{color:var(--acento)}
+.grupo{display:flex;flex-direction:column;gap:.3rem;margin-bottom:.4rem}

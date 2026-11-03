@@ -11,9 +11,10 @@ más reciente de cada una (ver docs/METODOLOGIA.md, sección de frescura).
 
 - Descarga el índice **ONI** de la NOAA/CPC (trimestral) y la **TSM semanal** de la
   región Niño 3.4 (semanal, los lunes).
-- Consulta, para la capital de cada uno de los 25 departamentos, la lluvia y la
-  temperatura de los últimos 30 días, las condiciones de hoy y el pronóstico a 7
-  días (Open-Meteo).
+- Consulta, para la capital de cada uno de los 25 departamentos y para un punto
+  representativo de cada una de las 195 provincias, la lluvia y la temperatura
+  de los últimos 30 días, las condiciones de hoy y el pronóstico a 7 días
+  (Open-Meteo). Las provincias sin cobertura del modelo se muestran en gris.
 - Compara esos valores con las normales climáticas 1991–2020 calculadas a
   partir del reanálisis ERA5.
 - Publica `data/estado.json` y lo pinta en un mapa Leaflet con tres capas:
@@ -23,6 +24,8 @@ más reciente de cada una (ver docs/METODOLOGIA.md, sección de frescura).
 
 ```
 scripts/config.py             departamentos, umbrales y endpoints
+scripts/provincias.py         provincias desde el GeoJSON: punto y zona
+scripts/niveles.py            selector de nivel (departamento / provincia)
 scripts/fetch_oni.py          índice ONI y TSM semanal de la NOAA
 scripts/calcular_normales.py  normales 1991-2020 (se corre una sola vez)
 scripts/actualizar.py         construye data/estado.json (corre a diario)
@@ -36,8 +39,11 @@ data/                         salidas en JSON, versionadas
 ```bash
 PYTHONPATH=scripts python scripts/calcular_normales.py   # una sola vez, 30-90 min
 PYTHONPATH=scripts python scripts/verificar_normales.py  # controla el resultado
+PYTHONPATH=scripts python scripts/calcular_normales.py --nivel provincia   # varias horas
+PYTHONPATH=scripts python scripts/verificar_normales.py --nivel provincia
 PYTHONPATH=scripts python scripts/fetch_oni.py
 PYTHONPATH=scripts python scripts/actualizar.py
+PYTHONPATH=scripts python scripts/actualizar.py --nivel provincia
 python -m http.server 8000 --directory docs              # abrir localhost:8000
 ```
 

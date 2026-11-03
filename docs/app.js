@@ -47,9 +47,27 @@ const fmtDia = s => s ? new Date(s + "T12:00:00").toLocaleDateString("es-PE",
   { dateStyle: "medium" }) : "s/d";
 
 let capaActual = "nivel_alerta";
-let porDepartamento = {};
+let nivelActual = "departamento";   // "departamento" | "provincia"
+let porUnidad = {};                 // clave -> registro del estado
 let umbralNormalBaja = null;
 let capaGeo;
+let geoCache = {};
+
+// Que archivo de estado y que GeoJSON usa cada nivel, y como se empareja un
+// poligono con su registro (departamentos por nombre; provincias por ubigeo,
+// porque el GeoJSON trae dos poligonos con el mismo codigo y nombre distinto).
+const NIVELES = {
+  departamento: {
+    estado: "data/estado.json", geo: "peru_departamentos.geojson", lista: "departamentos",
+    claveGeo: f => normaliza(f.properties.NOMBDEP), claveDato: d => normaliza(d.nombre),
+    etiqueta: f => f.properties.NOMBDEP
+  },
+  provincia: {
+    estado: "data/estado_provincias.json", geo: "peru_provincias.geojson", lista: "provincias",
+    claveGeo: f => f.properties.FIRST_IDPR, claveDato: d => d.ubigeo,
+    etiqueta: f => `${f.properties.NOMBPROV} (${f.properties.FIRST_NOMB})`
+  }
+};
 
 const mapa = L.map("mapa", { zoomControl: true, attributionControl: true })
   .setView([-9.8, -75.2], 5);
@@ -64,7 +82,7 @@ L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
 // Color de un departamento para la capa activa. En la capa de lluvia, las
 // zonas con normal muy baja se pintan por acumulado en mm (ver limitacion 4).
 function colorDe(d) {
-  if (!d) return "#3a444d";
+  if (!d || d.sin_datos || d.sin_normal) return "#3a444d";
   if (capaActual === "anomalia_precipitacion_pct" && d.normal_baja) {
     return ESCALAS.precipitacion_mm.color(d.precipitacion_obs_mm);
   }
@@ -72,7 +90,7 @@ function colorDe(d) {
 }
 
 function estilo(feature) {
-  const d = porDepartamento[normaliza(feature.properties.NOMBDEP)];
+  const d = porUnidad[NIVELES[nivelActual].claveGeo(feature)];
   return {
     fillColor: colorDe(d),
     fillOpacity: 0.82, color: "#0f1419", weight: 1
@@ -82,10 +100,18 @@ function estilo(feature) {
 function mostrarDetalle(d) {
   const caja = document.getElementById("detalle");
   if (!d) {
-    caja.innerHTML = '<p class="vacio">Pasa el cursor sobre un departamento.</p>';
+    caja.innerHTML = '<p class="vacio">Pasa el cursor sobre una unidad del mapa.</p>';
     return;
   }
   const f = (v, u, dec = 1) => v == null ? "s/d" : `${v.toFixed(dec)} ${u}`;
+  const sub = d.departamento ? `${d.departamento} · ${d.zona.replace(/_/g, " ")}`
+                             : `${d.capital} · ${d.zona.replace(/_/g, " ")}`;
+  if (d.sin_datos || d.sin_normal) {
+    caja.innerHTML = `<h2>${d.nombre}</h2><p class="vacio">${sub}</p>
+      <p class="nota"><strong>Sin información.</strong> ${d.motivo_sin_normal || d.motivo_sin_datos || ""}
+      ${d.temperatura_actual_c != null ? `<br>Temperatura actual: ${f(d.temperatura_actual_c, "°C")}` : ""}</p>`;
+    return;
+  }
   const lluviaPct = d.normal_baja
     ? `<dt>Anomalía de lluvia</dt><dd>no informativa</dd>
        <dt>Anomalía (mm)</dt><dd>${d.anomalia_precipitacion_mm == null ? "s/d"
@@ -96,14 +122,15 @@ function mostrarDetalle(d) {
     ? `<p class="nota">Normal mensual menor a ${umbralNormalBaja ?? "—"} mm: el porcentaje
        exagera cualquier lluvia pequeña, por eso se muestra el acumulado en mm.</p>` : "";
   const altitud = d.elevacion_modelo_m == null ? "" :
-    `<dt>Altitud del punto de malla</dt><dd>${d.elevacion_modelo_m} m</dd>
-     <dt>Altitud de la capital (ref.)</dt><dd>${d.altitud_capital_m ?? "s/d"} m</dd>`;
+    `<dt>Altitud del punto de malla</dt><dd>${d.elevacion_modelo_m} m</dd>` +
+    (d.altitud_capital_m == null ? "" :
+     `<dt>Altitud de la capital (ref.)</dt><dd>${d.altitud_capital_m} m</dd>`);
   const hoy = d.lluvia_hoy_mm == null ? "" :
     `<dt>Lluvia hoy (hasta la hora)</dt><dd>${f(d.lluvia_hoy_mm, "mm")}</dd>
      <dt>Temperatura actual</dt><dd>${f(d.temperatura_actual_c, "°C")}</dd>`;
   caja.innerHTML = `
     <h2>${d.nombre}</h2>
-    <p class="vacio">${d.capital} · ${d.zona.replace(/_/g, " ")}</p>
+    <p class="vacio">${sub}</p>
     <dl>
       ${hoy}
       <dt>Lluvia (30 días)</dt><dd>${f(d.precipitacion_obs_mm, "mm")}</dd>
@@ -168,48 +195,73 @@ function pintarFuentes(estado) {
     `<li><span>${a}</span><strong>${b}</strong><em>${c}</em></li>`).join("");
 }
 
-Promise.all([
-  fetch("data/estado.json").then(r => r.json()),
-  fetch("peru_departamentos.geojson").then(r => r.json())
-]).then(([estado, geo]) => {
-  umbralNormalBaja = estado.umbral_normal_baja_mm ?? null;
-  estado.departamentos.forEach(d => { porDepartamento[normaliza(d.nombre)] = d; });
-
+function pintarCabecera(estado) {
   document.getElementById("oni-valor").textContent =
     (estado.oni.oni > 0 ? "+" : "") + estado.oni.oni.toFixed(2);
   document.getElementById("oni-estado").textContent = estado.oni.estado;
   document.getElementById("oni-trimestre").textContent =
     `${estado.oni.trimestre} ${estado.oni.anio} · TSM ${estado.oni.tsm} °C · trimestral`;
-
   const s = estado.tsm_semanal;
   document.getElementById("semanal-valor").textContent = s
     ? (s.anomalia > 0 ? "+" : "") + s.anomalia.toFixed(2) + " °C" : "s/d";
   document.getElementById("semanal-nota").textContent = s
     ? `semana centrada en ${fmtDia(s.semana_centrada)} · semanal`
     : "no publicada en la última corrida · semanal";
-
   document.getElementById("actualizado").textContent = fmtFecha(estado.actualizado);
   pintarFuentes(estado);
+}
 
-  capaGeo = L.geoJSON(geo, {
-    style: estilo,
-    onEachFeature: (feature, layer) => {
-      const d = porDepartamento[normaliza(feature.properties.NOMBDEP)];
-      layer.bindTooltip(feature.properties.NOMBDEP, { sticky: true });
-      layer.on({
-        mouseover: e => { e.target.setStyle({ weight: 2.5, color: "#e6edf3" }); mostrarDetalle(d); },
-        mouseout: e => capaGeo.resetStyle(e.target),
-        click: () => mapa.fitBounds(layer.getBounds())
-      });
-    }
-  }).addTo(mapa);
+function cargarNivel(nivel) {
+  const cfg = NIVELES[nivel];
+  const geoP = geoCache[nivel] || (geoCache[nivel] = fetch(cfg.geo).then(r => r.json()));
+  return Promise.all([
+    fetch(cfg.estado).then(r => { if (!r.ok) throw new Error(`${cfg.estado}: HTTP ${r.status}`); return r.json(); }),
+    geoP
+  ]).then(([estado, geo]) => {
+    nivelActual = nivel;
+    umbralNormalBaja = estado.umbral_normal_baja_mm ?? null;
+    porUnidad = {};
+    estado[cfg.lista].forEach(d => { porUnidad[cfg.claveDato(d)] = d; });
+    pintarCabecera(estado);
 
+    const aviso = document.getElementById("aviso-nivel");
+    aviso.textContent = nivel === "provincia"
+      ? `Provincias: ${estado[cfg.lista].length} con cobertura, ${estado.unidades_sin_datos ?? 0} sin información (en gris). Resolución del modelo ~9 km; Putumayo figura dentro de Maynas.`
+      : "";
+
+    if (capaGeo) mapa.removeLayer(capaGeo);
+    capaGeo = L.geoJSON(geo, {
+      style: estilo,
+      onEachFeature: (feature, layer) => {
+        const d = porUnidad[cfg.claveGeo(feature)];
+        layer.bindTooltip(cfg.etiqueta(feature), { sticky: true });
+        layer.on({
+          mouseover: e => { e.target.setStyle({ weight: 2.5, color: "#e6edf3" }); mostrarDetalle(d); },
+          mouseout: e => capaGeo.resetStyle(e.target),
+          click: () => mapa.fitBounds(layer.getBounds())
+        });
+      }
+    }).addTo(mapa);
+    dibujarLeyenda();
+  });
+}
+
+cargarNivel("departamento").then(() => {
   mapa.fitBounds(capaGeo.getBounds(), { padding: [12, 12] });
-  dibujarLeyenda();
 }).catch(err => {
   document.getElementById("detalle").innerHTML =
     `<p class="vacio">No se pudieron cargar los datos (${err.message}).
      Ejecuta <code>python scripts/actualizar.py</code> para generarlos.</p>`;
+});
+
+document.querySelectorAll('input[name="nivel"]').forEach(input => {
+  input.addEventListener("change", e => {
+    cargarNivel(e.target.value).catch(err => {
+      document.getElementById("aviso-nivel").textContent =
+        `Nivel provincial todavía sin datos publicados (${err.message}).`;
+      document.querySelector('input[name="nivel"][value="departamento"]').checked = true;
+    });
+  });
 });
 
 document.querySelectorAll('input[name="capa"]').forEach(input => {

@@ -144,3 +144,22 @@ def pedir_json(url_base, params, intentos=INTENTOS, timeout=TIMEOUT,
     url = f"{url_base}?{urllib.parse.urlencode(params)}"
     return descargar(url, intentos=intentos, timeout=timeout,
                      sangria=sangria, validar=_validar_json)
+
+
+def pedir_lote(url_base, params_comunes, puntos, intentos=INTENTOS,
+               timeout=TIMEOUT, sangria="    "):
+    """Una sola peticion para varios puntos: Open-Meteo acepta listas de
+    coordenadas separadas por comas y devuelve una lista de resultados en el
+    mismo orden. Para un solo punto devuelve un dict; aqui se normaliza a
+    lista para que el llamador no distinga casos."""
+    params = dict(params_comunes)
+    params["latitude"] = ",".join(str(p["lat"]) for p in puntos)
+    params["longitude"] = ",".join(str(p["lon"]) for p in puntos)
+    datos = pedir_json(url_base, params, intentos=intentos, timeout=timeout,
+                       sangria=sangria)
+    if isinstance(datos, dict):
+        datos = [datos]
+    if len(datos) != len(puntos):
+        raise ErrorApi(f"la API devolvio {len(datos)} resultados para "
+                       f"{len(puntos)} puntos")
+    return datos

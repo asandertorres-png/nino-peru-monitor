@@ -52,6 +52,14 @@ DEPARTAMENTOS = [
 
 API_ACTUAL = "https://api.open-meteo.com/v1/forecast"
 API_ARCHIVO = "https://archive-api.open-meteo.com/v1/archive"
+
+# Modelo del archivo por nivel. None = el que la API elige por defecto (ERA5,
+# ~25 km), que es lo que usan las normales departamentales ya publicadas.
+# Para provincias se pide ERA5-Land (~9 km): muchas provincias son mas chicas
+# que una celda de ERA5. ERA5-Land no cubre el mar: un punto costero puede
+# quedar sin datos y se registra como tal. Nombre del parametro pendiente de
+# verificar contra la API en la primera corrida.
+MODELO_ARCHIVO = {"departamento": None, "provincia": "era5_land"}
 URL_ONI = "https://www.cpc.ncep.noaa.gov/data/indices/oni.ascii.txt"
 # TSM semanal de la region Nino 3.4 (NOAA/CPC, serie 1991-2020). Se actualiza
 # los lunes. Formato del archivo pendiente de verificar: ver fetch_oni.py.
