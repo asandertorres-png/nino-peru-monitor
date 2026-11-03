@@ -115,18 +115,40 @@ registra en cada corrida:
 - `elevacion_modelo_m`: la altitud que reporta la propia API de Open-Meteo para
   el punto de malla que usa (campo `elevation` de la respuesta);
 - `altitud_capital_m`: la altitud de referencia de la capital (`config.py`);
-- `diferencia_altitud_m`: la diferencia entre ambas.
+- `diferencia_altitud_m`: modelo menos capital.
 
-Las tres quedan en `data/estado.json` para cada departamento. Una diferencia
-grande indica que el punto de malla promedia un relieve distinto del que hay en
-la capital: por ejemplo, en un valle que el modelo ubica en una ladera más alta
-y más lluviosa. Es un indicador del tamaño del problema de representación, no
-una medida del sesgo de precipitación: el sesgo de lluvia no se mide aquí.
+Las tres quedan en `data/estado.json` para cada departamento.
+
+**Primera corrida (3 de noviembre de 2026), 10 capitales:**
+
+| Capital | Diferencia de altitud (m) |
+|---|---|
+| Arequipa | −23 |
+| Cajamarca | −47 |
+| Callao | +17 |
+| Cusco | −17 |
+| Ica | 0 |
+| La Libertad | +2 |
+| Lambayeque | +4 |
+| Lima | −6 |
+| Moquegua | +2 |
+| Tacna | +9 |
+
+El resto de los departamentos queda en `data/estado.json` y se incorpora a esta
+tabla cuando se revise la corrida completa.
+
+**Lectura.** En estas capitales el punto de malla queda a menos de 50 m de la
+altitud de la capital. La altitud, por sí sola, no explica el exceso de lluvia
+de la normal ERA5 en varias capitales andinas (Cajamarca: 2619 mm/año en la
+normal, un valor que la comparación con estaciones deberá confirmar o
+descartar). El sesgo de precipitación, entonces, no viene solo de la altura
+del punto: depende de cómo el modelo representa la lluvia en la exposición de
+cada valle y en la pendiente, que la altitud no captura. Esta es una
+conclusión del diagnóstico; no se corrige en el código. La diferencia en Ica
+(0 m) es un resultado de redondeo y no se interpreta.
 
 Las altitudes de referencia de las capitales son **aproximadas**, tomadas de
 referencia cartográfica, y deben verificarse contra IGN antes de citar cifras.
-Los valores de diferencia por departamento se completan con la primera corrida
-del flujo automático; no se citan aquí cifras que no se hayan calculado.
 
 ## Normal mensual muy baja (limitación 4, implementada)
 
@@ -147,6 +169,11 @@ Por eso, cuando la **normal mensual** está por debajo de
 
 El umbral es **provisional**: fijado por criterio, no calibrado. Hay que
 revisarlo con datos de estaciones.
+
+La marca depende del **mes en curso**, porque usa la normal mensual. En
+noviembre de 2026 quedan marcadas Callao, Ica, La Libertad, Lambayeque, Lima,
+Moquegua y Tacna. Piura queda por encima del umbral en ese mes. El conjunto
+cambia a lo largo del año.
 
 ## Nivel de alerta
 
