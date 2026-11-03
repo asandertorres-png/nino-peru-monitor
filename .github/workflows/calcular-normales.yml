@@ -1,0 +1,71 @@
+# Calculo de las normales climaticas 1991-2020.
+#
+# Se ejecuta A MANO (pestana Actions -> "Calcular normales 1991-2020" ->
+# "Run workflow"), no por cron: es una tarea de una sola vez cuyo producto,
+# data/normales.json, queda versionado y lo lee el flujo diario.
+#
+# Corre aqui y no en una maquina local porque el runner de GitHub tiene
+# salida a internet sin restricciones y aguanta hasta 6 horas por trabajo,
+# de sobra para una corrida que toma entre 30 y 90 minutos.
+#
+# Si la corrida se corta, el avance parcial se commitea igual y basta con
+# volver a lanzar el workflow: el script retoma desde donde quedo.
+
+name: Calcular normales 1991-2020
+
+on:
+  workflow_dispatch:
+    inputs:
+      reiniciar:
+        description: "Descartar el avance parcial y empezar de cero"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+jobs:
+  normales:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350   # el tope de GitHub son 360; deja margen para commitear
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Calcular normales
+        id: calculo
+        env:
+          PYTHONPATH: scripts
+          PYTHONUNBUFFERED: "1"
+        run: |
+          if [ "${{ inputs.reiniciar }}" = "true" ]; then
+            python scripts/calcular_normales.py --reiniciar
+          else
+            python scripts/calcular_normales.py
+          fi
+
+      - name: Verificar el producto
+        if: success()
+        env:
+          PYTHONPATH: scripts
+        run: python scripts/verificar_normales.py
+
+      - name: Publicar resultado
+        if: always()   # tambien cuando la corrida se corta: el parcial sirve para retomar
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          mkdir -p docs/data
+          if [ -f data/normales.json ]; then cp data/normales.json docs/data/; fi
+          git add -A data/ docs/data/
+          if git diff --staged --quiet; then
+            echo "Sin cambios que publicar."
+          else
+            git commit -m "datos: normales climaticas 1991-2020 (corrida automatica)"
+            git pull --rebase origin "${GITHUB_REF_NAME}"
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+          fi
