@@ -6,6 +6,11 @@ la disponibilidad exacta de la serie de IPC de alimentos por ciudad (§4.1) y la
 climatología base del ICEN (§4.3). Ninguna cifra de este documento es un
 resultado; no hay estimaciones todavía.
 
+**Leer antes:** [BRECHAS.md](BRECHAS.md) tiene el inventario verificado de los
+datos que el repositorio tiene (y los que no), el mapeo de cada brecha de la
+literatura contra esos datos, y el orden de trabajo que de ahí se desprende.
+Dos diseños alternativos quedaron descartados **con cita**, no por intuición.
+
 ---
 
 ## 1. Título propuesto
@@ -53,11 +58,16 @@ geográfica**, y esa distribución no ha sido estimada.
 1. **Desagregación regional.** Panel ciudad-mes (26 ciudades) en vez de agregado
    nacional, con anomalías climáticas locales construidas desde ERA5 con
    normales 1991–2020 propias.
-2. **Separación explícita ONI/ICEN.** Estimar por separado el efecto del Niño
-   del Pacífico central (ONI, región Niño 3.4, criterio NOAA) y del Niño costero
-   (ICEN, región Niño 1+2, criterio ENFEN). Ningún trabajo revisado los contrasta
-   sobre precios regionales. 2017 es el caso que hace la distinción no trivial:
-   Niño costero intenso con Pacífico central casi neutro.
+2. **Separación explícita ONI/ICEN, a nivel subnacional.** La literatura de
+   "diversidad de ENSO" (Gallegati et al. 2026; Solomou et al. 2025) ya
+   establece que el Pacífico central y el oriental tienen efectos distintos
+   sobre la inflación, pero lo estima **entre países y a nivel nacional**, con
+   modelos globales. La literatura peruana, en cambio, trata "El Niño" como un
+   solo fenómeno. Esta tesis estima la distinción **dentro del país, entre
+   regiones**, en el país donde esa distinción se institucionalizó: la región
+   Niño 1+2 está frente a la costa peruana y el ENFEN mantiene el ICEN
+   precisamente porque los dos índices divergen. 2017 es el experimento
+   natural: Niño costero intenso con Pacífico central casi neutro.
 3. **Reproducibilidad.** Pipeline en Python, datos y código versionados, sin API
    keys, derivado de la infraestructura ya construida en este repositorio.
 
@@ -324,8 +334,9 @@ Anexos: tablas completas, código, diccionario de variables.
 
 | Semana | Tarea | Entregable |
 |---|---|---|
+| 0 | **Persistir los agregados mes-año en `calcular_normales.py`** y re-indexar tmax/tmin a `(anio, mes)`. Ver BRECHAS.md §1: el panel se calcula y se descarta, y recuperarlo no cuesta ninguna petición extra | Panel climático mensual |
 | 1 | Verificar disponibilidad del IPC por ciudad y grupo (§4.1). Decidir plan A o B | Nota de decisión de datos |
-| 2 | Mapeo de las 26 ciudades a coordenadas; descarga de normales mensuales ERA5 | `data/tesis/normales_ciudades.json` |
+| 2 | Mapeo de las 26 ciudades a coordenadas; descarga de normales mensuales ERA5. Arreglar el parser de TSM semanal (hoy devuelve error) y extender el ONI a 1950 | `data/tesis/normales_ciudades.json` |
 | 3 | Descarga del IPC y construcción del panel | `data/tesis/panel.csv` |
 | 4 | ICEN-réplica y su validación contra informes del IGP | `data/tesis/icen.json` + nota de validación |
 | 5 | Descriptiva, gráficos, control de calidad del panel | Capítulo 5 |
