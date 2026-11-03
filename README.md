@@ -59,6 +59,15 @@ quedo; `--reiniciar` descarta ese avance.
 Las fuentes deben estar accesibles desde la red donde se corra:
 `archive-api.open-meteo.com`, `api.open-meteo.com` y `www.cpc.ncep.noaa.gov`.
 
+## Tesis
+
+Este repositorio es tambien la infraestructura de datos de una tesis de
+economia sobre el efecto de El Nino en los precios de alimentos por ciudad.
+El protocolo (pregunta, hipotesis, estrategia empirica, limitaciones y
+cronograma) esta en [docs/tesis/PROTOCOLO.md](docs/tesis/PROTOCOLO.md); el
+codigo en `scripts/tesis/` y sus dependencias en `requirements-tesis.txt`,
+separadas para que el monitor siga usando solo la libreria estandar.
+
 ## Publicación
 
 En Settings → Pages, elegir "Deploy from a branch", rama `main`, carpeta `/docs`.
