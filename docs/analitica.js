@@ -62,7 +62,7 @@
         <line x1="${x0}" y1="${y(0)}" x2="${x1}" y2="${y(0)}" stroke="${LINEA}"/>
         <path d="${path}" fill="none" stroke="${SERIE}" stroke-width="2" stroke-linejoin="round"/>
         <circle cx="${x(puntos.length - 1)}" cy="${y(ult.v)}" r="3" fill="${SERIE}" stroke="#15181d" stroke-width="2"/>
-        <text x="${x1 + 6}" y="${y(ult.v) + 3}" fill="${TINTA}" font-size="9" font-family="IBM Plex Mono, monospace">${fmt(ult.v, unidad.trim() === "%" && !signo ? 0 : 1, signo)}${unidad}</text>
+        <text x="${x1 + 6}" y="${y(ult.v) + 3}" fill="${TINTA}" font-size="9" style="font-variant-numeric:tabular-nums">${fmt(ult.v, unidad.trim() === "%" && !signo ? 0 : 1, signo)}${unidad}</text>
         <text x="${x0}" y="${H - 2}" fill="${TENUE}" font-size="8">${puntos[0].f}</text>
         <text x="${x1}" y="${H - 2}" fill="${TENUE}" font-size="8" text-anchor="end">${ult.f}</text>
       </svg></div>`;

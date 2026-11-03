@@ -393,6 +393,18 @@ cargarNivel("departamento").then(() => {
     `<p class="vacio">No se pudieron cargar los datos (${err.message}). Ejecuta <code>python scripts/actualizar.py</code> para generarlos.</p>`;
 });
 
+// La opcion "Provincias" solo se habilita si su estado ya fue publicado: las normales
+// provinciales se calculan en una corrida larga y hasta entonces el archivo no existe.
+fetch(NIVELES.provincia.estado, { method: "HEAD" }).then(r => {
+  const lab = document.getElementById("opcion-provincia");
+  if (!r.ok) {
+    lab.classList.add("deshabilitada");
+    lab.querySelector("input").disabled = true;
+    lab.title = "En preparación: el cálculo de normales provinciales está en curso";
+    lab.appendChild(Object.assign(document.createElement("span"), { textContent: " · en preparación", className: "nota" }));
+  }
+}).catch(() => {});
+
 document.querySelectorAll('input[name="nivel"]').forEach(input => {
   input.addEventListener("change", e => {
     cargarNivel(e.target.value).catch(err => {
