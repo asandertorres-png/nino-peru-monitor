@@ -63,6 +63,10 @@ let umbralNormalBaja = null;
 let capaGeo, capaSeleccion = null;
 const geoCache = {};
 
+// Los tooltips son un recurso de hover: en pantallas tactiles quedan pegados tras tocar y
+// repiten lo que el panel de detalle ya muestra, asi que solo se activan con puntero fino.
+const CON_TOOLTIPS = matchMedia("(hover: hover) and (pointer: fine)").matches;
+
 const NIVELES = {
   departamento: {
     estado: "data/estado.json", geo: "peru_departamentos.geojson", lista: "departamentos",
@@ -152,7 +156,7 @@ function dibujarLeyenda() {
       <p class="nota">Zonas con normal mensual menor a ${umbralNormalBaja ?? "—"} mm: ahí el porcentaje no informa y se pinta el acumulado.</p></div>`;
   }
   cuerpo += `<div class="chip" style="margin-top:.45rem"><i class="sin-info"></i>Sin información</div>`;
-  const html = `<h4>${e.titulo}${e.unidad ? ` (${e.unidad})` : ""}</h4>${cuerpo}${e.nota ? `<p class="nota">${e.nota}</p>` : ""}`;
+  const html = `<div class="ley-cuerpo"><h4>${e.titulo}${e.unidad ? ` (${e.unidad})` : ""}</h4>${cuerpo}${e.nota ? `<p class="nota">${e.nota}</p>` : ""}</div>`;
   caja.innerHTML = html;
   document.getElementById("leyenda-movil").innerHTML = html;
 }
@@ -220,7 +224,11 @@ function pintarCabecera(estado) {
 function pintarFrescura(estado) {
   const f = estado.fuentes || {};
   const ahora = Date.parse(conZona(estado.actualizado));
-  const horas = iso => iso ? Math.max(0, (ahora - Date.parse(conZona(iso))) / 36e5) : null;
+  const horas = iso => {
+    if (!iso || isNaN(ahora)) return null;
+    const h = (ahora - Date.parse(conZona(iso))) / 36e5;
+    return isNaN(h) ? null : Math.max(0, h);
+  };
   let hOni = null;
   if (f.oni?.trimestre) {
     const [tri, anio] = f.oni.trimestre.split(" ");
@@ -279,6 +287,10 @@ function pintarTabla() {
 function cargarNivel(nivel) {
   const cfg = NIVELES[nivel];
   const geoP = geoCache[nivel] || (geoCache[nivel] = fetch(cfg.geo).then(r => r.json()));
+  // mientras llega el nivel nuevo, el anterior se mantiene atenuado: sin salto de layout
+  const cont = document.getElementById("mapa");
+  cont.classList.add("cargando");
+  const fin = () => cont.classList.remove("cargando");
   return Promise.all([
     fetch(cfg.estado).then(r => { if (!r.ok) throw new Error(`${cfg.estado}: HTTP ${r.status}`); return r.json(); }),
     geoP
@@ -299,7 +311,7 @@ function cargarNivel(nivel) {
       style: estilo,
       onEachFeature: (feature, layer) => {
         const clave = cfg.claveGeo(feature);
-        layer.bindTooltip(() => `${cfg.etiqueta(feature)} · <b>${valorCapa(porUnidad[clave])}</b>`, { sticky: true, direction: "top", opacity: 1 });
+        if (CON_TOOLTIPS) layer.bindTooltip(() => `${cfg.etiqueta(feature)} · <b>${valorCapa(porUnidad[clave])}</b>`, { sticky: true, direction: "top", opacity: 1 });
         layer.on({
           mouseover: e => { if (capaSeleccion !== layer) e.target.setStyle({ weight: 2.5, color: "#f0efec" }); mostrarDetalle(porUnidad[clave]); },
           mouseout: e => { if (capaSeleccion !== layer) capaGeo.resetStyle(e.target); },
@@ -317,7 +329,7 @@ function cargarNivel(nivel) {
     dibujarLeyenda();
     pintarTabla();
     mostrarDetalle(null);
-  });
+  }).finally(fin);
 }
 
 cargarNivel("departamento").then(() => {

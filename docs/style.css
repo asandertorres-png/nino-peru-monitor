@@ -14,9 +14,12 @@
   --cuerpo:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
   --datos:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
   --radio:10px;
+  /* curvas con intencion: las nativas del navegador son demasiado blandas */
+  --ease-out:cubic-bezier(0.23,1,0.32,1);
+  --ease-in-out:cubic-bezier(0.77,0,0.175,1);
 }
 *{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%}
+html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
 body{margin:0;background:var(--plano);color:var(--tinta);font-family:var(--cuerpo);
      font-size:15px;line-height:1.45}
 a{color:var(--acento)}
@@ -24,7 +27,8 @@ a{color:var(--acento)}
 
 /* ---- cabecera ---- */
 .barra{display:flex;align-items:flex-end;justify-content:space-between;gap:1rem;flex-wrap:wrap;
-       padding:1.1rem 1.4rem .8rem;border-bottom:1px solid var(--linea)}
+       padding:calc(1.1rem + env(safe-area-inset-top,0px)) max(1.4rem,env(safe-area-inset-right,0px)) .8rem
+               max(1.4rem,env(safe-area-inset-left,0px));border-bottom:1px solid var(--linea)}
 .eyebrow{display:block;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--tenue)}
 h1{margin:.15rem 0 0;font-family:var(--display);font-weight:700;font-size:2.1rem;line-height:1;
    letter-spacing:.01em;text-transform:uppercase}
@@ -34,13 +38,20 @@ h1 span{color:var(--acento);font-weight:500}
 .segmento{display:inline-flex;background:var(--superficie-2);border:1px solid var(--linea);
           border-radius:999px;padding:3px;gap:2px}
 .segmento label{position:relative;padding:.38rem .85rem;border-radius:999px;font-size:.84rem;
-                color:var(--tinta-2);cursor:pointer;white-space:nowrap;user-select:none}
+                color:var(--tinta-2);cursor:pointer;white-space:nowrap;
+                user-select:none;-webkit-user-select:none;touch-action:manipulation;
+                transition:transform 140ms var(--ease-out),background 140ms ease,color 140ms ease}
 .segmento input{position:absolute;inset:0;opacity:0;margin:0;cursor:pointer}
+.segmento label:active{transform:scale(.96)}
 .segmento label:has(input:checked){background:var(--tinta);color:var(--plano);font-weight:600}
+@media (hover:hover) and (pointer:fine){
+  .segmento label:not(:has(input:checked)):hover{background:rgba(255,255,255,.06);color:var(--tinta)}
+}
 .segmento label:has(input:focus-visible){outline:2px solid var(--acento);outline-offset:1px}
 
 /* ---- cuerpo ---- */
-main{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:1rem;padding:1rem 1.4rem 1.4rem}
+main{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:1rem;
+     padding:1rem max(1.4rem,env(safe-area-inset-right,0px)) 1.4rem max(1.4rem,env(safe-area-inset-left,0px))}
 .mapa-col{display:flex;flex-direction:column;gap:.6rem;min-width:0}
 .capas{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
 .capas .etiqueta{margin-right:.2rem}
@@ -49,8 +60,13 @@ main{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:1rem;padding:1re
 /* el mapa base se atenua para que el dato mande sobre la cartografia */
 .leaflet-tile-pane{filter:brightness(.62) saturate(.55) contrast(1.05)}
 .leaflet-container{font-family:var(--cuerpo);background:#0b0e12}
-.leaflet-interactive{transition:stroke-width .12s ease, stroke .12s ease}
-@media (prefers-reduced-motion:reduce){.leaflet-interactive{transition:none}}
+.leaflet-interactive{transition:stroke-width 120ms ease,stroke 120ms ease,fill 180ms ease,fill-opacity 180ms ease}
+.leaflet-overlay-pane{transition:opacity 200ms var(--ease-out)}
+#mapa.cargando .leaflet-overlay-pane{opacity:.45}
+@media (prefers-reduced-motion:reduce){
+  .leaflet-interactive{transition:fill 180ms ease,fill-opacity 180ms ease}
+  .leaflet-overlay-pane{transition:none}
+}
 
 /* etiquetas de capitales: vernaculo cartografico, versalitas con halo */
 .etq-capital{font-family:var(--display);font-weight:500;font-size:11.5px;letter-spacing:.09em;
@@ -71,6 +87,8 @@ main{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:1rem;padding:1re
          padding:.6rem .75rem;color:var(--tinta-2);font-size:.76rem;max-width:280px;
          backdrop-filter:blur(4px)}
 .leyenda h4{margin:0 0 .4rem;font-size:.78rem;color:var(--tinta);font-weight:600}
+.ley-cuerpo{opacity:1;transition:opacity 160ms var(--ease-out)}
+@starting-style{.ley-cuerpo{opacity:0}}
 .leyenda .nota{margin:.4rem 0 0;font-size:.68rem;color:var(--tenue)}
 .leyenda .chips{display:flex;flex-direction:column;gap:.25rem}
 .chip{display:flex;align-items:center;gap:.45rem}
@@ -89,8 +107,10 @@ main{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:1rem;padding:1re
 .leaflet-tooltip b{font-family:var(--datos);font-weight:500}
 .leaflet-tooltip-top:before,.leaflet-tooltip-bottom:before,.leaflet-tooltip-left:before,
 .leaflet-tooltip-right:before{display:none}
-.leaflet-control-zoom a{background:var(--superficie);color:var(--tinta);border-color:var(--linea)}
-.leaflet-control-zoom a:hover{background:var(--superficie-2)}
+.leaflet-control-zoom a{background:var(--superficie);color:var(--tinta);border-color:var(--linea);
+                        touch-action:manipulation;transition:transform 140ms var(--ease-out),background 140ms ease}
+.leaflet-control-zoom a:active{transform:scale(.94)}
+@media (hover:hover) and (pointer:fine){.leaflet-control-zoom a:hover{background:var(--superficie-2)}}
 .leaflet-bar{border:1px solid var(--linea)}
 .leaflet-control-attribution{background:rgba(13,15,18,.8);color:var(--tenue);font-size:.66rem}
 .leaflet-control-attribution a{color:var(--acento)}
@@ -101,7 +121,18 @@ main{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:1rem;padding:1re
 
 /* tabla de valores (vista equivalente al mapa) */
 details.tabla{border:1px solid var(--linea);border-radius:var(--radio);background:var(--superficie)}
-details.tabla summary{cursor:pointer;padding:.6rem .9rem;font-size:.84rem;color:var(--tinta-2)}
+details.tabla summary{cursor:pointer;padding:.6rem .9rem;font-size:.84rem;color:var(--tinta-2);
+                      user-select:none;-webkit-user-select:none;touch-action:manipulation;
+                      transition:transform 140ms var(--ease-out)}
+details.tabla summary:active{transform:scale(.995)}
+details.tabla{interpolate-size:allow-keywords}
+details.tabla::details-content{height:0;overflow:clip;
+  transition:height 220ms var(--ease-out),content-visibility 220ms allow-discrete}
+details.tabla[open]::details-content{height:auto}
+@media (prefers-reduced-motion:reduce){details.tabla::details-content{transition:none}}
+details.tabla table{min-width:560px}
+details.tabla th,details.tabla td.num{white-space:nowrap}
+details.tabla .scroll{overscroll-behavior:contain}
 details.tabla table{width:100%;border-collapse:collapse;font-size:.8rem}
 details.tabla th,details.tabla td{padding:.35rem .6rem;border-top:1px solid var(--linea);text-align:left}
 details.tabla th{color:var(--tenue);font-weight:500;font-size:.72rem;letter-spacing:.04em;text-transform:uppercase}
@@ -123,7 +154,7 @@ details.tabla .scroll{max-height:360px;overflow:auto}
             background:rgba(255,255,255,.08);font-size:.72rem;color:var(--tinta)}
 .tile .nota{margin-top:.1rem}
 
-#detalle h2{margin:0;font-family:var(--display);font-size:1.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.02em;line-height:1.05}
+#detalle h2{margin:0;font-family:var(--display);font-size:1.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.02em;line-height:1.05;overflow-wrap:anywhere}
 #detalle .sub{margin:.1rem 0 .6rem;color:var(--tenue);font-size:.8rem}
 #detalle dl{display:grid;grid-template-columns:1fr auto;gap:.28rem .8rem;margin:0;font-size:.84rem}
 #detalle dt{color:var(--tinta-2)}
@@ -148,7 +179,8 @@ details.tabla .scroll{max-height:360px;overflow:auto}
 .lista-fuentes li{display:grid;grid-template-columns:1fr auto;gap:0 .6rem}
 .lista-fuentes strong{color:var(--tinta-2);font-weight:500;font-family:var(--datos);font-size:.72rem;text-align:right}
 
-footer{padding:.4rem 1.4rem 2rem;color:var(--tenue);font-size:.76rem;max-width:80ch}
+footer{padding:.4rem max(1.4rem,env(safe-area-inset-right,0px)) calc(2rem + env(safe-area-inset-bottom,0px))
+        max(1.4rem,env(safe-area-inset-left,0px));color:var(--tenue);font-size:.76rem;max-width:80ch}
 footer p{margin:.35rem 0}
 
 /* ---- movil ---- */
@@ -164,7 +196,11 @@ footer p{margin:.35rem 0}
   #leyenda-movil{display:block}
 }
 @media (max-width:520px){
-  .barra,main,footer{padding-left:1rem;padding-right:1rem}
-  .capas{overflow-x:auto;flex-wrap:nowrap;padding-bottom:.2rem}
+  .barra,main,footer{padding-left:max(1rem,env(safe-area-inset-left,0px));padding-right:max(1rem,env(safe-area-inset-right,0px))}
+  .capas{overflow-x:auto;flex-wrap:nowrap;padding-bottom:.2rem;overscroll-behavior-x:contain}
   .enso{grid-template-columns:1fr}
+}
+@media (max-width:380px){
+  .segmento label{padding:.34rem .6rem;font-size:.78rem}
+  h1{font-size:1.5rem}
 }
