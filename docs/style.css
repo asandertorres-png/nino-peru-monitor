@@ -42,3 +42,6 @@ footer a{color:var(--acento)}
 .leaflet-popup-content-wrapper,.leaflet-tooltip{background:#1b232b;color:var(--texto);
     border:1px solid var(--borde)}
 @media (max-width:900px){main{grid-template-columns:1fr}#mapa{height:55vh}}
+
+.leaflet-control-attribution{background:rgba(15,20,25,.75);color:var(--tenue);font-size:.68rem}
+.leaflet-control-attribution a{color:var(--acento)}

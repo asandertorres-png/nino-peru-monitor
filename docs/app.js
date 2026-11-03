@@ -51,11 +51,14 @@ let porDepartamento = {};
 let umbralNormalBaja = null;
 let capaGeo;
 
-const mapa = L.map("mapa", { zoomControl: true, attributionControl: false })
+const mapa = L.map("mapa", { zoomControl: true, attributionControl: true })
   .setView([-9.8, -75.2], 5);
 
-L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
-  maxZoom: 10, opacity: 0.55
+// Mapa base de OpenStreetMap: libre y sin clave (Carto dejo de servir sus
+// mosaicos sin API key). La atribucion es obligatoria por la licencia ODbL.
+L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+  maxZoom: 10, opacity: 0.45,
+  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 }).addTo(mapa);
 
 // Color de un departamento para la capa activa. En la capa de lluvia, las
