@@ -1,0 +1,1856 @@
+{
+  "periodo": "1991-2020",
+  "fuente": "ERA5 via Open-Meteo Archive API",
+  "normales": {
+    "Amazonas": {
+      "01": {
+        "precipitacion_mensual_mm": 255.65,
+        "tmax_media_c": 19.43,
+        "tmin_media_c": 11.78,
+        "anios_usados_precipitacion": 30
+      },
+      "02": {
+        "precipitacion_mensual_mm": 270.75,
+        "tmax_media_c": 19.42,
+        "tmin_media_c": 11.88,
+        "anios_usados_precipitacion": 30
+      },
+      "03": {
+        "precipitacion_mensual_mm": 286.07,
+        "tmax_media_c": 19.61,
+        "tmin_media_c": 11.73,
+        "anios_usados_precipitacion": 30
+      },
+      "04": {
+        "precipitacion_mensual_mm": 195.14,
+        "tmax_media_c": 19.72,
+        "tmin_media_c": 11.49,
+        "anios_usados_precipitacion": 30
+      },
+      "05": {
+        "precipitacion_mensual_mm": 126.84,
+        "tmax_media_c": 19.61,
+        "tmin_media_c": 11.28,
+        "anios_usados_precipitacion": 30
+      },
+      "06": {
+        "precipitacion_mensual_mm": 75.09,
+        "tmax_media_c": 19.07,
+        "tmin_media_c": 10.46,
+        "anios_usados_precipitacion": 30
+      },
+      "07": {
+        "precipitacion_mensual_mm": 66.61,
+        "tmax_media_c": 18.97,
+        "tmin_media_c": 9.9,
+        "anios_usados_precipitacion": 30
+      },
+      "08": {
+        "precipitacion_mensual_mm": 66.19,
+        "tmax_media_c": 19.71,
+        "tmin_media_c": 10.04,
+        "anios_usados_precipitacion": 30
+      },
+      "09": {
+        "precipitacion_mensual_mm": 112.14,
+        "tmax_media_c": 20.06,
+        "tmin_media_c": 10.52,
+        "anios_usados_precipitacion": 30
+      },
+      "10": {
+        "precipitacion_mensual_mm": 215.2,
+        "tmax_media_c": 20.08,
+        "tmin_media_c": 11.08,
+        "anios_usados_precipitacion": 30
+      },
+      "11": {
+        "precipitacion_mensual_mm": 208.49,
+        "tmax_media_c": 20.21,
+        "tmin_media_c": 11.69,
+        "anios_usados_precipitacion": 30
+      },
+      "12": {
+        "precipitacion_mensual_mm": 225.55,
+        "tmax_media_c": 19.52,
+        "tmin_media_c": 11.74,
+        "anios_usados_precipitacion": 30
+      }
+    },
+    "Ancash": {
+      "01": {
+        "precipitacion_mensual_mm": 187.53,
+        "tmax_media_c": 18.29,
+        "tmin_media_c": 9.39,
+        "anios_usados_precipitacion": 30
+      },
+      "02": {
+        "precipitacion_mensual_mm": 209.75,
+        "tmax_media_c": 18.19,
+        "tmin_media_c": 9.78,
+        "anios_usados_precipitacion": 30
+      },
+      "03": {
+        "precipitacion_mensual_mm": 242.96,
+        "tmax_media_c": 18.26,
+        "tmin_media_c": 9.77,
+        "anios_usados_precipitacion": 30
+      },
+      "04": {
+        "precipitacion_mensual_mm": 149.01,
+        "tmax_media_c": 18.54,
+        "tmin_media_c": 9.4,
+        "anios_usados_precipitacion": 30
+      },
+      "05": {
+        "precipitacion_mensual_mm": 89.4,
+        "tmax_media_c": 18.44,
+        "tmin_media_c": 8.72,
+        "anios_usados_precipitacion": 30
+      },
+      "06": {
+        "precipitacion_mensual_mm": 53.85,
+        "tmax_media_c": 18.48,
+        "tmin_media_c": 7.83,
+        "anios_usados_precipitacion": 30
+      },
+      "07": {
+        "precipitacion_mensual_mm": 48.66,
+        "tmax_media_c": 18.58,
+        "tmin_media_c": 7.39,
+        "anios_usados_precipitacion": 30
+      },
+      "08": {
+        "precipitacion_mensual_mm": 70.45,
+        "tmax_media_c": 19.03,
+        "tmin_media_c": 7.68,
+        "anios_usados_precipitacion": 30
+      },
+      "09": {
+        "precipitacion_mensual_mm": 124.2,
+        "tmax_media_c": 18.73,
+        "tmin_media_c": 8.56,
+        "anios_usados_precipitacion": 30
+      },
+      "10": {
+        "precipitacion_mensual_mm": 155.91,
+        "tmax_media_c": 18.59,
+        "tmin_media_c": 8.85,
+        "anios_usados_precipitacion": 30
+      },
+      "11": {
+        "precipitacion_mensual_mm": 134.34,
+        "tmax_media_c": 18.72,
+        "tmin_media_c": 8.76,
+        "anios_usados_precipitacion": 30
+      },
+      "12": {
+        "precipitacion_mensual_mm": 161.84,
+        "tmax_media_c": 18.39,
+        "tmin_media_c": 9.08,
+        "anios_usados_precipitacion": 30
+      }
+    },
+    "Apurimac": {
+      "01": {
+        "precipitacion_mensual_mm": 204.92,
+        "tmax_media_c": 21.09,
+        "tmin_media_c": 13.43,
+        "anios_usados_precipitacion": 30
+      },
+      "02": {
+        "precipitacion_mensual_mm": 184.92,
+        "tmax_media_c": 20.89,
+        "tmin_media_c": 13.45,
+        "anios_usados_precipitacion": 30
+      },
+      "03": {
+        "precipitacion_mensual_mm": 163.87,
+        "tmax_media_c": 20.85,
+        "tmin_media_c": 13.27,
+        "anios_usados_precipitacion": 30
+      },
+      "04": {
+        "precipitacion_mensual_mm": 82.08,
+        "tmax_media_c": 20.88,
+        "tmin_media_c": 12.39,
+        "anios_usados_precipitacion": 30
+      },
+      "05": {
+        "precipitacion_mensual_mm": 25.57,
+        "tmax_media_c": 20.87,
+        "tmin_media_c": 11.2,
+        "anios_usados_precipitacion": 30
+      },
+      "06": {
+        "precipitacion_mensual_mm": 13.63,
+        "tmax_media_c": 20.63,
+        "tmin_media_c": 9.68,
+        "anios_usados_precipitacion": 30
+      },
+      "07": {
+        "precipitacion_mensual_mm": 13.85,
+        "tmax_media_c": 20.83,
+        "tmin_media_c": 9.15,
+        "anios_usados_precipitacion": 30
+      },
+      "08": {
+        "precipitacion_mensual_mm": 22.95,
+        "tmax_media_c": 21.68,
+        "tmin_media_c": 10.15,
+        "anios_usados_precipitacion": 30
+      },
+      "09": {
+        "precipitacion_mensual_mm": 42.38,
+        "tmax_media_c": 22.31,
+        "tmin_media_c": 11.68,
+        "anios_usados_precipitacion": 30
+      },
+      "10": {
+        "precipitacion_mensual_mm": 93.5,
+        "tmax_media_c": 22.5,
+        "tmin_media_c": 12.67,
+        "anios_usados_precipitacion": 30
+      },
+      "11": {
+        "precipitacion_mensual_mm": 109.51,
+        "tmax_media_c": 22.51,
+        "tmin_media_c": 13.28,
+        "anios_usados_precipitacion": 30
+      },
+      "12": {
+        "precipitacion_mensual_mm": 166.53,
+        "tmax_media_c": 21.65,
+        "tmin_media_c": 13.49,
+        "anios_usados_precipitacion": 30
+      }
+    },
+    "Arequipa": {
+      "01": {
+        "precipitacion_mensual_mm": 181.05,
+        "tmax_media_c": 18.78,
+        "tmin_media_c": 11.61,
+        "anios_usados_precipitacion": 30
+      },
+      "02": {
+        "precipitacion_mensual_mm": 217.14,
+        "tmax_media_c": 18.28,
+        "tmin_media_c": 11.56,
+        "anios_usados_precipitacion": 30
+      },
+      "03": {
+        "precipitacion_mensual_mm": 165.71,
+        "tmax_media_c": 18.46,
+        "tmin_media_c": 11.43,
+        "anios_usados_precipitacion": 30
+      },
+      "04": {
+        "precipitacion_mensual_mm": 53.05,
+        "tmax_media_c": 19.45,
+        "tmin_media_c": 10.6,
+        "anios_usados_precipitacion": 30
+      },
+      "05": {
+        "precipitacion_mensual_mm": 4.88,
+        "tmax_media_c": 20.63,
+        "tmin_media_c": 9.15,
+        "anios_usados_precipitacion": 30
+      },
+      "06": {
+        "precipitacion_mensual_mm": 0.61,
+        "tmax_media_c": 20.86,
+        "tmin_media_c": 8.3,
+        "anios_usados_precipitacion": 30
+      },
+      "07": {
+        "precipitacion_mensual_mm": 1.25,
+        "tmax_media_c": 20.76,
+        "tmin_media_c": 7.93,
+        "anios_usados_precipitacion": 30
+      },
+      "08": {
+        "precipitacion_mensual_mm": 2.19,
+        "tmax_media_c": 21.53,
+        "tmin_media_c": 8.56,
+        "anios_usados_precipitacion": 30
+      },
+      "09": {
+        "precipitacion_mensual_mm": 3.22,
+        "tmax_media_c": 22.05,
+        "tmin_media_c": 9.29,
+        "anios_usados_precipitacion": 30
+      },
+      "10": {
+        "precipitacion_mensual_mm": 5.33,
+        "tmax_media_c": 22.19,
+        "tmin_media_c": 10.41,
+        "anios_usados_precipitacion": 30
+      },
+      "11": {
+        "precipitacion_mensual_mm": 10.66,
+        "tmax_media_c": 21.82,
+        "tmin_media_c": 11.09,
+        "anios_usados_precipitacion": 30
+      },
+      "12": {
+        "precipitacion_mensual_mm": 56.23,
+        "tmax_media_c": 20.66,
+        "tmin_media_c": 11.82,
+        "anios_usados_precipitacion": 30
+      }
+    },
+    "Ayacucho": {
+      "01": {
+        "precipitacion_mensual_mm": 172.73,
+        "tmax_media_c": 18.96,
+        "tmin_media_c": 11.31,
+        "anios_usados_precipitacion": 30
+      },
+      "02": {
+        "precipitacion_mensual_mm": 159.26,
+        "tmax_media_c": 18.63,
+        "tmin_media_c": 11.31,
+        "anios_usados_precipitacion": 30
+      },
+      "03": {
+        "precipitacion_mensual_mm": 139.28,
+        "tmax_media_c": 18.52,
+        "tmin_media_c": 11.08,
+        "anios_usados_precipitacion": 30
+      },
+      "04": {
+        "precipitacion_mensual_mm": 56.8,
+        "tmax_media_c": 18.75,
+        "tmin_media_c": 10.36,
+        "anios_usados_precipitacion": 30
+      },
+      "05": {
+        "precipitacion_mensual_mm": 22.58,
+        "tmax_media_c": 18.91,
+        "tmin_media_c": 8.94,
+        "anios_usados_precipitacion": 30
+      },
+      "06": {
+        "precipitacion_mensual_mm": 13.33,
+        "tmax_media_c": 18.4,
+        "tmin_media_c": 7.34,
+        "anios_usados_precipitacion": 30
+      },
+      "07": {
+        "precipitacion_mensual_mm": 17.78,
+        "tmax_media_c": 18.2,
+        "tmin_media_c": 6.72,
+        "anios_usados_precipitacion": 30
+      },
+      "08": {
+        "precipitacion_mensual_mm": 25.44,
+        "tmax_media_c": 18.98,
+        "tmin_media_c": 7.61,
+        "anios_usados_precipitacion": 30
+      },
+      "09": {
+        "precipitacion_mensual_mm": 38.31,
+        "tmax_media_c": 19.71,
+        "tmin_media_c": 9.33,
+        "anios_usados_precipitacion": 30
+      },
+      "10": {
+        "precipitacion_mensual_mm": 72.12,
+        "tmax_media_c": 20.25,
+        "tmin_media_c": 10.47,
+        "anios_usados_precipitacion": 30
+      },
+      "11": {
+        "precipitacion_mensual_mm": 83.94,
+        "tmax_media_c": 20.64,
+        "tmin_media_c": 10.95,
+        "anios_usados_precipitacion": 30
+      },
+      "12": {
+        "precipitacion_mensual_mm": 138.17,
+        "tmax_media_c": 19.69,
+        "tmin_media_c": 11.39,
+        "anios_usados_precipitacion": 30
+      }
+    },
+    "Cajamarca": {
+      "01": {
+        "precipitacion_mensual_mm": 338.95,
+        "tmax_media_c": 18.44,
+        "tmin_media_c": 10.01,
+        "anios_usados_precipitacion": 30
+      },
+      "02": {
+        "precipitacion_mensual_mm": 399.21,
+        "tmax_media_c": 18.47,
+        "tmin_media_c": 10.47,
+        "anios_usados_precipitacion": 30
+      },
+      "03": {
+        "precipitacion_mensual_mm": 442.04,
+        "tmax_media_c": 18.51,
+        "tmin_media_c": 10.47,
+        "anios_usados_precipitacion": 30
+      },
+      "04": {
+        "precipitacion_mensual_mm": 283.21,
+        "tmax_media_c": 18.68,
+        "tmin_media_c": 10.28,
+        "anios_usados_precipitacion": 30
+      },
+      "05": {
+        "precipitacion_mensual_mm": 141.29,
+        "tmax_media_c": 18.81,
+        "tmin_media_c": 9.79,
+        "anios_usados_precipitacion": 30
+      },
+      "06": {
+        "precipitacion_mensual_mm": 53.67,
+        "tmax_media_c": 19.07,
+        "tmin_media_c": 9.04,
+        "anios_usados_precipitacion": 30
+      },
+      "07": {
+        "precipitacion_mensual_mm": 28.02,
+        "tmax_media_c": 19.7,
+        "tmin_media_c": 8.53,
+        "anios_usados_precipitacion": 30
+      },
+      "08": {
+        "precipitacion_mensual_mm": 40.58,
+        "tmax_media_c": 20.57,
+        "tmin_media_c": 8.81,
+        "anios_usados_precipitacion": 30
+      },
+      "09": {
+        "precipitacion_mensual_mm": 151.96,
+        "tmax_media_c": 19.91,
+        "tmin_media_c": 9.42,
+        "anios_usados_precipitacion": 30
+      },
+      "10": {
+        "precipitacion_mensual_mm": 253.31,
+        "tmax_media_c": 19.12,
+        "tmin_media_c": 9.44,
+        "anios_usados_precipitacion": 30
+      },
+      "11": {
+        "precipitacion_mensual_mm": 210.94,
+        "tmax_media_c": 19.09,
+        "tmin_media_c": 9.28,
+        "anios_usados_precipitacion": 30
+      },
+      "12": {
+        "precipitacion_mensual_mm": 276.15,
+        "tmax_media_c": 18.69,
+        "tmin_media_c": 9.67,
+        "anios_usados_precipitacion": 30
+      }
+    },
+    "Callao": {
+      "01": {
+        "precipitacion_mensual_mm": 14.57,
+        "tmax_media_c": 25.46,
+        "tmin_media_c": 20.18,
+        "anios_usados_precipitacion": 30
+      },
+      "02": {
+        "precipitacion_mensual_mm": 25.74,
+        "tmax_media_c": 26.45,
+        "tmin_media_c": 21.25,
+        "anios_usados_precipitacion": 30
+      },
+      "03": {
+        "precipitacion_mensual_mm": 21.77,
+        "tmax_media_c": 26.32,
+        "tmin_media_c": 21.03,
+        "anios_usados_precipitacion": 30
+      },
+      "04": {
+        "precipitacion_mensual_mm": 6.15,
+        "tmax_media_c": 24.49,
+        "tmin_media_c": 19.34,
+        "anios_usados_precipitacion": 30
+      },
+      "05": {
+        "precipitacion_mensual_mm": 1.41,
+        "tmax_media_c": 22.11,
+        "tmin_media_c": 17.52,
+        "anios_usados_precipitacion": 30
+      },
+      "06": {
+        "precipitacion_mensual_mm": 1.08,
+        "tmax_media_c": 20.33,
+        "tmin_media_c": 16.07,
+        "anios_usados_precipitacion": 30
+      },
+      "07": {
+        "precipitacion_mensual_mm": 1.02,
+        "tmax_media_c": 19.47,
+        "tmin_media_c": 15.2,
+        "anios_usados_precipitacion": 30
+      },
+      "08": {
+        "precipitacion_mensual_mm": 0.82,
+        "tmax_media_c": 19.38,
+        "tmin_media_c": 14.82,
+        "anios_usados_precipitacion": 30
+      },
+      "09": {
+        "precipitacion_mensual_mm": 1.55,
+        "tmax_media_c": 19.88,
+        "tmin_media_c": 15.09,
+        "anios_usados_precipitacion": 30
+      },
+      "10": {
+        "precipitacion_mensual_mm": 2.49,
+        "tmax_media_c": 20.62,
+        "tmin_media_c": 15.65,
+        "anios_usados_precipitacion": 30
+      },
+      "11": {
+        "precipitacion_mensual_mm": 2.2,
+        "tmax_media_c": 21.75,
+        "tmin_media_c": 16.64,
+        "anios_usados_precipitacion": 30
+      },
+      "12": {
+        "precipitacion_mensual_mm": 5.86,
+        "tmax_media_c": 23.54,
+        "tmin_media_c": 18.37,
+        "anios_usados_precipitacion": 30
+      }
+    },
+    "Cusco": {
+      "01": {
+        "precipitacion_mensual_mm": 231.97,
+        "tmax_media_c": 15.13,
+        "tmin_media_c": 7.67,
+        "anios_usados_precipitacion": 30
+      },
+      "02": {
+        "precipitacion_mensual_mm": 213.76,
+        "tmax_media_c": 15.04,
+        "tmin_media_c": 7.75,
+        "anios_usados_precipitacion": 30
+      },
+      "03": {
+        "precipitacion_mensual_mm": 166.27,
+        "tmax_media_c": 15.04,
+        "tmin_media_c": 7.51,
+        "anios_usados_precipitacion": 30
+      },
+      "04": {
+        "precipitacion_mensual_mm": 76.48,
+        "tmax_media_c": 15.08,
+        "tmin_media_c": 6.78,
+        "anios_usados_precipitacion": 30
+      },
+      "05": {
+        "precipitacion_mensual_mm": 24.79,
+        "tmax_media_c": 15.06,
+        "tmin_media_c": 5.82,
+        "anios_usados_precipitacion": 30
+      },
+      "06": {
+        "precipitacion_mensual_mm": 11.24,
+        "tmax_media_c": 14.91,
+        "tmin_media_c": 4.64,
+        "anios_usados_precipitacion": 30
+      },
+      "07": {
+        "precipitacion_mensual_mm": 11.32,
+        "tmax_media_c": 15.06,
+        "tmin_media_c": 4.18,
+        "anios_usados_precipitacion": 30
+      },
+      "08": {
+        "precipitacion_mensual_mm": 22.46,
+        "tmax_media_c": 15.76,
+        "tmin_media_c": 4.82,
+        "anios_usados_precipitacion": 30
+      },
+      "09": {
+        "precipitacion_mensual_mm": 37.84,
+        "tmax_media_c": 16.23,
+        "tmin_media_c": 6.09,
+        "anios_usados_precipitacion": 30
+      },
+      "10": {
+        "precipitacion_mensual_mm": 85.14,
+        "tmax_media_c": 16.43,
+        "tmin_media_c": 7.12,
+        "anios_usados_precipitacion": 30
+      },
+      "11": {
+        "precipitacion_mensual_mm": 117.53,
+        "tmax_media_c": 16.41,
+        "tmin_media_c": 7.76,
+        "anios_usados_precipitacion": 30
+      },
+      "12": {
+        "precipitacion_mensual_mm": 191.06,
+        "tmax_media_c": 15.65,
+        "tmin_media_c": 7.87,
+        "anios_usados_precipitacion": 30
+      }
+    },
+    "Huancavelica": {
+      "01": {
+        "precipitacion_mensual_mm": 219.0,
+        "tmax_media_c": 13.44,
+        "tmin_media_c": 5.27,
+        "anios_usados_precipitacion": 30
+      },
+      "02": {
+        "precipitacion_mensual_mm": 216.72,
+        "tmax_media_c": 13.26,
+        "tmin_media_c": 5.61,
+        "anios_usados_precipitacion": 30
+      },
+      "03": {
+        "precipitacion_mensual_mm": 197.36,
+        "tmax_media_c": 13.17,
+        "tmin_media_c": 5.58,
+        "anios_usados_precipitacion": 30
+      },
+      "04": {
+        "precipitacion_mensual_mm": 108.28,
+        "tmax_media_c": 13.01,
+        "tmin_media_c": 4.49,
+        "anios_usados_precipitacion": 30
+      },
+      "05": {
+        "precipitacion_mensual_mm": 53.79,
+        "tmax_media_c": 12.81,
+        "tmin_media_c": 2.76,
+        "anios_usados_precipitacion": 30
+      },
+      "06": {
+        "precipitacion_mensual_mm": 28.56,
+        "tmax_media_c": 12.26,
+        "tmin_media_c": 1.48,
+        "anios_usados_precipitacion": 30
+      },
+      "07": {
+        "precipitacion_mensual_mm": 33.13,
+        "tmax_media_c": 12.07,
+        "tmin_media_c": 1.13,
+        "anios_usados_precipitacion": 30
+      },
+      "08": {
+        "precipitacion_mensual_mm": 53.72,
+        "tmax_media_c": 12.62,
+        "tmin_media_c": 1.75,
+        "anios_usados_precipitacion": 30
+      },
+      "09": {
+        "precipitacion_mensual_mm": 102.7,
+        "tmax_media_c": 13.03,
+        "tmin_media_c": 2.89,
+        "anios_usados_precipitacion": 30
+      },
+      "10": {
+        "precipitacion_mensual_mm": 147.21,
+        "tmax_media_c": 13.62,
+        "tmin_media_c": 3.64,
+        "anios_usados_precipitacion": 30
+      },
+      "11": {
+        "precipitacion_mensual_mm": 141.23,
+        "tmax_media_c": 14.2,
+        "tmin_media_c": 3.89,
+        "anios_usados_precipitacion": 30
+      },
+      "12": {
+        "precipitacion_mensual_mm": 198.19,
+        "tmax_media_c": 13.77,
+        "tmin_media_c": 4.87,
+        "anios_usados_precipitacion": 30
+      }
+    },
+    "Huanuco": {
+      "01": {
+        "precipitacion_mensual_mm": 148.46,
+        "tmax_media_c": 22.63,
+        "tmin_media_c": 16.08,
+        "anios_usados_precipitacion": 30
+      },
+      "02": {
+        "precipitacion_mensual_mm": 162.55,
+        "tmax_media_c": 22.44,
+        "tmin_media_c": 16.21,
+        "anios_usados_precipitacion": 30
+      },
+      "03": {
+        "precipitacion_mensual_mm": 146.24,
+        "tmax_media_c": 22.38,
+        "tmin_media_c": 16.14,
+        "anios_usados_precipitacion": 30
+      },
+      "04": {
+        "precipitacion_mensual_mm": 75.33,
+        "tmax_media_c": 22.58,
+        "tmin_media_c": 15.54,
+        "anios_usados_precipitacion": 30
+      },
+      "05": {
+        "precipitacion_mensual_mm": 46.41,
+        "tmax_media_c": 22.51,
+        "tmin_media_c": 14.65,
+        "anios_usados_precipitacion": 30
+      },
+      "06": {
+        "precipitacion_mensual_mm": 22.93,
+        "tmax_media_c": 22.09,
+        "tmin_media_c": 13.7,
+        "anios_usados_precipitacion": 30
+      },
+      "07": {
+        "precipitacion_mensual_mm": 19.9,
+        "tmax_media_c": 22.09,
+        "tmin_media_c": 13.02,
+        "anios_usados_precipitacion": 30
+      },
+      "08": {
+        "precipitacion_mensual_mm": 23.18,
+        "tmax_media_c": 22.66,
+        "tmin_media_c": 13.39,
+        "anios_usados_precipitacion": 30
+      },
+      "09": {
+        "precipitacion_mensual_mm": 34.03,
+        "tmax_media_c": 23.15,
+        "tmin_media_c": 14.38,
+        "anios_usados_precipitacion": 30
+      },
+      "10": {
+        "precipitacion_mensual_mm": 66.47,
+        "tmax_media_c": 23.39,
+        "tmin_media_c": 15.27,
+        "anios_usados_precipitacion": 30
+      },
+      "11": {
+        "precipitacion_mensual_mm": 90.09,
+        "tmax_media_c": 23.38,
+        "tmin_media_c": 15.68,
+        "anios_usados_precipitacion": 30
+      },
+      "12": {
+        "precipitacion_mensual_mm": 128.32,
+        "tmax_media_c": 22.92,
+        "tmin_media_c": 15.99,
+        "anios_usados_precipitacion": 30
+      }
+    },
+    "Ica": {
+      "01": {
+        "precipitacion_mensual_mm": 20.34,
+        "tmax_media_c": 29.34,
+        "tmin_media_c": 20.11,
+        "anios_usados_precipitacion": 30
+      },
+      "02": {
+        "precipitacion_mensual_mm": 27.47,
+        "tmax_media_c": 29.55,
+        "tmin_media_c": 20.96,
+        "anios_usados_precipitacion": 30
+      },
+      "03": {
+        "precipitacion_mensual_mm": 19.48,
+        "tmax_media_c": 29.91,
+        "tmin_media_c": 20.98,
+        "anios_usados_precipitacion": 30
+      },
+      "04": {
+        "precipitacion_mensual_mm": 3.26,
+        "tmax_media_c": 29.18,
+        "tmin_media_c": 19.59,
+        "anios_usados_precipitacion": 30
+      },
+      "05": {
+        "precipitacion_mensual_mm": 0.29,
+        "tmax_media_c": 27.26,
+        "tmin_media_c": 17.58,
+        "anios_usados_precipitacion": 30
+      },
+      "06": {
+        "precipitacion_mensual_mm": 0.12,
+        "tmax_media_c": 25.32,
+        "tmin_media_c": 15.73,
+        "anios_usados_precipitacion": 30
+      },
+      "07": {
+        "precipitacion_mensual_mm": 0.15,
+        "tmax_media_c": 24.89,
+        "tmin_media_c": 14.97,
+        "anios_usados_precipitacion": 30
+      },
+      "08": {
+        "precipitacion_mensual_mm": 0.08,
+        "tmax_media_c": 25.51,
+        "tmin_media_c": 14.84,
+        "anios_usados_precipitacion": 30
+      },
+      "09": {
+        "precipitacion_mensual_mm": 0.1,
+        "tmax_media_c": 26.62,
+        "tmin_media_c": 15.44,
+        "anios_usados_precipitacion": 30
+      },
+      "10": {
+        "precipitacion_mensual_mm": 1.16,
+        "tmax_media_c": 27.46,
+        "tmin_media_c": 16.12,
+        "anios_usados_precipitacion": 30
+      },
+      "11": {
+        "precipitacion_mensual_mm": 1.22,
+        "tmax_media_c": 28.05,
+        "tmin_media_c": 17.01,
+        "anios_usados_precipitacion": 30
+      },
+      "12": {
+        "precipitacion_mensual_mm": 4.49,
+        "tmax_media_c": 28.98,
+        "tmin_media_c": 18.62,
+        "anios_usados_precipitacion": 30
+      }
+    },
+    "Junin": {
+      "01": {
+        "precipitacion_mensual_mm": 236.09,
+        "tmax_media_c": 16.26,
+        "tmin_media_c": 8.31,
+        "anios_usados_precipitacion": 30
+      },
+      "02": {
+        "precipitacion_mensual_mm": 239.54,
+        "tmax_media_c": 16.04,
+        "tmin_media_c": 8.54,
+        "anios_usados_precipitacion": 30
+      },
+      "03": {
+        "precipitacion_mensual_mm": 213.41,
+        "tmax_media_c": 15.99,
+        "tmin_media_c": 8.52,
+        "anios_usados_precipitacion": 30
+      },
+      "04": {
+        "precipitacion_mensual_mm": 108.27,
+        "tmax_media_c": 15.99,
+        "tmin_media_c": 7.74,
+        "anios_usados_precipitacion": 30
+      },
+      "05": {
+        "precipitacion_mensual_mm": 48.38,
+        "tmax_media_c": 15.94,
+        "tmin_media_c": 6.62,
+        "anios_usados_precipitacion": 30
+      },
+      "06": {
+        "precipitacion_mensual_mm": 22.61,
+        "tmax_media_c": 15.68,
+        "tmin_media_c": 5.32,
+        "anios_usados_precipitacion": 30
+      },
+      "07": {
+        "precipitacion_mensual_mm": 22.51,
+        "tmax_media_c": 15.73,
+        "tmin_media_c": 4.75,
+        "anios_usados_precipitacion": 30
+      },
+      "08": {
+        "precipitacion_mensual_mm": 40.9,
+        "tmax_media_c": 16.28,
+        "tmin_media_c": 5.48,
+        "anios_usados_precipitacion": 30
+      },
+      "09": {
+        "precipitacion_mensual_mm": 85.61,
+        "tmax_media_c": 16.36,
+        "tmin_media_c": 6.49,
+        "anios_usados_precipitacion": 30
+      },
+      "10": {
+        "precipitacion_mensual_mm": 140.9,
+        "tmax_media_c": 16.65,
+        "tmin_media_c": 7.33,
+        "anios_usados_precipitacion": 30
+      },
+      "11": {
+        "precipitacion_mensual_mm": 144.35,
+        "tmax_media_c": 17.09,
+        "tmin_media_c": 7.63,
+        "anios_usados_precipitacion": 30
+      },
+      "12": {
+        "precipitacion_mensual_mm": 205.89,
+        "tmax_media_c": 16.61,
+        "tmin_media_c": 8.17,
+        "anios_usados_precipitacion": 30
+      }
+    },
+    "La Libertad": {
+      "01": {
+        "precipitacion_mensual_mm": 25.59,
+        "tmax_media_c": 26.01,
+        "tmin_media_c": 20.42,
+        "anios_usados_precipitacion": 30
+      },
+      "02": {
+        "precipitacion_mensual_mm": 50.8,
+        "tmax_media_c": 26.49,
+        "tmin_media_c": 21.51,
+        "anios_usados_precipitacion": 30
+      },
+      "03": {
+        "precipitacion_mensual_mm": 62.46,
+        "tmax_media_c": 26.29,
+        "tmin_media_c": 21.48,
+        "anios_usados_precipitacion": 30
+      },
+      "04": {
+        "precipitacion_mensual_mm": 25.87,
+        "tmax_media_c": 25.22,
+        "tmin_media_c": 20.11,
+        "anios_usados_precipitacion": 30
+      },
+      "05": {
+        "precipitacion_mensual_mm": 3.7,
+        "tmax_media_c": 24.28,
+        "tmin_media_c": 18.86,
+        "anios_usados_precipitacion": 30
+      },
+      "06": {
+        "precipitacion_mensual_mm": 0.97,
+        "tmax_media_c": 23.18,
+        "tmin_media_c": 17.65,
+        "anios_usados_precipitacion": 30
+      },
+      "07": {
+        "precipitacion_mensual_mm": 0.63,
+        "tmax_media_c": 22.47,
+        "tmin_media_c": 16.78,
+        "anios_usados_precipitacion": 30
+      },
+      "08": {
+        "precipitacion_mensual_mm": 0.89,
+        "tmax_media_c": 22.16,
+        "tmin_media_c": 16.29,
+        "anios_usados_precipitacion": 30
+      },
+      "09": {
+        "precipitacion_mensual_mm": 2.17,
+        "tmax_media_c": 22.38,
+        "tmin_media_c": 16.5,
+        "anios_usados_precipitacion": 30
+      },
+      "10": {
+        "precipitacion_mensual_mm": 3.87,
+        "tmax_media_c": 22.75,
+        "tmin_media_c": 16.77,
+        "anios_usados_precipitacion": 30
+      },
+      "11": {
+        "precipitacion_mensual_mm": 4.28,
+        "tmax_media_c": 23.43,
+        "tmin_media_c": 17.37,
+        "anios_usados_precipitacion": 30
+      },
+      "12": {
+        "precipitacion_mensual_mm": 9.26,
+        "tmax_media_c": 24.74,
+        "tmin_media_c": 18.87,
+        "anios_usados_precipitacion": 30
+      }
+    },
+    "Lambayeque": {
+      "01": {
+        "precipitacion_mensual_mm": 22.43,
+        "tmax_media_c": 28.59,
+        "tmin_media_c": 21.34,
+        "anios_usados_precipitacion": 30
+      },
+      "02": {
+        "precipitacion_mensual_mm": 47.86,
+        "tmax_media_c": 29.63,
+        "tmin_media_c": 22.72,
+        "anios_usados_precipitacion": 30
+      },
+      "03": {
+        "precipitacion_mensual_mm": 73.98,
+        "tmax_media_c": 29.55,
+        "tmin_media_c": 22.68,
+        "anios_usados_precipitacion": 30
+      },
+      "04": {
+        "precipitacion_mensual_mm": 26.84,
+        "tmax_media_c": 27.79,
+        "tmin_media_c": 20.9,
+        "anios_usados_precipitacion": 30
+      },
+      "05": {
+        "precipitacion_mensual_mm": 5.84,
+        "tmax_media_c": 26.1,
+        "tmin_media_c": 19.25,
+        "anios_usados_precipitacion": 30
+      },
+      "06": {
+        "precipitacion_mensual_mm": 0.83,
+        "tmax_media_c": 24.47,
+        "tmin_media_c": 17.91,
+        "anios_usados_precipitacion": 30
+      },
+      "07": {
+        "precipitacion_mensual_mm": 0.38,
+        "tmax_media_c": 23.49,
+        "tmin_media_c": 16.98,
+        "anios_usados_precipitacion": 30
+      },
+      "08": {
+        "precipitacion_mensual_mm": 0.12,
+        "tmax_media_c": 23.21,
+        "tmin_media_c": 16.43,
+        "anios_usados_precipitacion": 30
+      },
+      "09": {
+        "precipitacion_mensual_mm": 1.0,
+        "tmax_media_c": 23.63,
+        "tmin_media_c": 16.49,
+        "anios_usados_precipitacion": 30
+      },
+      "10": {
+        "precipitacion_mensual_mm": 2.77,
+        "tmax_media_c": 24.17,
+        "tmin_media_c": 16.76,
+        "anios_usados_precipitacion": 30
+      },
+      "11": {
+        "precipitacion_mensual_mm": 4.68,
+        "tmax_media_c": 25.11,
+        "tmin_media_c": 17.56,
+        "anios_usados_precipitacion": 30
+      },
+      "12": {
+        "precipitacion_mensual_mm": 9.39,
+        "tmax_media_c": 26.64,
+        "tmin_media_c": 19.29,
+        "anios_usados_precipitacion": 30
+      }
+    },
+    "Lima": {
+      "01": {
+        "precipitacion_mensual_mm": 14.57,
+        "tmax_media_c": 24.26,
+        "tmin_media_c": 19.42,
+        "anios_usados_precipitacion": 30
+      },
+      "02": {
+        "precipitacion_mensual_mm": 25.74,
+        "tmax_media_c": 24.94,
+        "tmin_media_c": 20.33,
+        "anios_usados_precipitacion": 30
+      },
+      "03": {
+        "precipitacion_mensual_mm": 21.77,
+        "tmax_media_c": 24.83,
+        "tmin_media_c": 20.08,
+        "anios_usados_precipitacion": 30
+      },
+      "04": {
+        "precipitacion_mensual_mm": 6.15,
+        "tmax_media_c": 23.37,
+        "tmin_media_c": 18.54,
+        "anios_usados_precipitacion": 30
+      },
+      "05": {
+        "precipitacion_mensual_mm": 1.41,
+        "tmax_media_c": 21.55,
+        "tmin_media_c": 16.9,
+        "anios_usados_precipitacion": 30
+      },
+      "06": {
+        "precipitacion_mensual_mm": 1.08,
+        "tmax_media_c": 20.02,
+        "tmin_media_c": 15.49,
+        "anios_usados_precipitacion": 30
+      },
+      "07": {
+        "precipitacion_mensual_mm": 1.02,
+        "tmax_media_c": 19.24,
+        "tmin_media_c": 14.62,
+        "anios_usados_precipitacion": 30
+      },
+      "08": {
+        "precipitacion_mensual_mm": 0.82,
+        "tmax_media_c": 19.12,
+        "tmin_media_c": 14.34,
+        "anios_usados_precipitacion": 30
+      },
+      "09": {
+        "precipitacion_mensual_mm": 1.55,
+        "tmax_media_c": 19.54,
+        "tmin_media_c": 14.7,
+        "anios_usados_precipitacion": 30
+      },
+      "10": {
+        "precipitacion_mensual_mm": 2.49,
+        "tmax_media_c": 20.17,
+        "tmin_media_c": 15.26,
+        "anios_usados_precipitacion": 30
+      },
+      "11": {
+        "precipitacion_mensual_mm": 2.2,
+        "tmax_media_c": 21.19,
+        "tmin_media_c": 16.18,
+        "anios_usados_precipitacion": 30
+      },
+      "12": {
+        "precipitacion_mensual_mm": 5.86,
+        "tmax_media_c": 22.74,
+        "tmin_media_c": 17.81,
+        "anios_usados_precipitacion": 30
+      }
+    },
+    "Loreto": {
+      "01": {
+        "precipitacion_mensual_mm": 242.92,
+        "tmax_media_c": 29.85,
+        "tmin_media_c": 23.43,
+        "anios_usados_precipitacion": 30
+      },
+      "02": {
+        "precipitacion_mensual_mm": 232.07,
+        "tmax_media_c": 29.82,
+        "tmin_media_c": 23.5,
+        "anios_usados_precipitacion": 30
+      },
+      "03": {
+        "precipitacion_mensual_mm": 297.51,
+        "tmax_media_c": 29.69,
+        "tmin_media_c": 23.45,
+        "anios_usados_precipitacion": 30
+      },
+      "04": {
+        "precipitacion_mensual_mm": 296.34,
+        "tmax_media_c": 29.3,
+        "tmin_media_c": 23.28,
+        "anios_usados_precipitacion": 30
+      },
+      "05": {
+        "precipitacion_mensual_mm": 271.94,
+        "tmax_media_c": 28.68,
+        "tmin_media_c": 22.93,
+        "anios_usados_precipitacion": 30
+      },
+      "06": {
+        "precipitacion_mensual_mm": 214.45,
+        "tmax_media_c": 28.11,
+        "tmin_media_c": 22.41,
+        "anios_usados_precipitacion": 30
+      },
+      "07": {
+        "precipitacion_mensual_mm": 165.73,
+        "tmax_media_c": 28.1,
+        "tmin_media_c": 22.13,
+        "anios_usados_precipitacion": 30
+      },
+      "08": {
+        "precipitacion_mensual_mm": 151.03,
+        "tmax_media_c": 29.21,
+        "tmin_media_c": 22.57,
+        "anios_usados_precipitacion": 30
+      },
+      "09": {
+        "precipitacion_mensual_mm": 174.41,
+        "tmax_media_c": 29.82,
+        "tmin_media_c": 23.16,
+        "anios_usados_precipitacion": 30
+      },
+      "10": {
+        "precipitacion_mensual_mm": 199.81,
+        "tmax_media_c": 30.09,
+        "tmin_media_c": 23.49,
+        "anios_usados_precipitacion": 30
+      },
+      "11": {
+        "precipitacion_mensual_mm": 233.2,
+        "tmax_media_c": 29.76,
+        "tmin_media_c": 23.56,
+        "anios_usados_precipitacion": 30
+      },
+      "12": {
+        "precipitacion_mensual_mm": 258.63,
+        "tmax_media_c": 29.71,
+        "tmin_media_c": 23.44,
+        "anios_usados_precipitacion": 30
+      }
+    },
+    "Madre de Dios": {
+      "01": {
+        "precipitacion_mensual_mm": 361.68,
+        "tmax_media_c": 29.37,
+        "tmin_media_c": 22.86,
+        "anios_usados_precipitacion": 30
+      },
+      "02": {
+        "precipitacion_mensual_mm": 366.88,
+        "tmax_media_c": 29.05,
+        "tmin_media_c": 22.73,
+        "anios_usados_precipitacion": 30
+      },
+      "03": {
+        "precipitacion_mensual_mm": 298.76,
+        "tmax_media_c": 29.25,
+        "tmin_media_c": 22.71,
+        "anios_usados_precipitacion": 30
+      },
+      "04": {
+        "precipitacion_mensual_mm": 170.05,
+        "tmax_media_c": 28.89,
+        "tmin_media_c": 22.19,
+        "anios_usados_precipitacion": 30
+      },
+      "05": {
+        "precipitacion_mensual_mm": 86.23,
+        "tmax_media_c": 27.71,
+        "tmin_media_c": 20.98,
+        "anios_usados_precipitacion": 30
+      },
+      "06": {
+        "precipitacion_mensual_mm": 55.78,
+        "tmax_media_c": 27.44,
+        "tmin_media_c": 20.29,
+        "anios_usados_precipitacion": 30
+      },
+      "07": {
+        "precipitacion_mensual_mm": 45.78,
+        "tmax_media_c": 27.9,
+        "tmin_media_c": 19.56,
+        "anios_usados_precipitacion": 30
+      },
+      "08": {
+        "precipitacion_mensual_mm": 63.07,
+        "tmax_media_c": 30.02,
+        "tmin_media_c": 20.6,
+        "anios_usados_precipitacion": 30
+      },
+      "09": {
+        "precipitacion_mensual_mm": 118.68,
+        "tmax_media_c": 30.72,
+        "tmin_media_c": 21.76,
+        "anios_usados_precipitacion": 30
+      },
+      "10": {
+        "precipitacion_mensual_mm": 223.57,
+        "tmax_media_c": 30.19,
+        "tmin_media_c": 22.6,
+        "anios_usados_precipitacion": 30
+      },
+      "11": {
+        "precipitacion_mensual_mm": 260.71,
+        "tmax_media_c": 29.41,
+        "tmin_media_c": 22.57,
+        "anios_usados_precipitacion": 30
+      },
+      "12": {
+        "precipitacion_mensual_mm": 328.58,
+        "tmax_media_c": 29.44,
+        "tmin_media_c": 22.89,
+        "anios_usados_precipitacion": 30
+      }
+    },
+    "Moquegua": {
+      "01": {
+        "precipitacion_mensual_mm": 46.99,
+        "tmax_media_c": 23.23,
+        "tmin_media_c": 16.03,
+        "anios_usados_precipitacion": 30
+      },
+      "02": {
+        "precipitacion_mensual_mm": 57.48,
+        "tmax_media_c": 23.1,
+        "tmin_media_c": 16.3,
+        "anios_usados_precipitacion": 30
+      },
+      "03": {
+        "precipitacion_mensual_mm": 35.09,
+        "tmax_media_c": 23.25,
+        "tmin_media_c": 16.3,
+        "anios_usados_precipitacion": 30
+      },
+      "04": {
+        "precipitacion_mensual_mm": 8.17,
+        "tmax_media_c": 23.46,
+        "tmin_media_c": 15.63,
+        "anios_usados_precipitacion": 30
+      },
+      "05": {
+        "precipitacion_mensual_mm": 0.75,
+        "tmax_media_c": 23.34,
+        "tmin_media_c": 15.08,
+        "anios_usados_precipitacion": 30
+      },
+      "06": {
+        "precipitacion_mensual_mm": 0.28,
+        "tmax_media_c": 22.6,
+        "tmin_media_c": 14.62,
+        "anios_usados_precipitacion": 30
+      },
+      "07": {
+        "precipitacion_mensual_mm": 0.54,
+        "tmax_media_c": 22.39,
+        "tmin_media_c": 14.31,
+        "anios_usados_precipitacion": 30
+      },
+      "08": {
+        "precipitacion_mensual_mm": 0.88,
+        "tmax_media_c": 22.97,
+        "tmin_media_c": 14.71,
+        "anios_usados_precipitacion": 30
+      },
+      "09": {
+        "precipitacion_mensual_mm": 0.51,
+        "tmax_media_c": 23.6,
+        "tmin_media_c": 15.19,
+        "anios_usados_precipitacion": 30
+      },
+      "10": {
+        "precipitacion_mensual_mm": 0.66,
+        "tmax_media_c": 23.85,
+        "tmin_media_c": 15.25,
+        "anios_usados_precipitacion": 30
+      },
+      "11": {
+        "precipitacion_mensual_mm": 1.7,
+        "tmax_media_c": 23.82,
+        "tmin_media_c": 15.12,
+        "anios_usados_precipitacion": 30
+      },
+      "12": {
+        "precipitacion_mensual_mm": 11.63,
+        "tmax_media_c": 23.9,
+        "tmin_media_c": 15.62,
+        "anios_usados_precipitacion": 30
+      }
+    },
+    "Pasco": {
+      "01": {
+        "precipitacion_mensual_mm": 175.83,
+        "tmax_media_c": 11.75,
+        "tmin_media_c": 2.37,
+        "anios_usados_precipitacion": 30
+      },
+      "02": {
+        "precipitacion_mensual_mm": 176.73,
+        "tmax_media_c": 11.59,
+        "tmin_media_c": 2.8,
+        "anios_usados_precipitacion": 30
+      },
+      "03": {
+        "precipitacion_mensual_mm": 165.32,
+        "tmax_media_c": 11.48,
+        "tmin_media_c": 2.77,
+        "anios_usados_precipitacion": 30
+      },
+      "04": {
+        "precipitacion_mensual_mm": 93.33,
+        "tmax_media_c": 11.39,
+        "tmin_media_c": 1.92,
+        "anios_usados_precipitacion": 30
+      },
+      "05": {
+        "precipitacion_mensual_mm": 57.04,
+        "tmax_media_c": 11.09,
+        "tmin_media_c": 0.87,
+        "anios_usados_precipitacion": 30
+      },
+      "06": {
+        "precipitacion_mensual_mm": 25.52,
+        "tmax_media_c": 10.5,
+        "tmin_media_c": -0.4,
+        "anios_usados_precipitacion": 30
+      },
+      "07": {
+        "precipitacion_mensual_mm": 23.51,
+        "tmax_media_c": 10.34,
+        "tmin_media_c": -1.07,
+        "anios_usados_precipitacion": 30
+      },
+      "08": {
+        "precipitacion_mensual_mm": 35.97,
+        "tmax_media_c": 10.94,
+        "tmin_media_c": -0.66,
+        "anios_usados_precipitacion": 30
+      },
+      "09": {
+        "precipitacion_mensual_mm": 73.3,
+        "tmax_media_c": 11.19,
+        "tmin_media_c": 0.51,
+        "anios_usados_precipitacion": 30
+      },
+      "10": {
+        "precipitacion_mensual_mm": 115.3,
+        "tmax_media_c": 11.64,
+        "tmin_media_c": 1.35,
+        "anios_usados_precipitacion": 30
+      },
+      "11": {
+        "precipitacion_mensual_mm": 124.32,
+        "tmax_media_c": 12.25,
+        "tmin_media_c": 1.5,
+        "anios_usados_precipitacion": 30
+      },
+      "12": {
+        "precipitacion_mensual_mm": 171.83,
+        "tmax_media_c": 11.93,
+        "tmin_media_c": 2.16,
+        "anios_usados_precipitacion": 30
+      }
+    },
+    "Piura": {
+      "01": {
+        "precipitacion_mensual_mm": 37.28,
+        "tmax_media_c": 33.11,
+        "tmin_media_c": 22.17,
+        "anios_usados_precipitacion": 30
+      },
+      "02": {
+        "precipitacion_mensual_mm": 64.94,
+        "tmax_media_c": 33.09,
+        "tmin_media_c": 23.4,
+        "anios_usados_precipitacion": 30
+      },
+      "03": {
+        "precipitacion_mensual_mm": 112.02,
+        "tmax_media_c": 33.32,
+        "tmin_media_c": 23.38,
+        "anios_usados_precipitacion": 30
+      },
+      "04": {
+        "precipitacion_mensual_mm": 39.15,
+        "tmax_media_c": 32.82,
+        "tmin_media_c": 22.0,
+        "anios_usados_precipitacion": 30
+      },
+      "05": {
+        "precipitacion_mensual_mm": 8.03,
+        "tmax_media_c": 31.67,
+        "tmin_media_c": 20.3,
+        "anios_usados_precipitacion": 30
+      },
+      "06": {
+        "precipitacion_mensual_mm": 2.56,
+        "tmax_media_c": 29.73,
+        "tmin_media_c": 18.65,
+        "anios_usados_precipitacion": 30
+      },
+      "07": {
+        "precipitacion_mensual_mm": 0.52,
+        "tmax_media_c": 28.55,
+        "tmin_media_c": 17.54,
+        "anios_usados_precipitacion": 30
+      },
+      "08": {
+        "precipitacion_mensual_mm": 0.37,
+        "tmax_media_c": 28.48,
+        "tmin_media_c": 17.04,
+        "anios_usados_precipitacion": 30
+      },
+      "09": {
+        "precipitacion_mensual_mm": 1.91,
+        "tmax_media_c": 29.22,
+        "tmin_media_c": 17.34,
+        "anios_usados_precipitacion": 30
+      },
+      "10": {
+        "precipitacion_mensual_mm": 4.17,
+        "tmax_media_c": 29.86,
+        "tmin_media_c": 17.66,
+        "anios_usados_precipitacion": 30
+      },
+      "11": {
+        "precipitacion_mensual_mm": 8.18,
+        "tmax_media_c": 30.43,
+        "tmin_media_c": 18.28,
+        "anios_usados_precipitacion": 30
+      },
+      "12": {
+        "precipitacion_mensual_mm": 18.84,
+        "tmax_media_c": 31.72,
+        "tmin_media_c": 20.08,
+        "anios_usados_precipitacion": 30
+      }
+    },
+    "Puno": {
+      "01": {
+        "precipitacion_mensual_mm": 225.57,
+        "tmax_media_c": 13.79,
+        "tmin_media_c": 5.54,
+        "anios_usados_precipitacion": 30
+      },
+      "02": {
+        "precipitacion_mensual_mm": 203.97,
+        "tmax_media_c": 13.82,
+        "tmin_media_c": 5.61,
+        "anios_usados_precipitacion": 30
+      },
+      "03": {
+        "precipitacion_mensual_mm": 169.03,
+        "tmax_media_c": 13.72,
+        "tmin_media_c": 5.22,
+        "anios_usados_precipitacion": 30
+      },
+      "04": {
+        "precipitacion_mensual_mm": 78.67,
+        "tmax_media_c": 13.67,
+        "tmin_media_c": 3.42,
+        "anios_usados_precipitacion": 30
+      },
+      "05": {
+        "precipitacion_mensual_mm": 19.56,
+        "tmax_media_c": 14.27,
+        "tmin_media_c": 0.53,
+        "anios_usados_precipitacion": 30
+      },
+      "06": {
+        "precipitacion_mensual_mm": 8.62,
+        "tmax_media_c": 14.32,
+        "tmin_media_c": -0.72,
+        "anios_usados_precipitacion": 30
+      },
+      "07": {
+        "precipitacion_mensual_mm": 9.19,
+        "tmax_media_c": 14.33,
+        "tmin_media_c": -0.92,
+        "anios_usados_precipitacion": 30
+      },
+      "08": {
+        "precipitacion_mensual_mm": 20.44,
+        "tmax_media_c": 14.99,
+        "tmin_media_c": 0.18,
+        "anios_usados_precipitacion": 30
+      },
+      "09": {
+        "precipitacion_mensual_mm": 49.96,
+        "tmax_media_c": 15.49,
+        "tmin_media_c": 1.74,
+        "anios_usados_precipitacion": 30
+      },
+      "10": {
+        "precipitacion_mensual_mm": 78.43,
+        "tmax_media_c": 15.66,
+        "tmin_media_c": 3.44,
+        "anios_usados_precipitacion": 30
+      },
+      "11": {
+        "precipitacion_mensual_mm": 87.47,
+        "tmax_media_c": 16.18,
+        "tmin_media_c": 4.48,
+        "anios_usados_precipitacion": 30
+      },
+      "12": {
+        "precipitacion_mensual_mm": 155.33,
+        "tmax_media_c": 14.89,
+        "tmin_media_c": 5.38,
+        "anios_usados_precipitacion": 30
+      }
+    },
+    "San Martin": {
+      "01": {
+        "precipitacion_mensual_mm": 151.33,
+        "tmax_media_c": 25.62,
+        "tmin_media_c": 18.31,
+        "anios_usados_precipitacion": 30
+      },
+      "02": {
+        "precipitacion_mensual_mm": 174.17,
+        "tmax_media_c": 25.8,
+        "tmin_media_c": 18.02,
+        "anios_usados_precipitacion": 30
+      },
+      "03": {
+        "precipitacion_mensual_mm": 231.0,
+        "tmax_media_c": 26.0,
+        "tmin_media_c": 17.66,
+        "anios_usados_precipitacion": 30
+      },
+      "04": {
+        "precipitacion_mensual_mm": 191.15,
+        "tmax_media_c": 26.16,
+        "tmin_media_c": 17.26,
+        "anios_usados_precipitacion": 30
+      },
+      "05": {
+        "precipitacion_mensual_mm": 148.85,
+        "tmax_media_c": 25.76,
+        "tmin_media_c": 16.89,
+        "anios_usados_precipitacion": 30
+      },
+      "06": {
+        "precipitacion_mensual_mm": 111.63,
+        "tmax_media_c": 25.13,
+        "tmin_media_c": 16.06,
+        "anios_usados_precipitacion": 30
+      },
+      "07": {
+        "precipitacion_mensual_mm": 93.92,
+        "tmax_media_c": 25.15,
+        "tmin_media_c": 15.34,
+        "anios_usados_precipitacion": 30
+      },
+      "08": {
+        "precipitacion_mensual_mm": 87.79,
+        "tmax_media_c": 26.14,
+        "tmin_media_c": 15.42,
+        "anios_usados_precipitacion": 30
+      },
+      "09": {
+        "precipitacion_mensual_mm": 112.67,
+        "tmax_media_c": 26.88,
+        "tmin_media_c": 16.21,
+        "anios_usados_precipitacion": 30
+      },
+      "10": {
+        "precipitacion_mensual_mm": 159.07,
+        "tmax_media_c": 26.7,
+        "tmin_media_c": 17.08,
+        "anios_usados_precipitacion": 30
+      },
+      "11": {
+        "precipitacion_mensual_mm": 166.02,
+        "tmax_media_c": 26.21,
+        "tmin_media_c": 18.08,
+        "anios_usados_precipitacion": 30
+      },
+      "12": {
+        "precipitacion_mensual_mm": 158.79,
+        "tmax_media_c": 25.61,
+        "tmin_media_c": 18.29,
+        "anios_usados_precipitacion": 30
+      }
+    },
+    "Tacna": {
+      "01": {
+        "precipitacion_mensual_mm": 18.72,
+        "tmax_media_c": 25.43,
+        "tmin_media_c": 18.05,
+        "anios_usados_precipitacion": 30
+      },
+      "02": {
+        "precipitacion_mensual_mm": 21.6,
+        "tmax_media_c": 25.68,
+        "tmin_media_c": 18.54,
+        "anios_usados_precipitacion": 30
+      },
+      "03": {
+        "precipitacion_mensual_mm": 12.89,
+        "tmax_media_c": 25.42,
+        "tmin_media_c": 18.1,
+        "anios_usados_precipitacion": 30
+      },
+      "04": {
+        "precipitacion_mensual_mm": 1.87,
+        "tmax_media_c": 24.06,
+        "tmin_media_c": 16.95,
+        "anios_usados_precipitacion": 30
+      },
+      "05": {
+        "precipitacion_mensual_mm": 3.75,
+        "tmax_media_c": 22.16,
+        "tmin_media_c": 15.93,
+        "anios_usados_precipitacion": 30
+      },
+      "06": {
+        "precipitacion_mensual_mm": 4.3,
+        "tmax_media_c": 20.49,
+        "tmin_media_c": 14.99,
+        "anios_usados_precipitacion": 30
+      },
+      "07": {
+        "precipitacion_mensual_mm": 4.1,
+        "tmax_media_c": 19.91,
+        "tmin_media_c": 14.21,
+        "anios_usados_precipitacion": 30
+      },
+      "08": {
+        "precipitacion_mensual_mm": 3.7,
+        "tmax_media_c": 20.4,
+        "tmin_media_c": 14.12,
+        "anios_usados_precipitacion": 30
+      },
+      "09": {
+        "precipitacion_mensual_mm": 2.44,
+        "tmax_media_c": 21.27,
+        "tmin_media_c": 14.37,
+        "anios_usados_precipitacion": 30
+      },
+      "10": {
+        "precipitacion_mensual_mm": 1.22,
+        "tmax_media_c": 22.34,
+        "tmin_media_c": 14.75,
+        "anios_usados_precipitacion": 30
+      },
+      "11": {
+        "precipitacion_mensual_mm": 1.19,
+        "tmax_media_c": 23.56,
+        "tmin_media_c": 15.47,
+        "anios_usados_precipitacion": 30
+      },
+      "12": {
+        "precipitacion_mensual_mm": 5.76,
+        "tmax_media_c": 24.74,
+        "tmin_media_c": 16.73,
+        "anios_usados_precipitacion": 30
+      }
+    },
+    "Tumbes": {
+      "01": {
+        "precipitacion_mensual_mm": 86.52,
+        "tmax_media_c": 29.29,
+        "tmin_media_c": 23.2,
+        "anios_usados_precipitacion": 30
+      },
+      "02": {
+        "precipitacion_mensual_mm": 183.36,
+        "tmax_media_c": 29.01,
+        "tmin_media_c": 23.55,
+        "anios_usados_precipitacion": 30
+      },
+      "03": {
+        "precipitacion_mensual_mm": 195.38,
+        "tmax_media_c": 29.07,
+        "tmin_media_c": 23.57,
+        "anios_usados_precipitacion": 30
+      },
+      "04": {
+        "precipitacion_mensual_mm": 124.31,
+        "tmax_media_c": 29.07,
+        "tmin_media_c": 23.32,
+        "anios_usados_precipitacion": 30
+      },
+      "05": {
+        "precipitacion_mensual_mm": 49.81,
+        "tmax_media_c": 29.01,
+        "tmin_media_c": 22.86,
+        "anios_usados_precipitacion": 30
+      },
+      "06": {
+        "precipitacion_mensual_mm": 10.01,
+        "tmax_media_c": 28.52,
+        "tmin_media_c": 21.75,
+        "anios_usados_precipitacion": 30
+      },
+      "07": {
+        "precipitacion_mensual_mm": 3.77,
+        "tmax_media_c": 28.24,
+        "tmin_media_c": 20.96,
+        "anios_usados_precipitacion": 30
+      },
+      "08": {
+        "precipitacion_mensual_mm": 1.52,
+        "tmax_media_c": 28.15,
+        "tmin_media_c": 20.45,
+        "anios_usados_precipitacion": 30
+      },
+      "09": {
+        "precipitacion_mensual_mm": 5.58,
+        "tmax_media_c": 28.17,
+        "tmin_media_c": 20.59,
+        "anios_usados_precipitacion": 30
+      },
+      "10": {
+        "precipitacion_mensual_mm": 7.37,
+        "tmax_media_c": 28.27,
+        "tmin_media_c": 20.84,
+        "anios_usados_precipitacion": 30
+      },
+      "11": {
+        "precipitacion_mensual_mm": 15.84,
+        "tmax_media_c": 28.43,
+        "tmin_media_c": 21.04,
+        "anios_usados_precipitacion": 30
+      },
+      "12": {
+        "precipitacion_mensual_mm": 40.77,
+        "tmax_media_c": 29.22,
+        "tmin_media_c": 22.25,
+        "anios_usados_precipitacion": 30
+      }
+    },
+    "Ucayali": {
+      "01": {
+        "precipitacion_mensual_mm": 293.48,
+        "tmax_media_c": 30.06,
+        "tmin_media_c": 23.29,
+        "anios_usados_precipitacion": 30
+      },
+      "02": {
+        "precipitacion_mensual_mm": 304.23,
+        "tmax_media_c": 29.99,
+        "tmin_media_c": 23.28,
+        "anios_usados_precipitacion": 30
+      },
+      "03": {
+        "precipitacion_mensual_mm": 326.72,
+        "tmax_media_c": 29.73,
+        "tmin_media_c": 23.21,
+        "anios_usados_precipitacion": 30
+      },
+      "04": {
+        "precipitacion_mensual_mm": 244.33,
+        "tmax_media_c": 29.46,
+        "tmin_media_c": 23.06,
+        "anios_usados_precipitacion": 30
+      },
+      "05": {
+        "precipitacion_mensual_mm": 153.91,
+        "tmax_media_c": 28.86,
+        "tmin_media_c": 22.62,
+        "anios_usados_precipitacion": 30
+      },
+      "06": {
+        "precipitacion_mensual_mm": 100.1,
+        "tmax_media_c": 28.41,
+        "tmin_media_c": 22.09,
+        "anios_usados_precipitacion": 30
+      },
+      "07": {
+        "precipitacion_mensual_mm": 79.41,
+        "tmax_media_c": 28.73,
+        "tmin_media_c": 21.74,
+        "anios_usados_precipitacion": 30
+      },
+      "08": {
+        "precipitacion_mensual_mm": 97.33,
+        "tmax_media_c": 30.29,
+        "tmin_media_c": 22.33,
+        "anios_usados_precipitacion": 30
+      },
+      "09": {
+        "precipitacion_mensual_mm": 142.53,
+        "tmax_media_c": 30.83,
+        "tmin_media_c": 23.04,
+        "anios_usados_precipitacion": 30
+      },
+      "10": {
+        "precipitacion_mensual_mm": 220.19,
+        "tmax_media_c": 30.5,
+        "tmin_media_c": 23.33,
+        "anios_usados_precipitacion": 30
+      },
+      "11": {
+        "precipitacion_mensual_mm": 261.12,
+        "tmax_media_c": 29.85,
+        "tmin_media_c": 23.25,
+        "anios_usados_precipitacion": 30
+      },
+      "12": {
+        "precipitacion_mensual_mm": 284.2,
+        "tmax_media_c": 29.79,
+        "tmin_media_c": 23.3,
+        "anios_usados_precipitacion": 30
+      }
+    }
+  }
+}
