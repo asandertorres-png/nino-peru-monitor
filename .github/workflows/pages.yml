@@ -47,6 +47,12 @@ jobs:
         with:
           enablement: true
 
+      # Pages sirve los archivos con 10 min de cache en el navegador: si solo cambia
+      # el HTML, el visitante puede mezclar HTML nuevo con CSS y JS viejos. Marcar
+      # los assets con el hash del commit obliga a descargar la version publicada.
+      - name: Versionar CSS y JS con el hash del commit
+        run: sed -i "s/?v=dev/?v=${GITHUB_SHA::8}/g" docs/index.html
+
       - name: Empaquetar docs/
         uses: actions/upload-pages-artifact@v3
         with:
