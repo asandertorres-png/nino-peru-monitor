@@ -1,48 +1,170 @@
+/* Monitor El Niño · Perú — hoja de estilos
+   Tokens: superficie oscura, tinta clara, un acento frío (azul 250 de la rampa),
+   y los colores de dato definidos en app.js (ESCALAS), no aquí. */
 :root{
-  --fondo:#0f1419; --panel:#161d24; --borde:#243039;
-  --texto:#e6edf3; --tenue:#8b9aa7; --acento:#4aa3df;
+  color-scheme:dark;
+  --plano:#0d0f12;          /* fondo de pagina */
+  --superficie:#15181d;     /* paneles */
+  --superficie-2:#1c2026;   /* controles, filas */
+  --linea:rgba(255,255,255,.10);
+  --tinta:#f0efec; --tinta-2:#c3c2b7; --tenue:#898781;
+  --acento:#86b6ef;
+  --alerta-1:#fab219; --alerta-2:#ec835a; --alerta-3:#d03b3b; --neutro:#3f3f3b;
+  --display:"Archivo Narrow","Arial Narrow",system-ui,sans-serif;
+  --cuerpo:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --datos:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+  --radio:10px;
 }
 *{box-sizing:border-box}
-body{margin:0;background:var(--fondo);color:var(--texto);
-     font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
-header{padding:1.4rem 1.6rem .6rem}
-h1{margin:0;font-size:1.45rem;letter-spacing:-.01em}
-.sub{margin:.3rem 0 0;color:var(--tenue);font-size:.9rem}
-#estado-enso{display:flex;gap:1rem;flex-wrap:wrap;padding:1rem 1.6rem}
-.tarjeta{background:var(--panel);border:1px solid var(--borde);border-radius:10px;
-         padding:.8rem 1rem;min-width:230px;display:flex;flex-direction:column;gap:.25rem}
-.etiqueta{font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;color:var(--tenue)}
-.tarjeta strong{font-size:1.5rem;font-variant-numeric:tabular-nums}
-.pill{align-self:flex-start;background:#2a3540;border-radius:999px;
-      padding:.15rem .6rem;font-size:.78rem}
-.nota{font-size:.75rem;color:var(--tenue)}
-.lista-fuentes{list-style:none;margin:.3rem 0 0;padding:0;font-size:.74rem;color:var(--tenue);
-               display:flex;flex-direction:column;gap:.2rem}
-.lista-fuentes li{display:grid;grid-template-columns:1fr auto;gap:0 .6rem}
-.lista-fuentes li em{grid-column:1 / -1;font-style:normal;font-size:.68rem;opacity:.8}
-.lista-fuentes strong{color:var(--texto);font-weight:500;font-size:.74rem;text-align:right}
-.sub-leyenda{display:block;margin-top:.5rem;color:var(--texto)}
-main{display:grid;grid-template-columns:1fr 340px;gap:1rem;padding:0 1.6rem 1.6rem}
-#mapa{height:70vh;min-height:460px;border-radius:12px;border:1px solid var(--borde);
-      background:#0b0f13}
-#panel{background:var(--panel);border:1px solid var(--borde);border-radius:12px;
-       padding:1rem;display:flex;flex-direction:column;gap:1rem;overflow:auto}
-#controles{display:flex;flex-direction:column;gap:.4rem;font-size:.85rem}
-#detalle h2{margin:0 0 .4rem;font-size:1.05rem}
-#detalle dl{display:grid;grid-template-columns:1fr auto;gap:.3rem .8rem;
-            margin:0;font-size:.85rem}
-#detalle dt{color:var(--tenue)}
-#detalle dd{margin:0;text-align:right;font-variant-numeric:tabular-nums}
-.vacio{color:var(--tenue);font-size:.85rem}
-#leyenda{font-size:.78rem;color:var(--tenue);display:flex;flex-direction:column;gap:.25rem}
-.fila-leyenda{display:flex;align-items:center;gap:.5rem}
-.muestra{width:16px;height:12px;border-radius:3px;display:inline-block}
-footer{padding:0 1.6rem 2rem;color:var(--tenue);font-size:.78rem;max-width:70ch}
-footer a{color:var(--acento)}
-.leaflet-popup-content-wrapper,.leaflet-tooltip{background:#1b232b;color:var(--texto);
-    border:1px solid var(--borde)}
-@media (max-width:900px){main{grid-template-columns:1fr}#mapa{height:55vh}}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--plano);color:var(--tinta);font-family:var(--cuerpo);
+     font-size:15px;line-height:1.45}
+a{color:var(--acento)}
+:focus-visible{outline:2px solid var(--acento);outline-offset:2px}
 
-.leaflet-control-attribution{background:rgba(15,20,25,.75);color:var(--tenue);font-size:.68rem}
+/* ---- cabecera ---- */
+.barra{display:flex;align-items:flex-end;justify-content:space-between;gap:1rem;flex-wrap:wrap;
+       padding:1.1rem 1.4rem .8rem;border-bottom:1px solid var(--linea)}
+.eyebrow{display:block;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--tenue)}
+h1{margin:.15rem 0 0;font-family:var(--display);font-weight:700;font-size:2.1rem;line-height:1;
+   letter-spacing:.01em;text-transform:uppercase}
+h1 span{color:var(--acento);font-weight:500}
+
+/* segmentos (radios como botones) */
+.segmento{display:inline-flex;background:var(--superficie-2);border:1px solid var(--linea);
+          border-radius:999px;padding:3px;gap:2px}
+.segmento label{position:relative;padding:.38rem .85rem;border-radius:999px;font-size:.84rem;
+                color:var(--tinta-2);cursor:pointer;white-space:nowrap;user-select:none}
+.segmento input{position:absolute;inset:0;opacity:0;margin:0;cursor:pointer}
+.segmento label:has(input:checked){background:var(--tinta);color:var(--plano);font-weight:600}
+.segmento label:has(input:focus-visible){outline:2px solid var(--acento);outline-offset:1px}
+
+/* ---- cuerpo ---- */
+main{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:1rem;padding:1rem 1.4rem 1.4rem}
+.mapa-col{display:flex;flex-direction:column;gap:.6rem;min-width:0}
+.capas{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+.capas .etiqueta{margin-right:.2rem}
+#mapa{height:min(74vh,820px);min-height:480px;border-radius:var(--radio);border:1px solid var(--linea);
+      background:#0b0e12;position:relative;isolation:isolate}
+/* el mapa base se atenua para que el dato mande sobre la cartografia */
+.leaflet-tile-pane{filter:brightness(.62) saturate(.55) contrast(1.05)}
+.leaflet-container{font-family:var(--cuerpo);background:#0b0e12}
+.leaflet-interactive{transition:stroke-width .12s ease, stroke .12s ease}
+@media (prefers-reduced-motion:reduce){.leaflet-interactive{transition:none}}
+
+/* etiquetas de capitales: vernaculo cartografico, versalitas con halo */
+.etq-capital{font-family:var(--display);font-weight:500;font-size:11.5px;letter-spacing:.09em;
+             text-transform:uppercase;color:#fff;white-space:nowrap;pointer-events:none;
+             text-shadow:0 0 2px #000,0 0 4px #000,0 1px 3px #000;transform:translate(-4px,-50%)}
+.etq-capital::before{content:"";display:inline-block;width:5px;height:5px;border-radius:50%;
+                     background:#fff;box-shadow:0 0 0 1.5px #000;margin:0 .35rem 1px 0;vertical-align:middle}
+.ocultar-etq .etq-capital{display:none}
+.zoom-lejos .etq-capital.p2{display:none}
+/* capitales del borde este: el rotulo va a la izquierda del punto para no cortarse */
+.etq-capital.izq{transform:translate(calc(-100% + 4px),-50%)}
+.etq-capital.izq::before{display:none}
+.etq-capital.izq::after{content:"";display:inline-block;width:5px;height:5px;border-radius:50%;
+                        background:#fff;box-shadow:0 0 0 1.5px #000;margin:0 0 1px .35rem;vertical-align:middle}
+
+/* leyenda dentro del mapa */
+.leyenda{background:rgba(13,15,18,.86);border:1px solid var(--linea);border-radius:8px;
+         padding:.6rem .75rem;color:var(--tinta-2);font-size:.76rem;max-width:280px;
+         backdrop-filter:blur(4px)}
+.leyenda h4{margin:0 0 .4rem;font-size:.78rem;color:var(--tinta);font-weight:600}
+.leyenda .nota{margin:.4rem 0 0;font-size:.68rem;color:var(--tenue)}
+.leyenda .chips{display:flex;flex-direction:column;gap:.25rem}
+.chip{display:flex;align-items:center;gap:.45rem}
+.chip i{display:inline-flex;align-items:center;justify-content:center;width:18px;height:14px;
+        border-radius:3px;font-style:normal;font-family:var(--datos);font-size:.62rem;color:#0b0b0b;font-weight:600}
+.chip.neutro i{color:var(--tinta-2);border:1px solid var(--linea)}
+.franja{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:2px;margin:.2rem 0 .15rem}
+.franja i{height:10px;border-radius:2px;display:block}
+.cortes{position:relative;height:12px;font-family:var(--datos);font-size:.64rem;color:var(--tenue)}
+.cortes span{position:absolute;top:0;transform:translateX(-50%);white-space:nowrap}
+.polos{display:flex;justify-content:space-between;font-size:.66rem;color:var(--tenue);margin-top:.15rem}
+.sub-ley{margin-top:.55rem;padding-top:.45rem;border-top:1px solid var(--linea)}
+
+.leaflet-tooltip{background:rgba(13,15,18,.92);color:var(--tinta);border:1px solid var(--linea);
+                 border-radius:6px;padding:.3rem .55rem;font-size:.8rem;box-shadow:none}
+.leaflet-tooltip b{font-family:var(--datos);font-weight:500}
+.leaflet-tooltip-top:before,.leaflet-tooltip-bottom:before,.leaflet-tooltip-left:before,
+.leaflet-tooltip-right:before{display:none}
+.leaflet-control-zoom a{background:var(--superficie);color:var(--tinta);border-color:var(--linea)}
+.leaflet-control-zoom a:hover{background:var(--superficie-2)}
+.leaflet-bar{border:1px solid var(--linea)}
+.leaflet-control-attribution{background:rgba(13,15,18,.8);color:var(--tenue);font-size:.66rem}
 .leaflet-control-attribution a{color:var(--acento)}
-.grupo{display:flex;flex-direction:column;gap:.3rem;margin-bottom:.4rem}
+
+#aviso-nivel{margin:0;font-size:.78rem;color:var(--tenue);min-height:1em}
+#leyenda-movil{display:none;max-width:none}
+.chip i.sin-info{background:#5a5f66;border:1px dashed #898781}
+
+/* tabla de valores (vista equivalente al mapa) */
+details.tabla{border:1px solid var(--linea);border-radius:var(--radio);background:var(--superficie)}
+details.tabla summary{cursor:pointer;padding:.6rem .9rem;font-size:.84rem;color:var(--tinta-2)}
+details.tabla table{width:100%;border-collapse:collapse;font-size:.8rem}
+details.tabla th,details.tabla td{padding:.35rem .6rem;border-top:1px solid var(--linea);text-align:left}
+details.tabla th{color:var(--tenue);font-weight:500;font-size:.72rem;letter-spacing:.04em;text-transform:uppercase}
+details.tabla td.num{font-family:var(--datos);text-align:right;white-space:nowrap}
+details.tabla .scroll{max-height:360px;overflow:auto}
+
+/* ---- panel lateral ---- */
+#panel{display:flex;flex-direction:column;gap:.8rem;min-width:0}
+.bloque{background:var(--superficie);border:1px solid var(--linea);border-radius:var(--radio);padding:.9rem 1rem}
+.bloque h3{margin:0 0 .5rem;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--tenue);font-weight:600}
+.etiqueta{font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--tenue)}
+.nota{font-size:.74rem;color:var(--tenue)}
+
+.enso{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+.tile{display:flex;flex-direction:column;gap:.15rem;padding:.7rem .8rem;border-radius:8px;
+      background:var(--superficie-2);border:1px solid var(--linea)}
+.tile .valor{font-size:1.9rem;font-weight:600;line-height:1.05;letter-spacing:-.01em}
+.tile .pill{align-self:flex-start;margin-top:.15rem;padding:.12rem .5rem;border-radius:999px;
+            background:rgba(255,255,255,.08);font-size:.72rem;color:var(--tinta)}
+.tile .nota{margin-top:.1rem}
+
+#detalle h2{margin:0;font-family:var(--display);font-size:1.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.02em;line-height:1.05}
+#detalle .sub{margin:.1rem 0 .6rem;color:var(--tenue);font-size:.8rem}
+#detalle dl{display:grid;grid-template-columns:1fr auto;gap:.28rem .8rem;margin:0;font-size:.84rem}
+#detalle dt{color:var(--tinta-2)}
+#detalle dd{margin:0;text-align:right;font-family:var(--datos);font-size:.82rem;white-space:nowrap}
+#detalle dd.destacado{color:var(--tinta);font-weight:500}
+#detalle .sep{grid-column:1/-1;height:1px;background:var(--linea);margin:.2rem 0}
+#detalle .alerta{display:inline-flex;align-items:center;gap:.4rem;font-family:var(--cuerpo)}
+#detalle .alerta i{width:16px;height:12px;border-radius:3px;display:inline-block}
+.vacio{color:var(--tenue);font-size:.84rem;margin:0}
+
+/* firma: franja de frescura */
+.frescura svg{width:100%;height:auto;display:block;overflow:visible}
+.frescura .eje{stroke:var(--linea);stroke-width:1}
+.frescura .tick{stroke:var(--linea)}
+.frescura .tick-txt{fill:var(--tenue);font-size:8.5px;font-family:var(--datos)}
+.frescura .punto{fill:var(--acento)}
+.frescura .punto.fijo{fill:var(--tenue)}
+.frescura .punto-txt{fill:var(--tinta-2);font-size:9px;font-family:var(--cuerpo)}
+.frescura .ahora{fill:var(--tinta);font-size:8.5px;font-family:var(--datos);font-weight:600}
+.lista-fuentes{list-style:none;margin:.5rem 0 0;padding:0;font-size:.74rem;color:var(--tenue);
+               display:flex;flex-direction:column;gap:.18rem}
+.lista-fuentes li{display:grid;grid-template-columns:1fr auto;gap:0 .6rem}
+.lista-fuentes strong{color:var(--tinta-2);font-weight:500;font-family:var(--datos);font-size:.72rem;text-align:right}
+
+footer{padding:.4rem 1.4rem 2rem;color:var(--tenue);font-size:.76rem;max-width:80ch}
+footer p{margin:.35rem 0}
+
+/* ---- movil ---- */
+@media (max-width:960px){
+  main{grid-template-columns:1fr}
+  #mapa{height:62vh;min-height:420px}
+  .enso{grid-template-columns:1fr 1fr}
+  h1{font-size:1.7rem}
+}
+@media (max-width:640px){
+  /* en pantallas chicas la leyenda sale del mapa para no taparlo */
+  .leaflet-bottom.leaflet-left .leyenda{display:none}
+  #leyenda-movil{display:block}
+}
+@media (max-width:520px){
+  .barra,main,footer{padding-left:1rem;padding-right:1rem}
+  .capas{overflow-x:auto;flex-wrap:nowrap;padding-bottom:.2rem}
+  .enso{grid-template-columns:1fr}
+}

@@ -1,61 +1,68 @@
+/* Monitor El Niño · Perú — logica del mapa.
+   Colores de dato segun el metodo de visualizacion:
+   - alerta: escala de estado fija (0 neutro, 1 warning, 2 serious, 3 critical), siempre con etiqueta;
+   - anomalias: divergentes de dos tonos con punto medio neutro, pasos iguales por brazo, mas claros
+     hacia afuera porque la superficie es oscura;
+   - lluvia acumulada (zonas de normal muy baja): secuencial de un tono, oscuro -> claro.
+   Las rampas se validaron por monotonia de luminosidad (OKLCH) antes de fijarlas. */
+
+const NEUTRO = "#3f3f3b";
+const SIN_DATOS = "#2b2e33";
+
 const ESCALAS = {
   nivel_alerta: {
-    titulo: "Nivel de alerta (indicativo)",
-    colores: ["#2b5f3f", "#b78a2a", "#c25a1e", "#9b1d1d"],
-    etiquetas: ["Sin señal", "Leve", "Moderada", "Alta"],
-    color: v => ESCALAS.nivel_alerta.colores[Math.max(0, Math.min(3, v ?? 0))],
-    formato: v => ESCALAS.nivel_alerta.etiquetas[v ?? 0]
+    titulo: "Nivel de alerta", nota: "Indicativo y provisional; no sustituye avisos oficiales.",
+    tipo: "estado",
+    clases: [
+      { v: 0, color: NEUTRO,    op: 0.35, etq: "Sin señal" },
+      { v: 1, color: "#fab219", op: 0.82, etq: "Leve" },
+      { v: 2, color: "#ec835a", op: 0.82, etq: "Moderada" },
+      { v: 3, color: "#d03b3b", op: 0.86, etq: "Alta" }
+    ],
+    formato: v => v == null ? "s/d" : ESCALAS.nivel_alerta.clases[v].etq
   },
   anomalia_precipitacion_pct: {
-    titulo: "Anomalía de lluvia (%)",
-    cortes: [-60, -30, 0, 30, 60, 100],
-    colores: ["#8c3b10", "#c07a35", "#d9c48a", "#8fc6c0", "#3f93b5", "#1f5d8c", "#123a63"],
-    color: v => escalonado(v, ESCALAS.anomalia_precipitacion_pct),
+    titulo: "Anomalía de lluvia, 30 días", unidad: "%", tipo: "divergente",
+    polos: ["déficit", "exceso"],
+    cortes: [-60, -30, -10, 10, 30, 60],
+    colores: ["#f8c3a8", "#f0906a", "#d95926", NEUTRO, "#3987e5", "#86b6ef", "#cde2fb"],
     formato: v => v == null ? "s/d" : `${v > 0 ? "+" : ""}${v} %`
   },
-  // Zonas con normal mensual muy baja: el porcentaje no informa, se muestra
-  // el acumulado absoluto (escala propia, distinta de la de porcentaje).
   precipitacion_mm: {
-    titulo: "Lluvia acumulada 30 días (mm), zonas de normal muy baja",
+    titulo: "Lluvia acumulada, 30 días", unidad: "mm", tipo: "secuencial",
     cortes: [1, 5, 20, 50],
-    colores: ["#efe6cf", "#d9c48a", "#8fc6c0", "#3f93b5", "#1f5d8c"],
-    color: v => escalonado(v, ESCALAS.precipitacion_mm),
+    colores: ["#184f95", "#256abf", "#3987e5", "#86b6ef", "#cde2fb"],
     formato: v => v == null ? "s/d" : `${v} mm`
   },
   anomalia_tmax_c: {
-    titulo: "Anomalía de temperatura máxima (°C)",
-    cortes: [-1, 0, 1, 2, 3],
-    colores: ["#2f6f9e", "#7fb0c9", "#d9d2b4", "#e0a257", "#c9601f", "#8c2a10"],
-    color: v => escalonado(v, ESCALAS.anomalia_tmax_c),
+    titulo: "Anomalía de temperatura máxima, 30 días", unidad: "°C", tipo: "divergente",
+    polos: ["más frío", "más cálido"],
+    cortes: [-2, -1, -0.5, 0.5, 1, 2],
+    colores: ["#cde2fb", "#86b6ef", "#3987e5", NEUTRO, "#e66767", "#f29a9a", "#f9cccc"],
     formato: v => v == null ? "s/d" : `${v > 0 ? "+" : ""}${v} °C`
   }
 };
 
-function escalonado(v, escala) {
-  if (v == null) return "#3a444d";
+function claseEscalonada(v, escala) {
   let i = 0;
   while (i < escala.cortes.length && v >= escala.cortes[i]) i++;
-  return escala.colores[i];
+  return i;
 }
 
-const normaliza = s => (s || "").toUpperCase()
-  .normalize("NFD").replace(/[̀-ͯ]/g, "").trim();
-
-const fmtFecha = s => s ? new Date(s).toLocaleString("es-PE",
-  { dateStyle: "medium", timeStyle: "short" }) : "s/d";
-const fmtDia = s => s ? new Date(s + "T12:00:00").toLocaleDateString("es-PE",
-  { dateStyle: "medium" }) : "s/d";
+const normaliza = s => (s || "").toUpperCase().normalize("NFD").replace(/[̀-ͯ]/g, "").trim();
+const fmtFecha = s => s ? new Date(conZona(s)).toLocaleString("es-PE", { dateStyle: "medium", timeStyle: "short" }) : "s/d";
+const fmtDia = s => s ? new Date(s + "T12:00:00-05:00").toLocaleDateString("es-PE", { dateStyle: "medium" }) : "s/d";
+// las horas del JSON vienen en hora de Lima sin zona; se la agregamos para no depender del navegador
+const conZona = s => /[zZ]|[+-]\d\d:\d\d$/.test(s) ? s : (s.length === 10 ? s + "T23:59:00-05:00" : s + ":00-05:00").replace(/:00:00-05:00$/, ":00-05:00");
 
 let capaActual = "nivel_alerta";
-let nivelActual = "departamento";   // "departamento" | "provincia"
-let porUnidad = {};                 // clave -> registro del estado
+let nivelActual = "departamento";
+let porUnidad = {};
+let registros = [];
 let umbralNormalBaja = null;
-let capaGeo;
-let geoCache = {};
+let capaGeo, capaSeleccion = null;
+const geoCache = {};
 
-// Que archivo de estado y que GeoJSON usa cada nivel, y como se empareja un
-// poligono con su registro (departamentos por nombre; provincias por ubigeo,
-// porque el GeoJSON trae dos poligonos con el mismo codigo y nombre distinto).
 const NIVELES = {
   departamento: {
     estado: "data/estado.json", geo: "peru_departamentos.geojson", lista: "departamentos",
@@ -65,152 +72,210 @@ const NIVELES = {
   provincia: {
     estado: "data/estado_provincias.json", geo: "peru_provincias.geojson", lista: "provincias",
     claveGeo: f => f.properties.FIRST_IDPR, claveDato: d => d.ubigeo,
-    etiqueta: f => `${f.properties.NOMBPROV} (${f.properties.FIRST_NOMB})`
+    etiqueta: f => `${f.properties.NOMBPROV} · ${f.properties.FIRST_NOMB}`
   }
 };
 
-const mapa = L.map("mapa", { zoomControl: true, attributionControl: true })
+/* ---------- mapa ---------- */
+const mapa = L.map("mapa", { zoomControl: true, attributionControl: true, zoomSnap: 0.5 })
   .setView([-9.8, -75.2], 5);
-
-// Mapa base de OpenStreetMap: libre y sin clave (Carto dejo de servir sus
-// mosaicos sin API key). La atribucion es obligatoria por la licencia ODbL.
 L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-  maxZoom: 10, opacity: 0.45,
-  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+  maxZoom: 11, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 }).addTo(mapa);
 
-// Color de un departamento para la capa activa. En la capa de lluvia, las
-// zonas con normal muy baja se pintan por acumulado en mm (ver limitacion 4).
-function colorDe(d) {
-  if (!d || d.sin_datos || d.sin_normal) return "#3a444d";
-  if (capaActual === "anomalia_precipitacion_pct" && d.normal_baja) {
-    return ESCALAS.precipitacion_mm.color(d.precipitacion_obs_mm);
+// etiquetas de capitales (se ocultan si el zoom aleja demasiado)
+const capasEtiquetas = L.layerGroup().addTo(mapa);
+fetch("capitales.json").then(r => r.json()).then(caps => {
+  caps.forEach(c => L.marker([c.lat, c.lon], {
+    interactive: false, keyboard: false,
+    icon: L.divIcon({ className: "", iconSize: [0, 0], html: `<span class="etq-capital p${c.prioridad || 1}${c.lon > -70.5 ? " izq" : ""}">${c.nombre}</span>` })
+  }).addTo(capasEtiquetas));
+}).catch(() => {});
+// prioridad cartografica: con el zoom lejos solo quedan las capitales principales
+const ajustarEtiquetas = () => {
+  const z = mapa.getZoom(), cl = mapa.getContainer().classList;
+  cl.toggle("ocultar-etq", z < 4.5); cl.toggle("zoom-lejos", z < 6);
+};
+mapa.on("zoomend", ajustarEtiquetas); ajustarEtiquetas();
+
+// leyenda dentro del mapa
+const leyenda = L.control({ position: "bottomleft" });
+leyenda.onAdd = () => { const d = L.DomUtil.create("div", "leyenda"); L.DomEvent.disableClickPropagation(d); return d; };
+leyenda.addTo(mapa);
+
+/* ---------- color ---------- */
+const sinInfo = d => !d || d.sin_datos || d.sin_normal;
+function claseDe(d) {
+  if (sinInfo(d)) return { color: SIN_DATOS, op: 0.55 };
+  if (capaActual === "nivel_alerta") {
+    const c = ESCALAS.nivel_alerta.clases[Math.max(0, Math.min(3, d.nivel_alerta ?? 0))];
+    return { color: c.color, op: c.op };
   }
-  return ESCALAS[capaActual].color(d[capaActual]);
+  if (capaActual === "anomalia_precipitacion_pct" && d.normal_baja) {
+    const e = ESCALAS.precipitacion_mm, v = d.precipitacion_obs_mm;
+    return v == null ? { color: SIN_DATOS, op: 0.55 } : { color: e.colores[claseEscalonada(v, e)], op: 0.8 };
+  }
+  const e = ESCALAS[capaActual], v = d[capaActual];
+  if (v == null) return { color: SIN_DATOS, op: 0.55 };
+  const i = claseEscalonada(v, e);
+  return { color: e.colores[i], op: e.colores[i] === NEUTRO ? 0.35 : 0.8 };
 }
 
 function estilo(feature) {
   const d = porUnidad[NIVELES[nivelActual].claveGeo(feature)];
-  return {
-    fillColor: colorDe(d),
-    fillOpacity: 0.82, color: "#0f1419", weight: 1
-  };
+  const c = claseDe(d);
+  if (sinInfo(d)) return { fillColor: "#5a5f66", fillOpacity: 0.55, color: "#898781", weight: 1, dashArray: "4 3" };
+  // el trazo lleva el color del plano: es la separacion de 2 px entre rellenos vecinos
+  return { fillColor: c.color, fillOpacity: c.op, color: "#0d0f12", weight: nivelActual === "provincia" ? 0.8 : 1.2 };
 }
 
+function valorCapa(d) {
+  if (!d || d.sin_datos || d.sin_normal) return "sin información";
+  if (capaActual === "anomalia_precipitacion_pct" && d.normal_baja) return `${d.precipitacion_obs_mm} mm (normal muy baja)`;
+  return ESCALAS[capaActual].formato(d[capaActual]);
+}
+
+/* ---------- leyenda ---------- */
+function dibujarLeyenda() {
+  const e = ESCALAS[capaActual];
+  const caja = leyenda.getContainer();
+  let cuerpo = "";
+  if (e.tipo === "estado") {
+    cuerpo = `<div class="chips">` + e.clases.map(c =>
+      `<div class="chip${c.color === NEUTRO ? " neutro" : ""}"><i style="background:${c.color}">${c.v}</i>${c.etq}</div>`).join("") + `</div>`;
+  } else {
+    cuerpo = franja(e);
+  }
+  if (capaActual === "anomalia_precipitacion_pct") {
+    const m = ESCALAS.precipitacion_mm;
+    cuerpo += `<div class="sub-ley"><h4>${m.titulo} (mm)</h4>${franja(m)}
+      <p class="nota">Zonas con normal mensual menor a ${umbralNormalBaja ?? "—"} mm: ahí el porcentaje no informa y se pinta el acumulado.</p></div>`;
+  }
+  cuerpo += `<div class="chip" style="margin-top:.45rem"><i class="sin-info"></i>Sin información</div>`;
+  const html = `<h4>${e.titulo}${e.unidad ? ` (${e.unidad})` : ""}</h4>${cuerpo}${e.nota ? `<p class="nota">${e.nota}</p>` : ""}`;
+  caja.innerHTML = html;
+  document.getElementById("leyenda-movil").innerHTML = html;
+}
+
+function franja(e) {
+  const sw = e.colores.map(c => `<i style="background:${c}"></i>`).join("");
+  // cada corte va sobre la frontera entre dos muestras
+  const n = e.colores.length;
+  const cortes = e.cortes.map((c, i) => `<span style="left:${((i + 1) / n * 100).toFixed(2)}%">${c}</span>`).join("");
+  const polos = e.polos ? `<div class="polos"><span>← ${e.polos[0]}</span><span>${e.polos[1]} →</span></div>` : "";
+  return `<div class="franja">${sw}</div><div class="cortes">${cortes}</div>${polos}`;
+}
+
+/* ---------- detalle ---------- */
 function mostrarDetalle(d) {
   const caja = document.getElementById("detalle");
-  if (!d) {
-    caja.innerHTML = '<p class="vacio">Pasa el cursor sobre una unidad del mapa.</p>';
-    return;
-  }
+  if (!d) { caja.innerHTML = '<p class="vacio">Pasa el cursor o toca una unidad del mapa para ver su detalle.</p>'; return; }
   const f = (v, u, dec = 1) => v == null ? "s/d" : `${v.toFixed(dec)} ${u}`;
-  const sub = d.departamento ? `${d.departamento} · ${d.zona.replace(/_/g, " ")}`
-                             : `${d.capital} · ${d.zona.replace(/_/g, " ")}`;
+  const signo = (v, u, dec = 1) => v == null ? "s/d" : `${v > 0 ? "+" : ""}${v.toFixed(dec)} ${u}`;
+  const sub = d.departamento ? `${d.departamento} · ${d.zona.replace(/_/g, " ")}` : `${d.capital} · ${d.zona.replace(/_/g, " ")}`;
   if (d.sin_datos || d.sin_normal) {
-    caja.innerHTML = `<h2>${d.nombre}</h2><p class="vacio">${sub}</p>
-      <p class="nota"><strong>Sin información.</strong> ${d.motivo_sin_normal || d.motivo_sin_datos || ""}
-      ${d.temperatura_actual_c != null ? `<br>Temperatura actual: ${f(d.temperatura_actual_c, "°C")}` : ""}</p>`;
+    caja.innerHTML = `<h2>${d.nombre}</h2><p class="sub">${sub}</p>
+      <p class="nota"><strong>Sin información para esta unidad.</strong> ${d.motivo_sin_normal || d.motivo_sin_datos || ""}</p>
+      ${d.temperatura_actual_c != null ? `<dl><dt>Temperatura actual</dt><dd>${f(d.temperatura_actual_c, "°C")}</dd></dl>` : ""}`;
     return;
   }
-  const lluviaPct = d.normal_baja
-    ? `<dt>Anomalía de lluvia</dt><dd>no informativa</dd>
-       <dt>Anomalía (mm)</dt><dd>${d.anomalia_precipitacion_mm == null ? "s/d"
-         : (d.anomalia_precipitacion_mm > 0 ? "+" : "") + d.anomalia_precipitacion_mm + " mm"}</dd>`
-    : `<dt>Anomalía de lluvia</dt>
-       <dd>${ESCALAS.anomalia_precipitacion_pct.formato(d.anomalia_precipitacion_pct)}</dd>`;
-  const aviso = d.normal_baja
-    ? `<p class="nota">Normal mensual menor a ${umbralNormalBaja ?? "—"} mm: el porcentaje
-       exagera cualquier lluvia pequeña, por eso se muestra el acumulado en mm.</p>` : "";
-  const altitud = d.elevacion_modelo_m == null ? "" :
-    `<dt>Altitud del punto de malla</dt><dd>${d.elevacion_modelo_m} m</dd>` +
-    (d.altitud_capital_m == null ? "" :
-     `<dt>Altitud de la capital (ref.)</dt><dd>${d.altitud_capital_m} m</dd>`);
-  const hoy = d.lluvia_hoy_mm == null ? "" :
-    `<dt>Lluvia hoy (hasta la hora)</dt><dd>${f(d.lluvia_hoy_mm, "mm")}</dd>
-     <dt>Temperatura actual</dt><dd>${f(d.temperatura_actual_c, "°C")}</dd>`;
+  const al = ESCALAS.nivel_alerta.clases[d.nivel_alerta ?? 0];
+  const lluvia = d.normal_baja
+    ? `<dt>Anomalía de lluvia</dt><dd>${signo(d.anomalia_precipitacion_mm, "mm")}</dd>`
+    : `<dt>Anomalía de lluvia</dt><dd class="destacado">${ESCALAS.anomalia_precipitacion_pct.formato(d.anomalia_precipitacion_pct)}</dd>`;
   caja.innerHTML = `
-    <h2>${d.nombre}</h2>
-    <p class="vacio">${sub}</p>
+    <h2>${d.nombre}</h2><p class="sub">${sub}</p>
     <dl>
-      ${hoy}
-      <dt>Lluvia (30 días)</dt><dd>${f(d.precipitacion_obs_mm, "mm")}</dd>
-      <dt>Normal del periodo</dt><dd>${f(d.precipitacion_normal_mm, "mm")}</dd>
-      ${lluviaPct}
-      <dt>T. máxima media</dt><dd>${f(d.tmax_obs_c, "°C", 1)}</dd>
-      <dt>Anomalía térmica</dt>
-      <dd>${ESCALAS.anomalia_tmax_c.formato(d.anomalia_tmax_c)}</dd>
-      <dt>Pronóstico 7 días</dt><dd>${f(d.pronostico_7d_mm, "mm")}</dd>
-      <dt>Nivel de alerta</dt><dd>${ESCALAS.nivel_alerta.formato(d.nivel_alerta)}</dd>
-      ${altitud}
-    </dl>${aviso}`;
+      <dt>Nivel de alerta</dt><dd><span class="alerta"><i style="background:${al.color}"></i>${al.etq}</span></dd>
+      <div class="sep"></div>
+      ${d.lluvia_hoy_mm == null ? "" : `<dt>Lluvia de hoy, hasta la hora</dt><dd>${f(d.lluvia_hoy_mm, "mm")}</dd>
+      <dt>Temperatura actual</dt><dd>${f(d.temperatura_actual_c, "°C")}</dd><div class="sep"></div>`}
+      <dt>Lluvia, 30 días</dt><dd>${f(d.precipitacion_obs_mm, "mm")}</dd>
+      <dt>Normal del mes</dt><dd>${f(d.precipitacion_normal_mm, "mm")}</dd>
+      ${lluvia}
+      <dt>T. máxima media, 30 días</dt><dd>${f(d.tmax_obs_c, "°C")}</dd>
+      <dt>Anomalía térmica</dt><dd class="destacado">${ESCALAS.anomalia_tmax_c.formato(d.anomalia_tmax_c)}</dd>
+      <dt>Pronóstico de lluvia, 7 días</dt><dd>${f(d.pronostico_7d_mm, "mm")}</dd>
+      ${d.elevacion_modelo_m == null ? "" : `<div class="sep"></div><dt>Altitud del punto de malla</dt><dd>${Math.round(d.elevacion_modelo_m)} m</dd>`}
+      ${d.altitud_capital_m == null ? "" : `<dt>Altitud de la capital (ref.)</dt><dd>${d.altitud_capital_m} m</dd>`}
+    </dl>
+    ${d.normal_baja ? `<p class="nota" style="margin:.5rem 0 0">Normal mensual menor a ${umbralNormalBaja ?? "—"} mm: el porcentaje exageraría cualquier lluvia; se muestra la diferencia en mm.</p>` : ""}`;
 }
 
-function dibujarLeyenda() {
-  const escala = ESCALAS[capaActual];
-  const caja = document.getElementById("leyenda");
-  let filas;
-  if (capaActual === "nivel_alerta") {
-    filas = escala.colores.map((c, i) =>
-      `<div class="fila-leyenda"><span class="muestra" style="background:${c}"></span>${escala.etiquetas[i]}</div>`);
-  } else {
-    const t = capaActual === "anomalia_tmax_c" ? "°C" : "%";
-    filas = escala.colores.map((c, i) => {
-      const a = i === 0 ? "" : escala.cortes[i - 1];
-      const b = i === escala.colores.length - 1 ? "" : escala.cortes[i];
-      const txt = !a ? `< ${b} ${t}` : !b ? `≥ ${a} ${t}` : `${a} a ${b} ${t}`;
-      return `<div class="fila-leyenda"><span class="muestra" style="background:${c}"></span>${txt}</div>`;
-    });
-  }
-  let extra = "";
-  if (capaActual === "anomalia_precipitacion_pct") {
-    const mm = ESCALAS.precipitacion_mm;
-    const filasMm = mm.colores.map((c, i) => {
-      const a = i === 0 ? 0 : mm.cortes[i - 1];
-      const b = i === mm.colores.length - 1 ? "" : mm.cortes[i];
-      const txt = !b ? `≥ ${a} mm` : `${a} a ${b} mm`;
-      return `<div class="fila-leyenda"><span class="muestra" style="background:${c}"></span>${txt}</div>`;
-    });
-    extra = `<strong class="sub-leyenda">${mm.titulo}</strong>` + filasMm.join("") +
-      `<p class="nota">Estas zonas tienen normal muy baja; el porcentaje no es informativo.</p>`;
-  }
-  caja.innerHTML = `<strong>${escala.titulo}</strong>` + filas.join("") + extra;
-}
-
-function pintarFuentes(estado) {
-  const f = estado.fuentes;
-  const lista = document.getElementById("fuentes");
-  if (!f) {
-    lista.innerHTML = "<li>Este archivo no trae el detalle por fuente; se actualiza en la próxima corrida.</li>";
-    return;
-  }
-  const filas = [
-    ["Condiciones actuales (Open-Meteo)", fmtFecha(f.condiciones_actuales?.hora), "cada hora"],
-    ["Lluvia de los últimos 30 días hasta", fmtDia(f.lluvia_30_dias?.hasta), "rezago de 1 día"],
-    ["Pronóstico 7 días hasta", fmtDia(f.pronostico_7_dias?.hasta), "pronóstico"],
-    ["TSM semanal Niño 3.4, semana centrada en", f.tsm_semanal ? fmtDia(f.tsm_semanal.semana_centrada) : "no publicada", "semanal, lunes"],
-    ["ONI (trimestre móvil)", f.oni?.trimestre ?? "s/d", "mensual"],
-    ["Normal 1991–2020 (ERA5)", "fija", "no cambia"]
-  ];
-  lista.innerHTML = filas.map(([a, b, c]) =>
-    `<li><span>${a}</span><strong>${b}</strong><em>${c}</em></li>`).join("");
-}
+/* ---------- cabecera ENSO y frescura ---------- */
+const CENTRO_TRIMESTRE = { DJF: 1, JFM: 2, FMA: 3, MAM: 4, AMJ: 5, MJJ: 6, JJA: 7, JAS: 8, ASO: 9, SON: 10, OND: 11, NDJ: 12 };
 
 function pintarCabecera(estado) {
-  document.getElementById("oni-valor").textContent =
-    (estado.oni.oni > 0 ? "+" : "") + estado.oni.oni.toFixed(2);
-  document.getElementById("oni-estado").textContent = estado.oni.estado;
-  document.getElementById("oni-trimestre").textContent =
-    `${estado.oni.trimestre} ${estado.oni.anio} · TSM ${estado.oni.tsm} °C · trimestral`;
+  const o = estado.oni;
+  document.getElementById("oni-valor").textContent = (o.oni > 0 ? "+" : "") + o.oni.toFixed(2);
+  document.getElementById("oni-estado").textContent = (o.estado || "").replace("Nino", "Niño").replace("Nina", "Niña");
+  document.getElementById("oni-trimestre").textContent = `${o.trimestre} ${o.anio} · media móvil de 3 meses`;
   const s = estado.tsm_semanal;
-  document.getElementById("semanal-valor").textContent = s
-    ? (s.anomalia > 0 ? "+" : "") + s.anomalia.toFixed(2) + " °C" : "s/d";
-  document.getElementById("semanal-nota").textContent = s
-    ? `semana centrada en ${fmtDia(s.semana_centrada)} · semanal`
-    : "no publicada en la última corrida · semanal";
+  document.getElementById("semanal-valor").textContent = s ? (s.anomalia > 0 ? "+" : "") + s.anomalia.toFixed(2) + " °C" : "s/d";
+  document.getElementById("semanal-nota").textContent = s ? `semana centrada en ${fmtDia(s.semana_centrada)}` : "no publicada en la última corrida";
   document.getElementById("actualizado").textContent = fmtFecha(estado.actualizado);
-  pintarFuentes(estado);
+  pintarFrescura(estado);
 }
 
+function pintarFrescura(estado) {
+  const f = estado.fuentes || {};
+  const ahora = Date.parse(conZona(estado.actualizado));
+  const horas = iso => iso ? Math.max(0, (ahora - Date.parse(conZona(iso))) / 36e5) : null;
+  let hOni = null;
+  if (f.oni?.trimestre) {
+    const [tri, anio] = f.oni.trimestre.split(" ");
+    const m = CENTRO_TRIMESTRE[tri];
+    if (m) hOni = horas(`${anio}-${String(m).padStart(2, "0")}-15`);
+  }
+  const fuentes = [
+    { n: "Condiciones de hoy", h: horas(f.condiciones_actuales?.hora), det: "cada hora" },
+    { n: "Lluvia 30 días", h: horas(f.lluvia_30_dias?.hasta), det: "hasta ayer" },
+    { n: "TSM semanal", h: f.tsm_semanal ? horas(f.tsm_semanal.semana_centrada) : null, det: "los lunes" },
+    { n: "ONI", h: hOni, det: "centro del trimestre" },
+  ];
+  // eje logaritmico de edad (ahora ... 3 meses) y la climatologia fija al extremo derecho
+  const X0 = 36, X1 = 280, HMAX = 2200;
+  const x = h => X0 + (Math.log10(1 + h) / Math.log10(1 + HMAX)) * (X1 - X0);
+  const ticks = [[6, "6 h"], [24, "1 d"], [168, "1 sem"], [720, "1 mes"]];
+  const clamp = v => Math.min(Math.max(v, 30), 300);
+  let svg = `<line class="eje" x1="${X0}" y1="40" x2="${X1 + 30}" y2="40"/>`;
+  svg += `<line class="tick" x1="${X0}" y1="36" x2="${X0}" y2="44"/><text class="ahora" x="${X0}" y="58" text-anchor="middle">ahora</text>`;
+  ticks.forEach(([h, t]) => svg += `<line class="tick" x1="${x(h)}" y1="37" x2="${x(h)}" y2="43"/><text class="tick-txt" x="${x(h)}" y="58" text-anchor="middle">${t}</text>`);
+  svg += `<circle class="punto fijo" cx="${X1 + 30}" cy="40" r="3.5"/><text class="tick-txt" x="${X1 + 30}" y="58" text-anchor="middle">normal</text>`;
+  fuentes.forEach((s, i) => {
+    if (s.h == null) return;
+    const cx = x(Math.min(s.h, HMAX));
+    const arriba = i % 2 === 0;
+    svg += `<line class="tick" x1="${cx}" y1="${arriba ? 24 : 40}" x2="${cx}" y2="${arriba ? 40 : 56}" opacity=".6"/>`;
+    svg += `<circle class="punto" cx="${cx}" cy="40" r="4"/>`;
+    svg += `<text class="punto-txt" x="${clamp(cx)}" y="${arriba ? 19 : 72}" text-anchor="middle">${s.n}</text>`;
+  });
+  document.getElementById("frescura").innerHTML = svg;
+
+  const edad = h => h == null ? "s/d" : h < 1.5 ? "menos de 1 h" : h < 48 ? `${Math.round(h)} h` : h < 24 * 21 ? `${Math.round(h / 24)} d` : `${Math.round(h / 24 / 7)} sem`;
+  const filas = fuentes.map(s => `<li><span>${s.n} · ${s.det}</span><strong>${edad(s.h)}</strong></li>`);
+  filas.push(`<li><span>Pronóstico de lluvia hasta</span><strong>${fmtDia(f.pronostico_7_dias?.hasta)}</strong></li>`);
+  filas.push(`<li><span>Normal 1991–2020</span><strong>fija</strong></li>`);
+  document.getElementById("fuentes").innerHTML = filas.join("");
+}
+
+/* ---------- tabla ---------- */
+function pintarTabla() {
+  const prov = nivelActual === "provincia";
+  const orden = [...registros].sort((a, b) => (b.nivel_alerta ?? -1) - (a.nivel_alerta ?? -1)
+    || (b.anomalia_precipitacion_pct ?? -999) - (a.anomalia_precipitacion_pct ?? -999));
+  const n = v => v == null ? "s/d" : v;
+  const filas = orden.map(d => `<tr><td>${d.nombre}</td>${prov ? `<td>${d.departamento}</td>` : ""}
+    <td class="num">${n(d.precipitacion_obs_mm)}</td><td class="num">${n(d.precipitacion_normal_mm)}</td>
+    <td class="num">${d.normal_baja ? `${n(d.anomalia_precipitacion_mm)} mm` : ESCALAS.anomalia_precipitacion_pct.formato(d.anomalia_precipitacion_pct)}</td>
+    <td class="num">${ESCALAS.anomalia_tmax_c.formato(d.anomalia_tmax_c)}</td>
+    <td>${d.sin_datos || d.sin_normal ? "sin información" : ESCALAS.nivel_alerta.formato(d.nivel_alerta)}</td></tr>`);
+  document.getElementById("tabla").innerHTML = `<thead><tr><th>Unidad</th>${prov ? "<th>Departamento</th>" : ""}
+    <th>Lluvia 30 d (mm)</th><th>Normal (mm)</th><th>Anom. lluvia</th><th>Anom. T máx</th><th>Alerta</th></tr></thead>
+    <tbody>${filas.join("")}</tbody>`;
+}
+
+/* ---------- carga por nivel ---------- */
 function cargarNivel(nivel) {
   const cfg = NIVELES[nivel];
   const geoP = geoCache[nivel] || (geoCache[nivel] = fetch(cfg.geo).then(r => r.json()));
@@ -220,45 +285,52 @@ function cargarNivel(nivel) {
   ]).then(([estado, geo]) => {
     nivelActual = nivel;
     umbralNormalBaja = estado.umbral_normal_baja_mm ?? null;
+    registros = estado[cfg.lista];
     porUnidad = {};
-    estado[cfg.lista].forEach(d => { porUnidad[cfg.claveDato(d)] = d; });
+    registros.forEach(d => { porUnidad[cfg.claveDato(d)] = d; });
     pintarCabecera(estado);
-
-    const aviso = document.getElementById("aviso-nivel");
-    aviso.textContent = nivel === "provincia"
-      ? `Provincias: ${estado[cfg.lista].length} con cobertura, ${estado.unidades_sin_datos ?? 0} sin información (en gris). Resolución del modelo ~9 km; Putumayo figura dentro de Maynas.`
+    document.getElementById("aviso-nivel").textContent = nivel === "provincia"
+      ? `${registros.length} provincias; ${estado.unidades_sin_datos ?? 0} sin información (en gris). Modelo de ~9 km; Putumayo figura dentro de Maynas.`
       : "";
 
     if (capaGeo) mapa.removeLayer(capaGeo);
+    capaSeleccion = null;
     capaGeo = L.geoJSON(geo, {
       style: estilo,
       onEachFeature: (feature, layer) => {
-        const d = porUnidad[cfg.claveGeo(feature)];
-        layer.bindTooltip(cfg.etiqueta(feature), { sticky: true });
+        const clave = cfg.claveGeo(feature);
+        layer.bindTooltip(() => `${cfg.etiqueta(feature)} · <b>${valorCapa(porUnidad[clave])}</b>`, { sticky: true, direction: "top", opacity: 1 });
         layer.on({
-          mouseover: e => { e.target.setStyle({ weight: 2.5, color: "#e6edf3" }); mostrarDetalle(d); },
-          mouseout: e => capaGeo.resetStyle(e.target),
-          click: () => mapa.fitBounds(layer.getBounds())
+          mouseover: e => { if (capaSeleccion !== layer) e.target.setStyle({ weight: 2.5, color: "#f0efec" }); mostrarDetalle(porUnidad[clave]); },
+          mouseout: e => { if (capaSeleccion !== layer) capaGeo.resetStyle(e.target); },
+          click: e => {
+            if (capaSeleccion && capaSeleccion !== layer) capaGeo.resetStyle(capaSeleccion);
+            capaSeleccion = layer;
+            layer.setStyle({ weight: 2.5, color: "#f0efec" }); layer.bringToFront();
+            mostrarDetalle(porUnidad[clave]);
+            L.DomEvent.stopPropagation(e);
+          }
         });
       }
     }).addTo(mapa);
+    capasEtiquetas.eachLayer(l => l.setZIndexOffset(1000));
     dibujarLeyenda();
+    pintarTabla();
+    mostrarDetalle(null);
   });
 }
 
 cargarNivel("departamento").then(() => {
-  mapa.fitBounds(capaGeo.getBounds(), { padding: [12, 12] });
+  mapa.fitBounds(capaGeo.getBounds(), { padding: [10, 10] });
 }).catch(err => {
   document.getElementById("detalle").innerHTML =
-    `<p class="vacio">No se pudieron cargar los datos (${err.message}).
-     Ejecuta <code>python scripts/actualizar.py</code> para generarlos.</p>`;
+    `<p class="vacio">No se pudieron cargar los datos (${err.message}). Ejecuta <code>python scripts/actualizar.py</code> para generarlos.</p>`;
 });
 
 document.querySelectorAll('input[name="nivel"]').forEach(input => {
   input.addEventListener("change", e => {
     cargarNivel(e.target.value).catch(err => {
-      document.getElementById("aviso-nivel").textContent =
-        `Nivel provincial todavía sin datos publicados (${err.message}).`;
+      document.getElementById("aviso-nivel").textContent = `Nivel provincial todavía sin datos publicados (${err.message}).`;
       document.querySelector('input[name="nivel"][value="departamento"]').checked = true;
     });
   });
@@ -267,7 +339,7 @@ document.querySelectorAll('input[name="nivel"]').forEach(input => {
 document.querySelectorAll('input[name="capa"]').forEach(input => {
   input.addEventListener("change", e => {
     capaActual = e.target.value;
-    if (capaGeo) capaGeo.setStyle(estilo);
+    if (capaGeo) { capaGeo.setStyle(estilo); if (capaSeleccion) capaSeleccion.setStyle({ weight: 2.5, color: "#f0efec" }); }
     dibujarLeyenda();
   });
 });

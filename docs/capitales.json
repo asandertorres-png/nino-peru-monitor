@@ -1,0 +1,170 @@
+[
+ {
+  "nombre": "Chachapoyas",
+  "departamento": "Amazonas",
+  "lat": -6.23,
+  "lon": -77.87,
+  "prioridad": 2
+ },
+ {
+  "nombre": "Huaraz",
+  "departamento": "Ancash",
+  "lat": -9.53,
+  "lon": -77.53,
+  "prioridad": 1
+ },
+ {
+  "nombre": "Abancay",
+  "departamento": "Apurimac",
+  "lat": -13.63,
+  "lon": -72.88,
+  "prioridad": 2
+ },
+ {
+  "nombre": "Arequipa",
+  "departamento": "Arequipa",
+  "lat": -16.41,
+  "lon": -71.54,
+  "prioridad": 1
+ },
+ {
+  "nombre": "Ayacucho",
+  "departamento": "Ayacucho",
+  "lat": -13.16,
+  "lon": -74.22,
+  "prioridad": 2
+ },
+ {
+  "nombre": "Cajamarca",
+  "departamento": "Cajamarca",
+  "lat": -7.16,
+  "lon": -78.51,
+  "prioridad": 1
+ },
+ {
+  "nombre": "Cusco",
+  "departamento": "Cusco",
+  "lat": -13.52,
+  "lon": -71.97,
+  "prioridad": 1
+ },
+ {
+  "nombre": "Huancavelica",
+  "departamento": "Huancavelica",
+  "lat": -12.79,
+  "lon": -74.97,
+  "prioridad": 2
+ },
+ {
+  "nombre": "Huanuco",
+  "departamento": "Huanuco",
+  "lat": -9.93,
+  "lon": -76.24,
+  "prioridad": 2
+ },
+ {
+  "nombre": "Ica",
+  "departamento": "Ica",
+  "lat": -14.07,
+  "lon": -75.73,
+  "prioridad": 1
+ },
+ {
+  "nombre": "Huancayo",
+  "departamento": "Junin",
+  "lat": -12.07,
+  "lon": -75.21,
+  "prioridad": 1
+ },
+ {
+  "nombre": "Trujillo",
+  "departamento": "La Libertad",
+  "lat": -8.11,
+  "lon": -79.03,
+  "prioridad": 1
+ },
+ {
+  "nombre": "Chiclayo",
+  "departamento": "Lambayeque",
+  "lat": -6.77,
+  "lon": -79.84,
+  "prioridad": 1
+ },
+ {
+  "nombre": "Lima",
+  "departamento": "Lima",
+  "lat": -12.05,
+  "lon": -77.04,
+  "prioridad": 1
+ },
+ {
+  "nombre": "Iquitos",
+  "departamento": "Loreto",
+  "lat": -3.75,
+  "lon": -73.25,
+  "prioridad": 1
+ },
+ {
+  "nombre": "Puerto Maldonado",
+  "departamento": "Madre de Dios",
+  "lat": -12.6,
+  "lon": -69.19,
+  "prioridad": 1
+ },
+ {
+  "nombre": "Moquegua",
+  "departamento": "Moquegua",
+  "lat": -17.19,
+  "lon": -70.93,
+  "prioridad": 2
+ },
+ {
+  "nombre": "Cerro de Pasco",
+  "departamento": "Pasco",
+  "lat": -10.68,
+  "lon": -76.26,
+  "prioridad": 2
+ },
+ {
+  "nombre": "Piura",
+  "departamento": "Piura",
+  "lat": -5.19,
+  "lon": -80.63,
+  "prioridad": 1
+ },
+ {
+  "nombre": "Puno",
+  "departamento": "Puno",
+  "lat": -15.84,
+  "lon": -70.03,
+  "prioridad": 1
+ },
+ {
+  "nombre": "Moyobamba",
+  "departamento": "San Martin",
+  "lat": -6.03,
+  "lon": -76.97,
+  "prioridad": 2
+ },
+ {
+  "nombre": "Tacna",
+  "departamento": "Tacna",
+  "lat": -18.01,
+  "lon": -70.25,
+  "prioridad": 1
+ },
+ {
+  "nombre": "Tumbes",
+  "departamento": "Tumbes",
+  "lat": -3.57,
+  "lon": -80.46,
+  "prioridad": 1
+ },
+ {
+  "nombre": "Pucallpa",
+  "departamento": "Ucayali",
+  "lat": -8.38,
+  "lon": -74.55,
+  "prioridad": 1
+ }
+]

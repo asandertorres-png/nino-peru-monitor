@@ -4,62 +4,84 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Monitor El Niño — Perú</title>
+<meta name="description" content="Anomalías climáticas por departamento y provincia del Perú frente a la normal 1991–2020, con el estado del ENSO. Actualización cada 6 horas.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header>
-  <h1>Monitor El Niño · Perú</h1>
-  <p class="sub">Anomalías climáticas por departamento frente a la normal 1991–2020.
-     Actualización cada 6 horas. No es tiempo real: cada fuente tiene su propio rezago.</p>
+<header class="barra">
+  <div>
+    <span class="eyebrow">Anomalías frente a la normal 1991–2020 · actualización cada 6 h · no es tiempo real</span>
+    <h1>Monitor El Niño <span>Perú</span></h1>
+  </div>
+  <div class="segmento" role="radiogroup" aria-label="Unidad del mapa">
+    <label><input type="radio" name="nivel" value="departamento" checked>Departamentos</label>
+    <label><input type="radio" name="nivel" value="provincia">Provincias</label>
+  </div>
 </header>
 
-<section id="estado-enso">
-  <div class="tarjeta">
-    <span class="etiqueta">ONI · Niño 3.4 · trimestral</span>
-    <strong id="oni-valor">—</strong>
-    <span id="oni-estado" class="pill">—</span>
-    <span id="oni-trimestre" class="nota">—</span>
-  </div>
-  <div class="tarjeta">
-    <span class="etiqueta">TSM Niño 3.4 · semanal</span>
-    <strong id="semanal-valor">—</strong>
-    <span id="semanal-nota" class="nota">—</span>
-  </div>
-  <div class="tarjeta">
-    <span class="etiqueta">Última actualización del monitor</span>
-    <strong id="actualizado">—</strong>
-    <ul id="fuentes" class="lista-fuentes"></ul>
-  </div>
-</section>
-
 <main>
-  <div id="mapa"></div>
-  <aside id="panel">
-    <div id="controles">
-      <div class="grupo"><span class="etiqueta">Unidad</span>
-        <label><input type="radio" name="nivel" value="departamento" checked> Departamentos (25)</label>
-        <label><input type="radio" name="nivel" value="provincia"> Provincias</label>
-      </div>
-      <p id="aviso-nivel" class="nota"></p>
+  <section class="mapa-col">
+    <div class="capas">
       <span class="etiqueta">Capa</span>
-      <label><input type="radio" name="capa" value="nivel_alerta" checked> Nivel de alerta</label>
-      <label><input type="radio" name="capa" value="anomalia_precipitacion_pct"> Anomalía de lluvia (%)</label>
-      <label><input type="radio" name="capa" value="anomalia_tmax_c"> Anomalía de temperatura (°C)</label>
+      <div class="segmento" role="radiogroup" aria-label="Capa del mapa">
+        <label><input type="radio" name="capa" value="nivel_alerta" checked>Nivel de alerta</label>
+        <label><input type="radio" name="capa" value="anomalia_precipitacion_pct">Lluvia</label>
+        <label><input type="radio" name="capa" value="anomalia_tmax_c">Temperatura</label>
+      </div>
     </div>
-    <div id="detalle"><p class="vacio">Pasa el cursor sobre un departamento para ver su detalle.</p></div>
-    <div id="leyenda"></div>
+    <div id="mapa" role="region" aria-label="Mapa del Perú con anomalías por unidad"></div>
+    <div id="leyenda-movil" class="leyenda" aria-label="Leyenda"></div>
+    <p id="aviso-nivel"></p>
+    <details class="tabla">
+      <summary>Ver la tabla de valores (misma información que el mapa)</summary>
+      <div class="scroll"><table id="tabla"></table></div>
+    </details>
+  </section>
+
+  <aside id="panel">
+    <section class="bloque">
+      <h3>Estado del ENSO · Pacífico central</h3>
+      <div class="enso">
+        <div class="tile">
+          <span class="etiqueta">ONI · trimestral</span>
+          <span class="valor" id="oni-valor">—</span>
+          <span id="oni-estado" class="pill">—</span>
+          <span id="oni-trimestre" class="nota">—</span>
+        </div>
+        <div class="tile">
+          <span class="etiqueta">TSM Niño 3.4 · semanal</span>
+          <span class="valor" id="semanal-valor">—</span>
+          <span id="semanal-nota" class="nota">—</span>
+        </div>
+      </div>
+      <p class="nota" style="margin:.55rem 0 0">Ambos miden el Pacífico central (Niño 3.4). El Niño costero se mide con el ICEN (Niño 1+2), pendiente de incorporar.</p>
+    </section>
+
+    <section class="bloque" id="detalle">
+      <p class="vacio">Pasa el cursor o toca una unidad del mapa para ver su detalle.</p>
+    </section>
+
+    <section class="bloque frescura">
+      <h3>Qué tan viejo es cada dato</h3>
+      <svg id="frescura" viewBox="0 0 330 80" aria-label="Edad de cada fuente respecto de la última actualización"></svg>
+      <ul id="fuentes" class="lista-fuentes"></ul>
+      <p class="nota" style="margin:.5rem 0 0">Última actualización del monitor: <strong id="actualizado">—</strong></p>
+    </section>
   </aside>
 </main>
 
 <footer>
-  <p><strong>No es tiempo real.</strong> La normal (ERA5) tiene varios días de rezago,
-     el ONI es mensual y la TSM semanal sale los lunes. Lo más reciente es la lluvia
-     y la temperatura de hoy, que vienen de la API de Open-Meteo y se refrescan cada hora.</p>
+  <p><strong>No es tiempo real.</strong> La normal (ERA5) tiene varios días de rezago, el ONI es mensual y la TSM semanal
+     sale los lunes. Lo más reciente es la lluvia y la temperatura de hoy, de la API de Open-Meteo, que se refresca cada hora.</p>
   <p>Fuentes: NOAA/CPC (índice ONI y TSM semanal), ERA5 y ERA5-Land / Open-Meteo (clima observado y normales).
      Límites departamentales y provinciales: <a href="https://github.com/juaneladio/peru-geojson">juaneladio/peru-geojson</a> (MPL-2.0).
-     Los niveles de alerta son indicativos y no sustituyen los avisos oficiales de
-     SENAMHI, ENFEN ni INDECI. Metodología en <a href="METODOLOGIA.md">METODOLOGIA.md</a>.</p>
+     Mapa base © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>.
+     Los niveles de alerta son indicativos y no sustituyen los avisos oficiales de SENAMHI, ENFEN ni INDECI.
+     Metodología en <a href="METODOLOGIA.md">METODOLOGIA.md</a>.</p>
 </footer>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
