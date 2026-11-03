@@ -13,6 +13,9 @@ Dos diseños alternativos quedaron descartados **con cita**, no por intuición.
 [MARCO_TEORICO.md](MARCO_TEORICO.md) tiene los cinco pilares teóricos y las
 diez predicciones contrastables que de ellos salen; **reformuló H1 y agregó
 H4b, H5 y H6**, que están abajo marcadas.
+[OPERACIONALIZACION.md](OPERACIONALIZACION.md) tiene la matriz de dimensiones e
+indicadores de las dos variables, con dimensiones de categoría **económica** y
+no física, y su correspondencia con cada hipótesis.
 
 ---
 

@@ -131,6 +131,48 @@ Esto importa porque elimina dos de los diseños que parecían disponibles.
 | Briceño-Ávalos et al. (2025) | Serie nacional 1950–2023 y **panel regional 2014–2023**; PBI per cápita contra temperatura, lluvia, El Niño y La Niña. Temperatura negativa; lluvia no clara; **la duración de El Niño y La Niña resultó no significativa**; solo los Niños extraordinarios de 1957, 1972, 1983 y 1998 salen negativos | **Debilita el panel de PBI departamental anual**: con pocos años y agregación anual, el efecto no se detecta |
 | Jury y Borbor-Ponce (2026, *Atmosphere*) | Sensibilidad del rendimiento de cultivos en la **sierra sur** (7–15° S, 70–77° O), 1961–2024; **La Niña favorece** cítricos, algodón, fruta y caña | Confirma que el signo puede invertirse por región y cultivo. Es climatología, no economía |
 | Yglesias-González et al. (2023, *PLOS ONE*) | Primer estudio de caso del Niño costero 2017 sobre economía, salud y gobernanza; pide expresamente **análisis de riesgo a nivel local** | Descriptivo. Deja abierta la cuantificación |
+| **Crofils et al. (2024, *JEEM*)** — *añadido el 3 nov 2026, ver §2.1* | Efectos dinámicos de shocks meteorológicos sobre la **producción agrícola mensual del Perú** con **proyecciones locales**. Shock adverso medido como **exceso de calor o de lluvia**; caída de ~5 % mensual hasta **cuatro meses consecutivos**; respuesta dependiente de tiempo y espacio, mayor en selva y en temporada de crecimiento. A nivel macro, los shocks **elevan la inflación** y reducen la producción agregada | **Es el antecedente más cercano que existe.** Ocupa el eslabón clima → producción y ya documenta el alza de inflación a nivel agregado |
+
+### 2.1 Corrección: un antecedente que la primera búsqueda no encontró
+
+Crofils et al. (2024, *Journal of Environmental Economics and Management*)
+apareció al buscar cómo la economía **mide** los shocks meteorológicos, no al
+buscar antecedentes peruanos. Es el trabajo más cercano a esta tesis que existe,
+y corresponde decirlo con precisión en lugar de minimizarlo:
+
+**Lo que ya hace, y que por tanto no es aporte nuestro:**
+
+- panel **mensual** del Perú, no anual: el argumento de frecuencia a favor de
+  nuestro diseño ya está hecho por ellos;
+- **proyecciones locales**, que es la especificación C del protocolo;
+- heterogeneidad por tipo de cultivo, geografía y estación;
+- y, sobre todo, **ya reportan que los shocks meteorológicos elevan la
+  inflación** a nivel macroeconómico.
+
+**Lo que deja abierto, y sigue siendo la brecha:**
+
+| Dimensión | Crofils et al. (2024) | Esta tesis |
+|---|---|---|
+| Variable dependiente | Producción agrícola; inflación **agregada** | **IPC de alimentos por ciudad** |
+| Unidad espacial | Regiones por tipo de geografía | **26 ciudades**, con exposición económica propia |
+| Índice del océano | Shock meteorológico local | **ONI frente a ICEN**, separados |
+| Canal de expectativas | No separado | Señal frente a realización (H1) |
+| Integración de mercados | No tratada | H5 |
+
+**Efecto neto sobre el proyecto: la brecha se estrecha y se vuelve más
+exigente.** Ya no alcanza con "estimar el efecto en el Perú con datos
+mensuales": eso está hecho, y bien, en un journal de primer nivel del campo. Lo
+que queda en pie es lo que se enunció en la brecha 1 — **la desagregación urbana,
+la separación ONI/ICEN y los canales de expectativas y de costos de
+transacción** — y ahora con un antecedente que hay que citar, replicar en su
+parte común y superar en la propia. Es una buena noticia disfrazada de mala: el
+diseño queda validado por un JEEM, y el aporte queda obligado a ser más preciso.
+
+También conviene leerlo como advertencia de resultado posible: Arango-Castillo
+et al. (2025), con un panel regional de inflación en México, **no encuentran
+efecto de corto plazo** y solo hallan efecto de largo plazo en precipitación.
+Que el coeficiente salga no significativo es un resultado admisible, y el
+protocolo debe estar escrito para que lo sea.
 
 **Dos conclusiones incómodas pero útiles:**
 
@@ -314,6 +356,9 @@ estimación.
 - Briceño-Ávalos, H. R., More-Sánchez, V. A. y Fierro-Bravo, M. (2025). Efectos
   del cambio climático sobre el bienestar. *Prohominum*.
   DOI 10.47606/acven/ph0420.
+- Crofils, C. et al. (2024). The dynamic effects of weather shocks on
+  agricultural production. *Journal of Environmental Economics and
+  Management*.
 - Emediegwu, L. (2024). Assessing the Asymmetric Effect of Global Climate
   Anomalies on Food Prices: Evidence from Local Prices. *Environmental and
   Resource Economics*.
