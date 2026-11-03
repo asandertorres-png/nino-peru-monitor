@@ -57,6 +57,7 @@ const conZona = s => /[zZ]|[+-]\d\d:\d\d$/.test(s) ? s : (s.length === 10 ? s + 
 
 let capaActual = "nivel_alerta";
 let nivelActual = "departamento";
+let mesActual = new Date().getMonth() + 1;
 let porUnidad = {};
 let registros = [];
 let umbralNormalBaja = null;
@@ -203,7 +204,9 @@ function mostrarDetalle(d) {
       ${d.elevacion_modelo_m == null ? "" : `<div class="sep"></div><dt>Altitud del punto de malla</dt><dd>${Math.round(d.elevacion_modelo_m)} m</dd>`}
       ${d.altitud_capital_m == null ? "" : `<dt>Altitud de la capital (ref.)</dt><dd>${d.altitud_capital_m} m</dd>`}
     </dl>
-    ${d.normal_baja ? `<p class="nota" style="margin:.5rem 0 0">Normal mensual menor a ${umbralNormalBaja ?? "—"} mm: el porcentaje exageraría cualquier lluvia; se muestra la diferencia en mm.</p>` : ""}`;
+    ${d.normal_baja ? `<p class="nota" style="margin:.5rem 0 0">Normal mensual menor a ${umbralNormalBaja ?? "—"} mm: el porcentaje exageraría cualquier lluvia; se muestra la diferencia en mm.</p>` : ""}
+    <div id="detalle-analitica"></div>`;
+  window.analitica?.detalle(d, nivelActual, nivelActual === "departamento" ? d.nombre : d.ubigeo, mesActual);
 }
 
 /* ---------- mapa de regiones Nino ---------- */
@@ -267,6 +270,7 @@ function pintarCabecera(estado) {
   document.getElementById("actualizado").textContent = fmtFecha(estado.actualizado);
   pintarFrescura(estado);
   pintarEnso(estado);
+  window.analitica?.cabecera();
 }
 
 function pintarFrescura(estado) {
@@ -345,6 +349,7 @@ function cargarNivel(nivel) {
   ]).then(([estado, geo]) => {
     nivelActual = nivel;
     umbralNormalBaja = estado.umbral_normal_baja_mm ?? null;
+    mesActual = estado.actualizado ? parseInt(estado.actualizado.slice(5, 7), 10) : mesActual;
     registros = estado[cfg.lista];
     porUnidad = {};
     registros.forEach(d => { porUnidad[cfg.claveDato(d)] = d; });
@@ -377,6 +382,7 @@ function cargarNivel(nivel) {
     dibujarLeyenda();
     pintarTabla();
     mostrarDetalle(null);
+    window.analitica?.resumen(estado, nivel, cfg.lista);
   }).finally(fin);
 }
 

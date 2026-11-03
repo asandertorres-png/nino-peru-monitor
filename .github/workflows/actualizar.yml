@@ -14,6 +14,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # historial.py reconstruye desde los snapshots commiteados
 
       - uses: actions/setup-python@v5
         with:
@@ -32,6 +34,11 @@ jobs:
 
       - name: Construir estado por departamento
         run: python scripts/actualizar.py
+        env:
+          PYTHONPATH: scripts
+
+      - name: Historial diario (una fila por dia)
+        run: python scripts/historial.py
         env:
           PYTHONPATH: scripts
 
