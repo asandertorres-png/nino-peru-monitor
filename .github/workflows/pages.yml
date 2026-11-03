@@ -1,0 +1,57 @@
+# Publica la carpeta docs/ en GitHub Pages usando el despliegue por Actions.
+#
+# Por que asi y no "Deploy from a branch": los commits de datos que hace el
+# cron usan GITHUB_TOKEN, y GitHub no dispara otros workflows a partir de esos
+# pushes. Por eso este workflow tambien escucha la finalizacion del flujo de
+# actualizacion (workflow_run): cada corrida del cron republica el sitio.
+#
+# actions/configure-pages con enablement: true activa Pages la primera vez que
+# corre, sin pasar por Settings. Requiere que el repositorio sea publico (en
+# cuentas gratuitas Pages no esta disponible para repos privados).
+
+name: Publicar sitio en GitHub Pages
+
+on:
+  push:
+    branches: [main]
+    paths: ["docs/**"]
+  workflow_run:
+    workflows: ["Actualizar datos del monitor"]
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  publicar:
+    # tras el cron, publicar solo si la actualizacion termino bien
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main   # con workflow_run el checkout por defecto no apunta a main
+
+      - name: Activar Pages si hace falta
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - name: Empaquetar docs/
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+
+      - name: Desplegar
+        id: deploy
+        uses: actions/deploy-pages@v4
