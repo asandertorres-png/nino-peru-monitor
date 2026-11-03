@@ -22,12 +22,12 @@ norte. Ambos pueden divergir: el Niño costero de 2017 fue intenso en el Niño
 proyecto; mientras tanto, el estado mostrado debe leerse como contexto global,
 no como declaración sobre el Niño costero.
 
-**Pendiente de verificación.** El orden de columnas del archivo semanal no se
-pudo comprobar al implementarlo. El parser toma la SST y la anomalía de Niño 3.4
-en las posiciones supuestas y rechaza el archivo si los valores no son
-plausibles (SST entre 20 y 33 °C, anomalía entre −6 y +6 °C). En ese caso la TSM
-semanal queda sin publicar y la interfaz lo dice. Antes de confiar en el valor,
-verificar una vez el archivo real.
+**Formato del archivo semanal.** Se verificó contra una muestra real del archivo
+de la NOAA: columnas Niño 1+2, 3, 3.4 y 4, cada una con SST y anomalía; cada fila
+lleva la fecha de la semana **centrada** en ese día. El parser toma la última fila
+y rechaza el archivo si los valores no son plausibles (SST de Niño 3.4 entre 20 y
+33 °C, anomalía entre −6 y +6 °C). En ese caso la TSM semanal queda sin publicar y
+la interfaz lo dice.
 
 ## Frescura de los datos: esto no es tiempo real
 
@@ -40,7 +40,7 @@ dato más reciente de cada fuente, porque no son lo mismo.
 | Condiciones actuales (temperatura, lluvia de hoy) | API de pronóstico de Open-Meteo (`current`, `hourly`) | Horas; la API las refresca cada hora |
 | Lluvia de los últimos 30 días | API de pronóstico de Open-Meteo (`past_days`) | Hasta el día anterior |
 | Pronóstico a 7 días | API de pronóstico de Open-Meteo | Hoy en adelante |
-| TSM semanal Niño 3.4 | NOAA/CPC, archivo semanal | Semana cerrada; sale los lunes |
+| TSM semanal Niño 3.4 | NOAA/CPC, archivo semanal | Semana centrada en la fecha que indica; sale los lunes |
 | ONI | NOAA/CPC | Trimestre móvil; se actualiza una vez al mes |
 | Normal 1991–2020 | ERA5 vía Open-Meteo (archivo) | Climatología fija; no cambia |
 

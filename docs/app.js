@@ -157,7 +157,7 @@ function pintarFuentes(estado) {
     ["Condiciones actuales (Open-Meteo)", fmtFecha(f.condiciones_actuales?.hora), "cada hora"],
     ["Lluvia de los últimos 30 días hasta", fmtDia(f.lluvia_30_dias?.hasta), "rezago de 1 día"],
     ["Pronóstico 7 días hasta", fmtDia(f.pronostico_7_dias?.hasta), "pronóstico"],
-    ["TSM semanal Niño 3.4, semana al", f.tsm_semanal ? fmtDia(f.tsm_semanal.semana_hasta) : "no publicada", "semanal, lunes"],
+    ["TSM semanal Niño 3.4, semana centrada en", f.tsm_semanal ? fmtDia(f.tsm_semanal.semana_centrada) : "no publicada", "semanal, lunes"],
     ["ONI (trimestre móvil)", f.oni?.trimestre ?? "s/d", "mensual"],
     ["Normal 1991–2020 (ERA5)", "fija", "no cambia"]
   ];
@@ -182,7 +182,7 @@ Promise.all([
   document.getElementById("semanal-valor").textContent = s
     ? (s.anomalia > 0 ? "+" : "") + s.anomalia.toFixed(2) + " °C" : "s/d";
   document.getElementById("semanal-nota").textContent = s
-    ? `semana al ${fmtDia(s.semana_hasta)} · semanal`
+    ? `semana centrada en ${fmtDia(s.semana_centrada)} · semanal`
     : "no publicada en la última corrida · semanal";
 
   document.getElementById("actualizado").textContent = fmtFecha(estado.actualizado);

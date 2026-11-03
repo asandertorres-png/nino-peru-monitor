@@ -200,8 +200,8 @@ def main():
             "frecuencia": "mensual (trimestral movil)",
         },
         "tsm_semanal": ({
-            "semana_hasta": semanal["semana_hasta"],
-            "origen": "NOAA CPC, Nino 3.4 semanal",
+            "semana_centrada": semanal["semana_centrada"],
+            "origen": "NOAA CPC, Nino 3.4 semanal (semana centrada)",
             "frecuencia": "semanal, los lunes",
         } if semanal else None),
     }
