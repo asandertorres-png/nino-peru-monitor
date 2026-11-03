@@ -58,5 +58,12 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           cp data/*.json docs/data/
           git add data/ docs/data/
-          git diff --staged --quiet || git commit -m "datos: actualizacion automatica $(date -u +%Y-%m-%d)"
-          git push
+          if git diff --staged --quiet; then
+            echo "Sin cambios que publicar."
+          else
+            git commit -m "datos: actualizacion automatica $(date -u +%Y-%m-%d)"
+            # la corrida dura minutos: si entre tanto entro otro commit en la rama, se
+            # rebasa encima (ante un conflicto en los datos, prevalece lo recien generado)
+            git pull --rebase -X theirs origin "${GITHUB_REF_NAME}"
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+          fi
