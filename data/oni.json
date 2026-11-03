@@ -1,6 +1,7 @@
 {
   "fuente": "NOAA CPC - Oceanic Nino Index (region Nino 3.4)",
   "url": "https://www.cpc.ncep.noaa.gov/data/indices/oni.ascii.txt",
+  "frecuencia": "trimestral (media movil de 3 meses)",
   "ultimo": {
     "trimestre": "JAS",
     "anio": 2026,
@@ -8,6 +9,8 @@
     "oni": 2.16,
     "estado": "El Nino muy fuerte"
   },
+  "semanal": null,
+  "semanal_error": "ValueError: no encontre filas con fecha y valores numericos",
   "serie": [
     {
       "trimestre": "ASO",
