@@ -10,6 +10,9 @@ resultado; no hay estimaciones todavía.
 datos que el repositorio tiene (y los que no), el mapeo de cada brecha de la
 literatura contra esos datos, y el orden de trabajo que de ahí se desprende.
 Dos diseños alternativos quedaron descartados **con cita**, no por intuición.
+[MARCO_TEORICO.md](MARCO_TEORICO.md) tiene los cinco pilares teóricos y las
+diez predicciones contrastables que de ellos salen; **reformuló H1 y agregó
+H4b, H5 y H6**, que están abajo marcadas.
 
 ---
 
@@ -176,20 +179,55 @@ los shocks ENSO sobre la inflación de alimentos a nivel de ciudad, 2010–2026.
 4. Evaluar si el efecto es asimétrico entre fase cálida (El Niño) y fase fría
    (La Niña).
 
-**Hipótesis.**
+**Hipótesis.** Cada una deriva de un pilar de
+[MARCO_TEORICO.md](MARCO_TEORICO.md); la tabla de §8 de ese documento dice qué
+las falsaría.
 
-- **H1.** Un shock cálido de ENSO eleva la inflación de alimentos, con efecto
-  máximo rezagado entre 3 y 9 meses (el canal pasa por cosecha y transporte, no
-  es instantáneo).
+- **H1 (reformulada).** El efecto tiene **dos componentes separables**: uno de
+  **anticipación**, ligado al índice oceánico y a los pronunciamientos del
+  ENFEN, que opera *antes* de que el daño físico se materialice; y uno de
+  **realización**, ligado a la anomalía climática local. El primero puede
+  dominar. — *Motivo del cambio:* Letta et al. (2021, AJAE) muestran que en
+  India las expectativas de los comerciantes anticipan **más del 80 %** del
+  impacto total sobre precios, y la sequía los eleva **durante el crecimiento
+  del cultivo**, antes de cualquier pérdida de cosecha. En el Perú el argumento
+  es más fuerte, porque ENSO se pronostica y el ENFEN emite avisos fechados.
+  **Consecuencia para la estimación: el índice oceánico y la anomalía local
+  entran juntos, no como alternativas.**
 - **H2.** El efecto es **heterogéneo en magnitud y posiblemente en signo** entre
-  regiones: mayor en la costa norte por destrucción de infraestructura y
-  pérdida de cosecha, y operando por déficit hídrico en la sierra sur.
+  regiones. Mecanismo, ahora explícito: El Niño opera por **dos canales a la
+  vez** — desplaza la oferta y **eleva los costos de transacción** al cortar
+  vías, lo que ensancha la banda neutral y segmenta el mercado local. McNew
+  (1996) documenta precisamente esto para el maíz del Misisipi durante la
+  inundación de 1993: los mayores costos de transporte redujeron la integración
+  y, por esa vía, la transferencia de shocks entre regiones.
 - **H3.** El ICEN-réplica tiene **mayor poder explicativo que el ONI** para las
   ciudades de la costa norte, y el ONI no domina al ICEN en ninguna región
-  costera. (Esta es la hipótesis que distingue la tesis; 2017 es el caso que la
-  pone a prueba.)
-- **H4.** El efecto es asimétrico: la fase cálida mueve los precios más que la
-  fase fría de magnitud comparable.
+  costera. (Hipótesis que distingue la tesis; 2017 es el caso que la pone a
+  prueba.)
+- **H4.** El efecto es **asimétrico**: un déficit mueve el precio más que un
+  excedente equivalente. — *Fundamento, antes ausente:* la teoría del
+  almacenamiento competitivo. El inventario amortigua el excedente, pero la
+  restricción de no negatividad no amortigua el déficit; Cafiero et al. (2014)
+  muestran que sin existencias el precio debe subir abruptamente, y Wright
+  (2009) que con existencias mínimas el precio se vuelve muy sensible a shocks
+  pequeños.
+- **H4b (nueva).** **Dependencia del estado:** el efecto es mayor cuando las
+  existencias son bajas. Sin datos de inventarios, se aproxima por la posición
+  en el calendario de cosecha y por la secuencia de meses previos
+  desfavorables.
+- **H5 (nueva).** **La integración entre ciudades cae durante el evento.** Es
+  la contraparte observable del canal de costos de transacción, y se contrasta
+  **solo con el panel de precios**, sin ningún dato adicional: la correlación
+  entre pares de ciudades, o el ancho de la banda neutral de un modelo con
+  umbral, debería aumentar durante los episodios.
+- **H6 (nueva).** **El sesgo de agregación atenúa el coeficiente hacia cero.**
+  Blanc y Schlenker (2017) advierten que los efectos fijos absorben señal
+  climática y que el ruido en la variable climática sesga los coeficientes
+  hacia abajo. Representar una unidad por un punto **es** ese ruido, así que la
+  estimación con media provincial debería dar coeficientes **mayores en valor
+  absoluto** que la del punto de la capital. Convierte la limitación de
+  representación puntual en resultado.
 
 ## 6. Estrategia empírica
 
@@ -272,9 +310,25 @@ tesis.
   ciudades el agrupamiento por ciudad solo no basta.
 - Con 26 grupos, el agrupamiento está en el límite inferior de lo aceptable:
   reportar además **bootstrap wild cluster**.
+- **Un estimador robusto a dependencia transversal** (efectos comunes
+  correlacionados, o efectos fijos interactivos) como contraste. Razón: nuestro
+  panel tiene N = 26 y T ≈ 200, es decir **T grande y N chico**. Thombs (2022)
+  muestra que en ese régimen los efectos fijos con errores robustos son
+  sesgados ante heterogeneidad de pendientes y dependencia transversal, y que
+  el desempeño **empeora a medida que T crece**. Gospodinov et al. (2025)
+  encuentran que agrupar en una sola dimensión produce distorsiones de tamaño y
+  que **una especificación aditiva de efectos fijos no controla
+  adecuadamente los efectos de tiempo comunes**.
 
 Esto no es decoración: con un regresor común en el tiempo, errores estándar mal
 especificados son el modo típico de fallo de este diseño.
+
+**Advertencia sobre los efectos fijos en dos vías.** Kropko y Kubinec (2020)
+muestran que el modelo de dos vías mezcla variación intra-unidad y transversal
+de un modo que vuelve los coeficientes difíciles de interpretar, y que bajo la
+lectura habitual la especificación está mal identificada. Por eso cada tabla
+reporta también la versión de **una sola vía** y declara explícitamente qué
+variación identifica cada coeficiente.
 
 ### 6.6 Robustez y falsación
 
@@ -290,6 +344,13 @@ especificados son el modo típico de fallo de este diseño.
 6. **Exposición.** Categórica vs estimada (§6.3).
 7. **No usar los umbrales de alerta del monitor.** Son provisionales, fijados por
    criterio y no calibrados. No entran en la estimación.
+8. **No linealidad y umbrales en la transmisión.** McNew (1996) muestra que los
+   precios espaciales se relacionan de forma no lineal y Goodwin y Piggott
+   (2001) que los modelos con banda neutral dan ajustes mucho más rápidos que
+   los lineales. Así que el modelo lineal es el caso restringido a contrastar,
+   no el punto de partida a defender.
+9. **Prueba de agregación (H6).** El mismo modelo con el punto de la capital y
+   con la media provincial. La teoría predice el signo de la diferencia.
 
 ## 7. Limitaciones que la tesis declara por adelantado
 
@@ -313,8 +374,12 @@ especificados son el modo típico de fallo de este diseño.
 ## 8. Estructura de capítulos
 
 1. Introducción: problema, pregunta, aporte.
-2. Marco teórico: shocks de oferta y precios de alimentos; economía de
-   desastres; ENSO como experimento natural.
+2. Marco teórico (ver [MARCO_TEORICO.md](MARCO_TEORICO.md)): la cadena océano →
+   clima local → oferta → precio regional → IPC urbano, con un pilar por
+   eslabón — el clima como variación identificadora, almacenamiento competitivo
+   (de dónde sale la no linealidad y la asimetría), expectativas de los
+   comerciantes, equilibrio espacial de precios con costos de transacción, y
+   traspaso al IPC con efectos de segunda vuelta.
 3. Antecedentes: la literatura de §3 y la brecha.
 4. El fenómeno en el Perú: ONI, ICEN y por qué no son lo mismo. Caracterización
    de 1982-83, 1997-98, 2015-16 y los costeros 2017 y 2023.
