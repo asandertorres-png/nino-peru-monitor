@@ -13,7 +13,8 @@
     return r.json();
   }).catch(e => { if (opcional) return null; throw e; }));
   const esc = s => String(s).replace(/[&<>"]/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[ch]));
-  const fmt = (v, dec = 1) => v == null ? "s/d" : (v > 0 ? "+" : "") + v.toFixed(dec);
+  const fmt = (v, dec = 1, signo = true) => v == null ? "s/d" : (signo && v > 0 ? "+" : "") + v.toFixed(dec);
+  const mediana = a => { if (!a.length) return null; const s = [...a].sort((x, y) => x - y), m = s.length >> 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; };
 
   /* ---------- perfil anual de la normal (12 barras) con el mes actual y lo observado ---------- */
   function perfilNormal(normales, clave, d, mesActual) {
@@ -46,7 +47,7 @@
   }
 
   /* ---------- linea de evolucion de una unidad (historial diario) ---------- */
-  function sparkline(valores, etiqueta, unidad) {
+  function sparkline(valores, etiqueta, unidad, signo = true) {
     const puntos = valores.filter(p => p.v != null);
     if (puntos.length < 2) {
       return `<p class="nota">Evolución: ${puntos.length} día${puntos.length === 1 ? "" : "s"} de historial${puntos.length ? ` (desde ${puntos[0].f})` : ""}. Se completa con las próximas actualizaciones.</p>`;
@@ -61,7 +62,7 @@
         <line x1="${x0}" y1="${y(0)}" x2="${x1}" y2="${y(0)}" stroke="${LINEA}"/>
         <path d="${path}" fill="none" stroke="${SERIE}" stroke-width="2" stroke-linejoin="round"/>
         <circle cx="${x(puntos.length - 1)}" cy="${y(ult.v)}" r="3" fill="${SERIE}" stroke="#15181d" stroke-width="2"/>
-        <text x="${x1 + 6}" y="${y(ult.v) + 3}" fill="${TINTA}" font-size="9" font-family="IBM Plex Mono, monospace">${fmt(ult.v)}${unidad}</text>
+        <text x="${x1 + 6}" y="${y(ult.v) + 3}" fill="${TINTA}" font-size="9" font-family="IBM Plex Mono, monospace">${fmt(ult.v, unidad.trim() === "%" && !signo ? 0 : 1, signo)}${unidad}</text>
         <text x="${x0}" y="${H - 2}" fill="${TENUE}" font-size="8">${puntos[0].f}</text>
         <text x="${x1}" y="${H - 2}" fill="${TENUE}" font-size="8" text-anchor="end">${ult.f}</text>
       </svg></div>`;
@@ -81,23 +82,23 @@
       if (d.anomalia_precipitacion_pct != null) z.pp.push(d.anomalia_precipitacion_pct);
       if (d.anomalia_tmax_c != null) z.tx.push(d.anomalia_tmax_c);
     });
-    const media = a => a.length ? a.reduce((s, v) => s + v, 0) / a.length : null;
+    const media = a => a.length ? a.reduce((s, v) => s + v, 0) / a.length : null;  // solo para ordenar zonas
     const etq = ["Sin señal", "Leve", "Moderada", "Alta"], col = ["#3f3f3b", "#fab219", "#ec835a", "#d03b3b"];
     const conteos = niveles.map((n, i) => `<div class="conteo"><i style="background:${col[i]}"></i><strong>${n}</strong><span>${etq[i]}</span></div>`).join("")
       + (sinInfo ? `<div class="conteo"><i class="sin-info"></i><strong>${sinInfo}</strong><span>Sin información</span></div>` : "");
     const filas = Object.entries(zonas).sort((a, b) => media(b[1].al) - media(a[1].al)).map(([z, v]) =>
-      `<tr><td>${ZONAS[z] || z}</td><td class="num">${v.n}</td><td class="num">${v.pp.length ? fmt(media(v.pp), 0) + " %" : "—"}</td><td class="num">${v.tx.length ? fmt(media(v.tx), 1) + " °C" : "—"}</td></tr>`).join("");
+      `<tr><td>${ZONAS[z] || z}</td><td class="num">${v.n}</td><td class="num">${v.pp.length ? fmt(mediana(v.pp), 0) + " %" : "—"}</td><td class="num">${v.tx.length ? fmt(mediana(v.tx), 1) + " °C" : "—"}</td></tr>`).join("");
     let evol = "";
     if (historial && lista === "departamentos") {
       const serie = historial.dias.map(dia => {
         const u = Object.values(dia.unidades); const con = u.filter(x => x.al != null);
         return { f: dia.fecha.slice(5), v: con.length ? Math.round(100 * con.filter(x => x.al >= 2).length / con.length) : null };
       });
-      evol = sparkline(serie, "Departamentos en alerta moderada o alta (%)", " %");
+      evol = sparkline(serie, "Departamentos en alerta moderada o alta (%)", " %", false);
     }
     return `<div class="conteos">${conteos}</div>
       <table class="zonas"><thead><tr><th>Zona</th><th>n</th><th>Anom. lluvia</th><th>Anom. T máx</th></tr></thead><tbody>${filas}</tbody></table>
-      <p class="nota">Medias simples por zona de las unidades con dato; la anomalía de lluvia excluye las ${normalBaja} unidades con normal muy baja. Las zonas y los umbrales son provisionales.</p>${evol}`;
+      <p class="nota">Mediana por zona de las unidades con dato (resiste valores extremos como un +1400 % en una unidad); la anomalía de lluvia excluye las ${normalBaja} unidades con normal muy baja. Las zonas y los umbrales son provisionales.</p>${evol}`;
   }
 
   /* ---------- ONI, ultimos cinco anios ---------- */
@@ -139,8 +140,10 @@
       Promise.all([traer(ruta, true), nivel === "departamento" ? traer("data/historial.json", true) : null]).then(([n, h]) => {
         let html = perfilNormal(n?.normales, clave, d, mesActual);
         if (h) {
-          const serie = h.dias.map(dia => ({ f: dia.fecha.slice(5), v: dia.unidades[clave]?.pp ?? null }));
-          html += sparkline(serie, "Anomalía de lluvia, evolución diaria (%)", " %");
+          // con normal muy baja el porcentaje es nulo a proposito: se sigue la anomalia en mm
+          const enMm = !!d.normal_baja;
+          const serie = h.dias.map(dia => ({ f: dia.fecha.slice(5), v: (enMm ? dia.unidades[clave]?.mm : dia.unidades[clave]?.pp) ?? null }));
+          html += sparkline(serie, `Anomalía de lluvia, evolución diaria (${enMm ? "mm" : "%"})`, enMm ? " mm" : " %");
         }
         cont.innerHTML = html;
       });
