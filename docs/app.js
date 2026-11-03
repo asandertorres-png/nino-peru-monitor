@@ -210,10 +210,10 @@ function mostrarDetalle(d) {
 // Recuadros oficiales (NOAA). Longitudes en 0-360 para que el Pacifico no se parta
 // en el antimeridiano: 160E = 160, 150W = 210, 90W = 270, 80W = 280.
 const REGIONES_NINO = {
-  nino4:  { nombre: "Niño 4",   bounds: [[-5, 160], [5, 210]],  dir: "top" },
-  nino34: { nombre: "Niño 3.4", bounds: [[-5, 190], [5, 240]],  dir: "bottom" },
-  nino3:  { nombre: "Niño 3",   bounds: [[-5, 210], [5, 270]],  dir: "top" },
-  nino12: { nombre: "Niño 1+2", bounds: [[-10, 270], [0, 280]], dir: "bottom" }
+  nino4:  { nombre: "Niño 4",   bounds: [[-5, 160], [5, 210]] },
+  nino34: { nombre: "Niño 3.4", bounds: [[-5, 190], [5, 240]] },
+  nino3:  { nombre: "Niño 3",   bounds: [[-5, 210], [5, 270]] },
+  nino12: { nombre: "Niño 1+2", bounds: [[-10, 270], [0, 280]] }
 };
 let mapaEnso = null;
 const rectEnso = {};
@@ -227,7 +227,7 @@ function pintarEnso(estado) {
       touchZoom: false, boxZoom: false, keyboard: false, attributionControl: false, zoomSnap: 0.25
     });
     L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 4 }).addTo(mapaEnso);
-    mapaEnso.fitBounds([[-30, 135], [25, 305]]);
+    mapaEnso.fitBounds([[-24, 150], [20, 295]]);
     // contorno del Peru, desplazado 360 grados a esta copia del mundo
     (geoCache.departamento || (geoCache.departamento = fetch(NIVELES.departamento.geo).then(r => r.json())))
       .then(geo => L.geoJSON(geo, {
@@ -236,16 +236,18 @@ function pintarEnso(estado) {
       }).addTo(mapaEnso)).catch(() => {});
     for (const [k, r] of Object.entries(REGIONES_NINO)) {
       rectEnso[k] = L.rectangle(r.bounds, { color: "#f0efec", weight: 1, fillColor: NEUTRO, fillOpacity: 0.3, interactive: false }).addTo(mapaEnso);
-      rectEnso[k].bindTooltip(r.nombre, { permanent: true, direction: r.dir, className: "etq-region", opacity: 1 });
     }
   }
   const e = ESCALAS.anomalia_tmax_c;
+  const fichas = [];
   for (const [k, r] of Object.entries(REGIONES_NINO)) {
     const v = reg?.[k]?.anomalia;
-    rectEnso[k].setStyle(v == null ? { fillColor: NEUTRO, fillOpacity: 0.3 }
-                                   : { fillColor: e.colores[claseEscalonada(v, e)], fillOpacity: 0.78 });
-    rectEnso[k].setTooltipContent(v == null ? r.nombre : `${r.nombre} <b>${v > 0 ? "+" : ""}${v.toFixed(1)} °C</b>`);
+    const color = v == null ? NEUTRO : e.colores[claseEscalonada(v, e)];
+    rectEnso[k].setStyle(v == null ? { fillColor: NEUTRO, fillOpacity: 0.3 } : { fillColor: color, fillOpacity: 0.85 });
+    fichas.push(`<div class="ficha${k === "nino12" ? " costera" : ""}"><i style="background:${color}"></i>
+      <span class="reg">${r.nombre}</span><span class="val">${v == null ? "s/d" : (v > 0 ? "+" : "") + v.toFixed(1) + " °C"}</span></div>`);
   }
+  document.getElementById("enso-chips").innerHTML = fichas.join("");
   nota.textContent = reg
     ? `Anomalía semanal de la temperatura del mar por región Niño (°C), semana centrada en ${fmtDia(s.semana_centrada)}. Niño 1+2, frente a la costa, es la región del Niño costero; Niño 3.4 es la del ONI.`
     : "El detalle por región Niño aparece con la próxima actualización del monitor.";
