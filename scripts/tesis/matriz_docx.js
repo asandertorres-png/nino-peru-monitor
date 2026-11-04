@@ -658,6 +658,27 @@ function seccionDatos() {
           ],
         })),
       ]),
+      salto(),
+      p("Tabla auxiliar: normales climáticas", { negrita: true, antes: 0, despues: 100 }),
+      p(`Se une al panel por (ciudad, mes). ${ESQUEMA.tabla_auxiliar.filas_esperadas} filas. `
+        + "Estos campos NO van en el panel: son constantes para cada par ciudad-mes del año, "
+        + "de modo que repetirlos en las 5 226 filas sería redundante.",
+        { tam: 17, despues: 120 }),
+      tabla([800, 1900, 3600, 1100, 1300, 2600, 2380], [
+        encabezado(["N°", "Campo", "Etiqueta", "Tipo", "Escala", "Rango válido", "Fuente"],
+                   [800, 1900, 3600, 1100, 1300, 2600, 2380]),
+        ...ESQUEMA.tabla_auxiliar.campos.map((c, i) => new TableRow({
+          children: [
+            celda(String(c.orden), 800, { tam: 14, alineacion: AlignmentType.CENTER, fondo: i % 2 ? GRIS : undefined }),
+            celda(c.nombre, 1900, { tam: 14, negrita: true, mono: true, fondo: i % 2 ? GRIS : undefined }),
+            celda(c.etiqueta, 3600, { tam: 14, fondo: i % 2 ? GRIS : undefined }),
+            celda(c.tipo, 1100, { tam: 14, alineacion: AlignmentType.CENTER, fondo: i % 2 ? GRIS : undefined }),
+            celda(c.escala, 1300, { tam: 14, alineacion: AlignmentType.CENTER, fondo: i % 2 ? GRIS : undefined }),
+            celda(c.rango, 2600, { tam: 13, fondo: i % 2 ? GRIS : undefined }),
+            celda(c.fuente, 2380, { tam: 13, fondo: i % 2 ? GRIS : undefined }),
+          ],
+        })),
+      ]),
       p("Nota. Los vacíos se dejan en blanco, nunca como 0 ni como −99: un cero es un dato y un "
         + "vacío es su ausencia. Los campos sigma_pp_mm, anios_normal, base_ipc y fuente_ipc no "
         + "entran en las regresiones; son controles de calidad y de trazabilidad, y son los que "

@@ -1,1 +1,1 @@
-﻿ciudad_id;ciudad;ubigeo;departamento;zona;lat;lon;anio;mes;periodo;anom_pp;anom_tx;oni;icen_rep;exp_vab_prim;exp_peso_alim;ipc_alim;infl_alim_m;infl_alim_12;volat_12;integr_media;ipc_general;normal_pp_mm;sigma_pp_mm;anios_normal;base_ipc;fuente_ipc
+﻿ciudad;zona;anio;mes;periodo;anom_pp;anom_tx;oni;icen_rep;exp_vab_prim;exp_peso_alim;ipc_alim;infl_alim_m;infl_alim_12;volat_12;integr_media;fuente_ipc
