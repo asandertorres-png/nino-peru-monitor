@@ -209,6 +209,66 @@ def inspeccionar_inei():
                 print(f"    pista '{pista}': ..." + re.sub(r"\s+", " ", t[max(0, i - 120):i + 160]) + "...", flush=True)
 
 
+PAGINA_BOLETINES = "https://www.inei.gob.pe/biblioteca-virtual/boletines/informe-de-precios/1/"
+CIUDADES_INEI = ["Chachapoyas", "Huaraz", "Abancay", "Arequipa", "Ayacucho", "Cajamarca", "Cusco", "Huancavelica", "Huanuco",
+                 "Ica", "Huancayo", "Trujillo", "Chiclayo", "Lima", "Iquitos", "Puerto Maldonado", "Moquegua", "Cerro de Pasco",
+                 "Piura", "Puno", "Moyobamba", "Tacna", "Tumbes", "Pucallpa", "Chimbote", "Tarapoto"]
+
+
+def inspeccionar_pdf():
+    """El IPC por ciudad sale en el informe tecnico mensual (PDF). Se mira si el texto es parseable."""
+    import shutil, subprocess, tempfile
+    print("== informes tecnicos de precios del INEI (PDF) ==", flush=True)
+    try:
+        t = decodificar(descargar(PAGINA_BOLETINES, intentos=2, timeout=60))
+    except Exception as exc:
+        print(f"- {PAGINA_BOLETINES}: error {exc}", flush=True)
+        return
+    enlaces = re.findall(r'<a[^>]+href=["\']([^"\']+\.pdf)["\'][^>]*>(.*?)</a>', t, re.I | re.S)
+    pdfs = []
+    for href, texto in enlaces:
+        txt = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", texto)).strip()
+        pdfs.append((href, txt))
+    print(f"- {PAGINA_BOLETINES}: {len(pdfs)} PDF", flush=True)
+    for href, txt in pdfs[:12]:
+        print(f"    {href} :: {txt[:100]}", flush=True)
+    # titulos en el html cerca de cada pdf (la lista suele llevar el mes)
+    for m in re.finditer(r"informe[^<]{0,80}precios[^<]{0,120}", t, re.I):
+        print("    titulo: " + re.sub(r"\s+", " ", m.group(0))[:160], flush=True)
+        break
+    if not pdfs:
+        return
+    url = pdfs[0][0]
+    if url.startswith("/"):
+        url = "https://www.inei.gob.pe" + url
+    print(f"descargando el mas reciente: {url}", flush=True)
+    try:
+        b = descargar(url, intentos=2, timeout=120)
+    except Exception as exc:
+        print(f"    error {exc}", flush=True)
+        return
+    print(f"    {len(b):,} bytes; pdftotext: {shutil.which('pdftotext')}", flush=True)
+    if not shutil.which("pdftotext"):
+        return
+    with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as f:
+        f.write(b); ruta = f.name
+    texto = subprocess.run(["pdftotext", "-layout", ruta, "-"], capture_output=True, text=True, timeout=120).stdout
+    lineas = texto.splitlines()
+    print(f"    {len(lineas):,} lineas de texto", flush=True)
+    patron = re.compile("|".join(re.escape(sin_tildes(c).lower()) for c in CIUDADES_INEI))
+    for i, l in enumerate(lineas):
+        ll = sin_tildes(l).lower()
+        if re.search(r"ciudad|principales ciudades", ll) and ("precio" in ll or "indice" in ll or "variac" in ll):
+            print(f"    [{i}] {l.strip()[:150]}", flush=True)
+    n = 0
+    for i, l in enumerate(lineas):
+        if patron.search(sin_tildes(l).lower()) and re.search(r"-?\d+[.,]\d", l):
+            print(f"    {i}: {l.rstrip()[:170]}", flush=True)
+            n += 1
+            if n > 90:
+                break
+
+
 def inspeccionar_api(codigo):
     url = URL_API.format(codigos=codigo, inicio="2024-1", fin="2024-12")
     print(f"prueba del API: {url}", flush=True)
@@ -279,14 +339,16 @@ def main():
     inspeccionar = "--inspeccionar" in sys.argv
     hoy = datetime.now(LIMA)
     if inspeccionar:
-        encontradas = inspeccionar_catalogo()
-        prueba = next((e[1] for e in encontradas if e[0]), None) or (encontradas[0][1] if encontradas else None)
-        if prueba:
-            try:
-                inspeccionar_api(prueba)
-            except Exception as exc:
-                print(f"  la prueba del API fallo: {exc}", flush=True)
-        inspeccionar_inei()
+        if "--catalogo" in sys.argv:
+            encontradas = inspeccionar_catalogo()
+            prueba = next((e[1] for e in encontradas if e[0]), None) or (encontradas[0][1] if encontradas else None)
+            if prueba:
+                try:
+                    inspeccionar_api(prueba)
+                except Exception as exc:
+                    print(f"  la prueba del API fallo: {exc}", flush=True)
+            inspeccionar_inei()
+        inspeccionar_pdf()
         print("modo inspeccion: no se escribe nada", flush=True)
         return
     if not CIUDADES:
