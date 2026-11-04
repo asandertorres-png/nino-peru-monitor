@@ -215,29 +215,63 @@ CIUDADES_INEI = ["Chachapoyas", "Huaraz", "Abancay", "Arequipa", "Ayacucho", "Ca
                  "Piura", "Puno", "Moyobamba", "Tacna", "Tumbes", "Pucallpa", "Chimbote", "Tarapoto"]
 
 
+PAGINAS_PDF = [
+    "https://www.inei.gob.pe/biblioteca-virtual/boletines/informe-de-precios/1/",
+    "https://www.inei.gob.pe/biblioteca-virtual/boletines/informe-de-precios/",
+    "https://www.inei.gob.pe/estadisticas/indice-tematico/price-indexes/",
+    "https://www.inei.gob.pe/biblioteca-virtual/boletines/",
+]
+
+
 def inspeccionar_pdf():
     """El IPC por ciudad sale en el informe tecnico mensual (PDF). Se mira si el texto es parseable."""
     import shutil, subprocess, tempfile
     print("== informes tecnicos de precios del INEI (PDF) ==", flush=True)
-    try:
-        t = decodificar(descargar(PAGINA_BOLETINES, intentos=2, timeout=60))
-    except Exception as exc:
-        print(f"- {PAGINA_BOLETINES}: error {exc}", flush=True)
-        return
-    todos = re.findall(r'<a[^>]+href=["\']([^"\']+)["\'][^>]*>(.*?)</a>', t, re.I | re.S)
     limpiar = lambda x: re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", x)).strip()
-    # los informes mensuales enlazan a una ficha o directo al PDF; se listan ambos tipos
-    fichas = [(h, limpiar(x)) for h, x in todos if re.search(r"informe|boletin|precios", (h + " " + limpiar(x)).lower()) and not h.lower().endswith((".jpg", ".png"))]
-    print(f"- {PAGINA_BOLETINES}: {len(todos)} enlaces, {len(fichas)} con pista de informe/boletin/precios", flush=True)
-    for h, x in fichas[:25]:
-        print(f"    {h} :: {x[:90]}", flush=True)
-    pdfs = [(h, x) for h, x in fichas if h.lower().endswith(".pdf")]
-    if not pdfs:
-        # seguir la primera ficha que no sea la misma pagina y buscar el PDF adentro
-        for h, x in fichas:
-            if h.startswith("/"):
-                h = "https://www.inei.gob.pe" + h
-            if "informe-de-precios" in h or not h.startswith("http"):
+    pdfs, fichas = [], []
+    for pagina in PAGINAS_PDF:
+        try:
+            t = decodificar(descargar(pagina, intentos=1, timeout=60))
+        except Exception as exc:
+            print(f"- {pagina}: error {exc}", flush=True)
+            continue
+        todos = re.findall(r'<a[^>]+href=["\']([^"\']+)["\'][^>]*>(.*?)</a>', t, re.I | re.S)
+        # todos los PDF de la pagina, con el texto del enlace y lo que lo rodea
+        for h, x in todos:
+            if h.lower().split("?")[0].endswith(".pdf"):
+                i = t.find(h)
+                ctx = limpiar(t[max(0, i - 300):i + len(h) + 200])
+                pdfs.append((h if h.startswith("http") else "https://www.inei.gob.pe" + h, limpiar(x) or ctx[:120]))
+        prefijos = {}
+        for h, _ in todos:
+            pre = re.sub(r"[^/]+$", "", h)[:60]
+            prefijos[pre] = prefijos.get(pre, 0) + 1
+        print(f"- {pagina}: {len(todos)} enlaces; prefijos mas comunes: {sorted(prefijos.items(), key=lambda kv: -kv[1])[:8]}", flush=True)
+        # enlaces que mencionan precios en el texto (fichas de informes), aunque no sean PDF
+        for h, x in todos:
+            tx = limpiar(x)
+            if re.search(r"precio|ipc|inflaci", (h + " " + tx).lower()):
+                fichas.append((h if h.startswith("http") else "https://www.inei.gob.pe" + h, tx))
+        # pistas de carga dinamica (la lista puede llegar por JS)
+        for pista in ("ajax", "fetch(", "api/", "boletines?", "json"):
+            i = t.lower().find(pista)
+            if i >= 0:
+                print(f"    pista '{pista}': ..." + re.sub(r"\s+", " ", t[max(0, i - 100):i + 140]) + "...", flush=True)
+    # quitar repetidos conservando el orden
+    vistos = set(); pdfs = [x for x in pdfs if not (x[0] in vistos or vistos.add(x[0]))]
+    vistos = set(); fichas = [x for x in fichas if not (x[0] in vistos or vistos.add(x[0]))]
+    print(f"PDF encontrados: {len(pdfs)}", flush=True)
+    for h, x in pdfs[:40]:
+        print(f"    {h} :: {x[:100]}", flush=True)
+    print(f"fichas con pista de precios: {len(fichas)}", flush=True)
+    for h, x in fichas[:30]:
+        print(f"    {h} :: {x[:100]}", flush=True)
+    # preferir un PDF cuyo nombre o texto hable de precios
+    pdfs = sorted(pdfs, key=lambda hx: 0 if re.search(r"precio|ipc|inflaci", (hx[0] + " " + hx[1]).lower()) else 1)
+    if not pdfs or not re.search(r"precio|ipc|inflaci", (pdfs[0][0] + " " + pdfs[0][1]).lower()):
+        # seguir las fichas de precios y buscar el PDF adentro
+        for h, x in fichas[:6]:
+            if any(h.rstrip("/") == pg.rstrip("/") for pg in PAGINAS_PDF) or not h.startswith("http"):
                 continue
             try:
                 t2 = decodificar(descargar(h, intentos=1, timeout=60))
@@ -247,7 +281,8 @@ def inspeccionar_pdf():
             dentro = re.findall(r'href=["\']([^"\']+\.pdf)["\']', t2, re.I)
             print(f"    ficha {h}: {len(dentro)} PDF: {dentro[:5]}", flush=True)
             if dentro:
-                pdfs = [(dentro[0], x)]
+                d = dentro[0]
+                pdfs = [(d if d.startswith("http") else "https://www.inei.gob.pe" + d, x)]
                 break
     print(f"    PDF candidatos: {len(pdfs)}", flush=True)
     for href, txt in pdfs[:12]:
@@ -259,9 +294,7 @@ def inspeccionar_pdf():
     if not pdfs:
         return
     url = pdfs[0][0]
-    if url.startswith("/"):
-        url = "https://www.inei.gob.pe" + url
-    print(f"descargando el mas reciente: {url}", flush=True)
+    print(f"descargando el candidato: {url}", flush=True)
     try:
         b = descargar(url, intentos=2, timeout=120)
     except Exception as exc:

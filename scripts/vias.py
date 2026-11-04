@@ -76,8 +76,11 @@ def describir_json(url):
     for k in ("name", "type", "geometryType", "description", "copyrightText", "currentVersion"):
         if k in doc and doc[k]:
             partes.append(f"{k}={str(doc[k])[:120]}")
-    if "fields" in doc:
-        partes.append("fields: " + ", ".join(f"{f.get('name')}({f.get('type', '')[13:]})" for f in doc["fields"][:40]))
+    if doc.get("fields"):
+        partes.append("fields: " + ", ".join(f"{f.get('name')}({(f.get('type') or '')[13:]})" for f in doc["fields"][:40]))
+    for k in ("subLayers", "parentLayer"):
+        if doc.get(k):
+            partes.append(f"{k}={json.dumps(doc[k], ensure_ascii=False)[:200]}")
     return " | ".join(partes) if partes else json.dumps(doc)[:300]
 
 
@@ -164,7 +167,10 @@ def inspeccionar():
         print(f"- {u}\n    {describir_json(u)}", flush=True)
         time.sleep(0.3)
     for u in CAPAS_RED:
-        print(f"- {u}\n    conteo: {contar(u)}\n    muestra: {muestra(u)[:900]}", flush=True)
+        try:
+            print(f"- {u}\n    conteo: {contar(u)}\n    muestra: {muestra(u)[:900]}", flush=True)
+        except Exception as e:
+            print(f"- {u}: error {e}", flush=True)
     print("== Red Vial Nacional generalizada por el servidor ==", flush=True)
     for off in (0.02, 0.005):
         print("    " + tamano_generalizado(RED_NACIONAL, off), flush=True)
