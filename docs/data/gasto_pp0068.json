@@ -5,7 +5,7 @@
  "fuente": "MEF, Portal de Datos Abiertos: Presupuesto y Ejecucion de Gasto (SIAF), archivo diario del anio",
  "url": "https://fs.datosabiertos.mef.gob.pe/datastorefiles/2026-Gasto-Diario.csv",
  "recurso": null,
- "descargado": "2026-11-03T21:49-05:00",
+ "descargado": "2026-11-04T13:59-05:00",
  "columnas_usadas": {
   "programa": "PROGRAMA_PPTO",
   "programa_nombre": "PROGRAMA_PPTO_NOMBRE",
@@ -131,7 +131,7 @@
   }
  },
  "otros": {
-  "": {
+  "sin departamento": {
    "pia": 0.0,
    "pim": 0.0,
    "certificado": 0.0,
@@ -794,7 +794,8 @@
   }
  },
  "advertencias": [
-  "cada fila del archivo del MEF es el movimiento del mes (PIA, modificaciones del PIM, certificado, comprometido, devengado y girado); el acumulado anual es la suma de todos los meses hasta el corte",
+  "cada fila del archivo del MEF es el movimiento del mes (PIA, modificaciones del PIM, certificado, comprometido, devengado y girado); el acumulado anual es la suma de todos los meses hasta el corte; las filas de presupuesto (PIA y PIM) vienen con mes 0",
+  "el mes de corte suele estar en curso: su devengado es parcial",
   "capa de insumo, no de resultado: mide presupuesto asignado y devengado, no obras terminadas ni danio evitado",
   "el PP 0068 cubre todos los peligros (sismos, heladas, incendios, lluvias), no solo El Nino",
   "el avance porcentual favorece a quien tiene poco PIM; leerlo junto con el monto per capita",
