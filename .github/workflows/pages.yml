@@ -16,7 +16,7 @@ on:
     branches: [main]
     paths: ["docs/**"]
   workflow_run:
-    workflows: ["Actualizar datos del monitor"]
+    workflows: ["Actualizar datos del monitor", "Gasto publico PP 0068 (MEF)"]
     types: [completed]
   workflow_dispatch:
 

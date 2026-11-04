@@ -123,3 +123,15 @@ def clasificar_oni(valor: float) -> str:
         if valor >= umbral:
             return etiqueta
     return "indeterminado"
+
+# Poblacion censada por departamento, Censos Nacionales 2017 (INEI). Se usa
+# solo como denominador per capita de la capa de gasto (PP 0068); es el ultimo
+# dato censal, no una proyeccion al anio en curso.
+POBLACION_CENSO_2017 = {
+    "Amazonas": 379_384, "Ancash": 1_083_519, "Apurimac": 405_759, "Arequipa": 1_382_730,
+    "Ayacucho": 616_176, "Cajamarca": 1_341_012, "Callao": 994_494, "Cusco": 1_205_527,
+    "Huancavelica": 347_639, "Huanuco": 721_047, "Ica": 850_765, "Junin": 1_246_038,
+    "La Libertad": 1_778_080, "Lambayeque": 1_197_260, "Lima": 9_485_405, "Loreto": 883_510,
+    "Madre de Dios": 141_070, "Moquegua": 174_863, "Pasco": 254_065, "Piura": 1_856_809,
+    "Puno": 1_172_697, "San Martin": 813_381, "Tacna": 329_332, "Tumbes": 224_863, "Ucayali": 496_459,
+}
