@@ -23,17 +23,43 @@ la tesis mide la *distribución geográfica* del efecto, no su existencia.
 
 ---
 
-## 1. Título propuesto
+## 1. Título
 
-> **El Niño y el precio de los alimentos en el Perú: efectos regionales
-> diferenciados sobre el IPC de 26 ciudades, 2010–2026**
+> # Niño del Pacífico central y Niño costero: efecto diferenciado sobre la inflación de alimentos en 26 ciudades del Perú, 2010–2026
 
-Variantes según cómo quede el alcance final:
+**Por qué este título y no el anterior.** La primera versión era *"El Niño y el
+precio de los alimentos en el Perú: efectos regionales diferenciados sobre el
+IPC de 26 ciudades"*. Se descartó al revisar antecedentes
+([ANTECEDENTES.md](ANTECEDENTES.md) §6): Calero y Rodríguez (2026) ya
+cuantifican el efecto de El Niño sobre la inflación nacional (+0,25 pp) y
+Crofils et al. (2024, *JEEM*) ya documentan heterogeneidad por geografía en el
+Perú. Un título construido sobre "efectos regionales diferenciados" no nombra
+nada que no esté hecho. **Este nombra la separación ONI / ICEN a nivel
+subnacional, que es lo único que sobrevivió intacto como aporte.**
 
-- Si se conserva la comparación ONI/ICEN como eje: *"Niño del Pacífico central
-  o Niño costero? Dos índices y sus efectos sobre los precios de alimentos en
-  las ciudades del Perú"*.
-- Si el jurado pide un alcance más acotado: restringir a macrorregión sur.
+**A qué compromete el título.** Un título que promete una distinción obliga a
+sostenerla:
+
+1. Calcular el **ICEN-réplica** y **validarlo** contra los informes del IGP
+   (§4.3 y tarea 4 de §9). Mientras no valide, el documento usa ese nombre y no
+   "ICEN".
+2. Estimar ONI e ICEN **por separado y por zona**, no en una sola regresión
+   agregada (H3).
+3. Sostener que **2017 es el caso que hace la distinción no trivial**: Niño
+   costero intenso con Pacífico central casi neutro.
+
+**Riesgo asumido, declarado por adelantado.** Si la réplica del ICEN no valida
+contra el IGP, el eje del título queda sin respaldo. El plan de contingencia ya
+está en §4.3: se reporta la discrepancia y se usa la anomalía de TSM de la
+región Niño 1+2 sin el nombre ICEN, y el título pasa a decir
+*"región Niño 3.4 y región Niño 1+2"* en lugar de los nombres de los índices.
+Es menos elegante y perfectamente defendible.
+
+**Variante si el jurado pide acotar el alcance:** restringir a la macrorregión
+sur. Advertencia para esa decisión: Ponce (2023) no halla efecto directo entre
+los hogares del sur peruano y el estudio ricardiano del Altiplano (2021) halla
+impacto marginal, de modo que acotar al sur **sube** el riesgo de no-resultado
+en lugar de bajarlo.
 
 ## 2. Planteamiento del problema
 
@@ -49,9 +75,27 @@ En la costa norte la fase cálida trae exceso de lluvia e inundación; en la
 sierra sur y la costa centro-sur, déficit hídrico. Un promedio nacional
 promedia dos fenómenos distintos y puede subestimar ambos.
 
-El problema de investigación es entonces: **el efecto de El Niño sobre los
-precios de alimentos en el Perú no es un número, es una distribución
-geográfica**, y esa distribución no ha sido estimada.
+Y hay una segunda agregación, menos visible y más grave: **la literatura trata
+"El Niño" como un solo fenómeno**. No lo es. El ONI mide el Pacífico central
+(región Niño 3.4) y el ICEN del ENFEN mide el Pacífico oriental (región Niño
+1+2, frente a la costa peruana), y los dos pueden divergir: 2017 fue un Niño
+costero intenso con un Pacífico central casi neutro. La literatura
+macroeconómica internacional ya estableció que los dos tipos tienen efectos
+distintos sobre la inflación —es la "diversidad de ENSO" de Gallegati et al.
+(2026) y Solomou et al. (2025)—, pero lo estimó **entre países**. Nadie lo ha
+estimado **dentro del país donde la distinción se institucionalizó**.
+
+El problema de investigación es entonces doble, y las dos mitades se sostienen
+entre sí: **el efecto sobre los precios de alimentos en el Perú no es un
+número sino una distribución geográfica, y no proviene de un fenómeno sino de
+dos que la medición agregada confunde.** Una región puede responder al Niño
+costero y no al del Pacífico central, o al revés, y un modelo con un solo
+índice y una sola unidad nacional no puede distinguirlo.
+
+**Lo que este planteamiento NO afirma.** No afirma que el efecto de ENSO sobre
+la inflación peruana sea desconocido: está cuantificado a nivel nacional
+(Calero y Rodríguez 2026; Crofils et al. 2024). Afirma que **su distribución
+geográfica y su atribución entre los dos índices** no lo están.
 
 ## 3. Brecha respecto de la literatura existente
 
@@ -168,23 +212,31 @@ justifica elegir este diseño sobre el panel departamental anual (25 × 18 = 450
 
 ## 5. Pregunta de investigación, objetivos e hipótesis
 
-**Pregunta central.** ¿Cuál es el efecto de los eventos El Niño sobre los
-precios de alimentos en las ciudades del Perú, y en qué medida ese efecto
-difiere entre regiones según el régimen de impacto climático?
+**Pregunta central.** ¿En qué medida el Niño del Pacífico central (ONI) y el
+Niño costero (ICEN) tienen efectos **distintos** sobre la inflación de alimentos
+de las ciudades del Perú, y cómo varía esa diferencia entre regiones según el
+régimen de impacto climático?
 
-**Objetivo general.** Estimar el efecto dinámico y regionalmente diferenciado de
-los shocks ENSO sobre la inflación de alimentos a nivel de ciudad, 2010–2026.
+**Objetivo general.** Estimar y comparar el efecto dinámico del Niño del
+Pacífico central y del Niño costero sobre la inflación de alimentos a nivel de
+ciudad, identificando su heterogeneidad regional, 2010–2026.
 
 **Objetivos específicos.**
 
 1. Construir un panel ciudad-mes de inflación de alimentos y anomalías
-   climáticas locales con normales 1991–2020 verificables.
-2. Estimar la función impulso-respuesta de la inflación de alimentos a un shock
-   ENSO, distinguiendo ONI de ICEN-réplica.
-3. Contrastar la heterogeneidad del efecto entre costa norte, costa centro-sur,
-   sierra y selva.
-4. Evaluar si el efecto es asimétrico entre fase cálida (El Niño) y fase fría
-   (La Niña).
+   climáticas locales con normales 1991–2020 verificables, y calcular y validar
+   la réplica del ICEN. *Es el objetivo del que dependen todos los demás.*
+2. **Estimar y comparar** la función impulso-respuesta de la inflación de
+   alimentos ante el Niño del Pacífico central (ONI) y ante el Niño costero
+   (ICEN-réplica). *Es el objetivo que da el título.*
+3. Contrastar la heterogeneidad del efecto de cada índice entre costa norte,
+   costa centro-sur, sierra y selva, y establecer si el orden de importancia
+   entre los dos índices cambia según la región.
+4. Separar el componente de **anticipación** —ligado al índice oceánico y a los
+   avisos del ENFEN— del de **realización**, ligado a la anomalía climática
+   local.
+5. Evaluar si el efecto es asimétrico entre fase cálida y fase fría de magnitud
+   comparable.
 
 **Hipótesis.** Cada una deriva de un pilar de
 [MARCO_TEORICO.md](MARCO_TEORICO.md); la tabla de §8 de ese documento dice qué
