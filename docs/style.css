@@ -55,6 +55,8 @@ main{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:1rem;
 .capas .etiqueta{margin-right:.2rem}
 #mapa{height:min(74vh,820px);min-height:480px;border-radius:var(--radio);border:1px solid var(--linea);
       background:#0b0e12;position:relative;isolation:isolate}
+/* zoom fraccionario: los mosaicos se solapan medio pixel para que no asomen costuras */
+.leaflet-tile{width:256.5px!important;height:256.5px!important}
 /* el mapa base se atenua para que el dato mande sobre la cartografia */
 .leaflet-tile-pane{filter:brightness(.7) saturate(.6) contrast(1.05)}
 .leaflet-container{font-family:var(--cuerpo);background:#0b0e12}
@@ -136,6 +138,12 @@ details.tabla th,details.tabla td{padding:.35rem .6rem;border-top:1px solid var(
 details.tabla th{color:var(--tenue);font-weight:500;font-size:.72rem;letter-spacing:.04em;text-transform:uppercase}
 details.tabla td.num{font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
 details.tabla .scroll{max-height:360px;overflow:auto}
+details.tabla .acciones{display:flex;align-items:center;gap:.7rem;padding:.55rem .9rem;border-top:1px solid var(--linea)}
+.boton{background:var(--tinta);color:var(--plano);border:0;border-radius:999px;padding:.4rem .9rem;font:inherit;font-size:.8rem;
+       font-weight:600;cursor:pointer;touch-action:manipulation;user-select:none;-webkit-user-select:none;
+       transition:transform 140ms var(--ease-out),background 140ms ease}
+.boton:active{transform:scale(.96)}
+@media (hover:hover) and (pointer:fine){.boton:hover{background:#fff}}
 
 /* ---- panel lateral ---- */
 #panel{display:flex;flex-direction:column;gap:.8rem;min-width:0}

@@ -16,7 +16,7 @@
 <body>
 <header class="barra">
   <div>
-    <span class="eyebrow">Anomalías frente a la normal 1991–2020 · actualización cada 6 h · no es tiempo real</span>
+    <span class="eyebrow">Anomalías frente a la normal 1991–2020 · actualización cada 6 h · no es tiempo real<span id="hace"></span></span>
     <h1>Monitor El Niño <span>Perú</span></h1>
   </div>
   <div class="segmento" role="radiogroup" aria-label="Unidad del mapa">
@@ -41,6 +41,8 @@
     <details class="tabla">
       <summary>Ver la tabla de valores (misma información que el mapa)</summary>
       <div class="scroll"><table id="tabla"></table></div>
+      <div class="acciones"><button type="button" id="descargar-csv" class="boton">Descargar CSV</button>
+        <span class="nota">Mismos valores que el mapa, con coordenadas del punto usado.</span></div>
     </details>
   </section>
 

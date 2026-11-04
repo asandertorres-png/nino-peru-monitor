@@ -64,6 +64,29 @@ let umbralNormalBaja = null;
 let capaGeo, capaSeleccion = null;
 const geoCache = {};
 
+// Estado de la vista en la URL (#nivel=…&capa=…&u=…): una vista concreta se puede
+// citar o compartir. replaceState evita que el navegador salte al cambiar el hash.
+function leerHash() {
+  const p = new URLSearchParams(location.hash.slice(1));
+  return { nivel: p.get("nivel"), capa: p.get("capa"), u: p.get("u") };
+}
+function escribirHash(u) {
+  const p = new URLSearchParams();
+  p.set("nivel", nivelActual); p.set("capa", capaActual);
+  if (u) p.set("u", u);
+  history.replaceState(null, "", "#" + p.toString());
+}
+let seleccionPendiente = leerHash().u;
+let claveSeleccion = null;
+
+function seleccionar(layer, clave) {
+  if (capaSeleccion && capaSeleccion !== layer) capaGeo.resetStyle(capaSeleccion);
+  capaSeleccion = layer; claveSeleccion = clave;
+  layer.setStyle({ weight: 2.5, color: "#f0efec" }); layer.bringToFront();
+  mostrarDetalle(porUnidad[clave]);
+  escribirHash(clave);
+}
+
 // Los tooltips son un recurso de hover: en pantallas tactiles quedan pegados tras tocar y
 // repiten lo que el panel de detalle ya muestra, asi que solo se activan con puntero fino.
 const CON_TOOLTIPS = matchMedia("(hover: hover) and (pointer: fine)").matches;
@@ -82,7 +105,7 @@ const NIVELES = {
 };
 
 /* ---------- mapa ---------- */
-const mapa = L.map("mapa", { zoomControl: true, attributionControl: true })
+const mapa = L.map("mapa", { zoomControl: true, attributionControl: true, zoomSnap: 0.5 })
   .setView([-9.8, -75.2], 5);
 L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
   maxZoom: 11, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
@@ -156,7 +179,7 @@ function dibujarLeyenda() {
     cuerpo += `<div class="sub-ley"><h4>${m.titulo} (mm)</h4>${franja(m)}
       <p class="nota">Zonas con normal mensual menor a ${umbralNormalBaja ?? "—"} mm: ahí el porcentaje no informa y se pinta el acumulado.</p></div>`;
   }
-  cuerpo += `<div class="chip" style="margin-top:.45rem"><i class="sin-info"></i>Sin información</div>`;
+  if (registros.some(sinInfo)) cuerpo += `<div class="chip" style="margin-top:.45rem"><i class="sin-info"></i>Sin información</div>`;
   const html = `<div class="ley-cuerpo"><h4>${e.titulo}${e.unidad ? ` (${e.unidad})` : ""}</h4>${cuerpo}${e.nota ? `<p class="nota">${e.nota}</p>` : ""}</div>`;
   caja.innerHTML = html;
   document.getElementById("leyenda-movil").innerHTML = html;
@@ -268,6 +291,9 @@ function pintarCabecera(estado) {
   document.getElementById("semanal-valor").textContent = s ? (s.anomalia > 0 ? "+" : "") + s.anomalia.toFixed(2) + " °C" : "s/d";
   document.getElementById("semanal-nota").textContent = s ? `semana centrada en ${fmtDia(s.semana_centrada)}` : "no publicada en la última corrida";
   document.getElementById("actualizado").textContent = fmtFecha(estado.actualizado);
+  const hace = (Date.now() - Date.parse(conZona(estado.actualizado))) / 36e5;
+  document.getElementById("hace").textContent = isNaN(hace) ? "" :
+    ` · actualizado hace ${hace < 1 ? Math.max(1, Math.round(hace * 60)) + " min" : hace < 48 ? Math.round(hace) + " h" : Math.round(hace / 24) + " d"}`;
   pintarFrescura(estado);
   pintarEnso(estado);
   window.analitica?.cabecera();
@@ -359,7 +385,7 @@ function cargarNivel(nivel) {
       : "";
 
     if (capaGeo) mapa.removeLayer(capaGeo);
-    capaSeleccion = null;
+    capaSeleccion = null; claveSeleccion = null;
     capaGeo = L.geoJSON(geo, {
       style: estilo,
       onEachFeature: (feature, layer) => {
@@ -368,13 +394,7 @@ function cargarNivel(nivel) {
         layer.on({
           mouseover: e => { if (capaSeleccion !== layer) e.target.setStyle({ weight: 2.5, color: "#f0efec" }); mostrarDetalle(porUnidad[clave]); },
           mouseout: e => { if (capaSeleccion !== layer) capaGeo.resetStyle(e.target); },
-          click: e => {
-            if (capaSeleccion && capaSeleccion !== layer) capaGeo.resetStyle(capaSeleccion);
-            capaSeleccion = layer;
-            layer.setStyle({ weight: 2.5, color: "#f0efec" }); layer.bringToFront();
-            mostrarDetalle(porUnidad[clave]);
-            L.DomEvent.stopPropagation(e);
-          }
+          click: e => { seleccionar(layer, clave); L.DomEvent.stopPropagation(e); }
         });
       }
     }).addTo(mapa);
@@ -383,11 +403,24 @@ function cargarNivel(nivel) {
     pintarTabla();
     mostrarDetalle(null);
     window.analitica?.resumen(estado, nivel, cfg.lista);
+    if (seleccionPendiente) {
+      const buscada = seleccionPendiente; seleccionPendiente = null;
+      capaGeo.eachLayer(l => { if (String(cfg.claveGeo(l.feature)) === buscada) seleccionar(l, buscada); });
+    }
+    escribirHash(claveSeleccion);
   }).finally(fin);
 }
 
-cargarNivel("departamento").then(() => {
-  mapa.fitBounds(capaGeo.getBounds(), { padding: [10, 10] });
+const inicial = leerHash();
+if (inicial.capa && ESCALAS[inicial.capa] && inicial.capa !== "precipitacion_mm") {
+  capaActual = inicial.capa;
+  const r = document.querySelector(`input[name="capa"][value="${inicial.capa}"]`); if (r) r.checked = true;
+}
+const nivelInicial = inicial.nivel === "provincia" ? "provincia" : "departamento";
+cargarNivel(nivelInicial).catch(() => cargarNivel("departamento")).then(() => {
+  const r = document.querySelector(`input[name="nivel"][value="${nivelActual}"]`); if (r) r.checked = true;
+  if (!capaSeleccion) mapa.fitBounds(capaGeo.getBounds(), { padding: [10, 10] });
+  else mapa.fitBounds(capaSeleccion.getBounds().pad(1.2));
 }).catch(err => {
   document.getElementById("detalle").innerHTML =
     `<p class="vacio">No se pudieron cargar los datos (${err.message}). Ejecuta <code>python scripts/actualizar.py</code> para generarlos.</p>`;
@@ -419,5 +452,24 @@ document.querySelectorAll('input[name="capa"]').forEach(input => {
     capaActual = e.target.value;
     if (capaGeo) { capaGeo.setStyle(estilo); if (capaSeleccion) capaSeleccion.setStyle({ weight: 2.5, color: "#f0efec" }); }
     dibujarLeyenda();
+    escribirHash(claveSeleccion);
   });
+});
+
+
+/* ---------- descarga CSV (mismos valores que el mapa) ---------- */
+document.getElementById("descargar-csv").addEventListener("click", () => {
+  const prov = nivelActual === "provincia";
+  const cols = [["unidad", d => d.nombre], ...(prov ? [["ubigeo", d => d.ubigeo], ["departamento", d => d.departamento]] : [["capital", d => d.capital]]),
+    ["zona", d => d.zona], ["lluvia_30d_mm", d => d.precipitacion_obs_mm], ["normal_mm", d => d.precipitacion_normal_mm],
+    ["normal_baja", d => d.normal_baja ? 1 : 0], ["anomalia_lluvia_pct", d => d.anomalia_precipitacion_pct],
+    ["anomalia_lluvia_mm", d => d.anomalia_precipitacion_mm], ["tmax_30d_c", d => d.tmax_obs_c], ["anomalia_tmax_c", d => d.anomalia_tmax_c],
+    ["lluvia_hoy_mm", d => d.lluvia_hoy_mm], ["temperatura_actual_c", d => d.temperatura_actual_c], ["pronostico_7d_mm", d => d.pronostico_7d_mm],
+    ["nivel_alerta", d => d.nivel_alerta], ["sin_informacion", d => sinInfo(d) ? 1 : 0], ["lat", d => d.lat], ["lon", d => d.lon]];
+  const celda = v => v == null ? "" : /[",\n]/.test(String(v)) ? `"${String(v).replace(/"/g, '""')}"` : String(v);
+  const lineas = [cols.map(c => c[0]).join(","), ...registros.map(d => cols.map(c => celda(c[1](d))).join(","))];
+  const blob = new Blob(["\ufeff" + lineas.join("\n")], { type: "text/csv;charset=utf-8" });
+  const a = Object.assign(document.createElement("a"), { href: URL.createObjectURL(blob),
+    download: `monitor-nino-${nivelActual}-${(document.getElementById("actualizado").textContent || "").replace(/[^0-9]+/g, "-").replace(/^-|-$/g, "") || "datos"}.csv` });
+  document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(a.href);
 });
