@@ -1,0 +1,21 @@
+name: Verificar fuentes de la tesis
+
+# Manual. El runner de GitHub si tiene salida hacia Open-Meteo, la NOAA, el
+# BCRP y el INEI, que es lo que la maquina de desarrollo puede no tener.
+on:
+  workflow_dispatch:
+
+jobs:
+  verificar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Verificar que las fuentes de los indicadores existan
+        run: python scripts/tesis/verificar_fuentes.py
+        env:
+          PYTHONPATH: scripts
