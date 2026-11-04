@@ -251,6 +251,56 @@ son por azar; el p es orientativo. La lluvia proviene de reanálisis en un
 punto, no de estaciones. Los meses con normal muy baja no se analizan en
 porcentaje. Es un insumo para plantear hipótesis, no una conclusión.
 
+## Lectura automática
+
+`scripts/lectura.py` escribe, en cada corrida, el texto que aparece bajo el
+bloque ENSO ("Lectura automática") y lo guarda en `estado*.json` bajo
+`lectura` (título, párrafos, nota, claves). Son reglas fijas sobre los índices
+ya publicados: la misma entrada produce siempre el mismo texto, y los umbrales
+están declarados al inicio del archivo. Es una **interpretación descriptiva**,
+no un pronóstico, y no sustituye a los comunicados del ENFEN.
+
+Qué dice cada párrafo y con qué regla:
+
+1. **Pacífico central.** Valor y categoría del ONI (umbrales de la NOAA/CPC
+   que usa el monitor), tendencia frente a tres trimestres atrás (±0,3 →
+   ascenso/descenso; si no, estable), trimestres seguidos del mismo lado de
+   ±0,5 frente al criterio de episodio de la NOAA (cinco), y anomalía semanal
+   en Niño 3.4 frente al ONI: ±0,5 °C → "por encima / por debajo", ±1,0 °C →
+   "muy por encima / muy por debajo"; dentro de ±0,5, "en línea".
+2. **Costa peruana.** Valor y categoría ENFEN del ICEN, tendencia con la misma
+   regla, meses de rezago del mes central respecto a la corrida, y anomalía
+   semanal en Niño 1+2 frente al ICEN con los mismos cortes. Si el ICEN no
+   estuvo accesible, usa la anomalía semanal y lo dice; si tampoco hay semanal,
+   deja la costa como pendiente.
+3. **Configuración.** Fase de cada cuenca (ONI ≥ +0,5 cálido, ≤ −0,5 frío;
+   ICEN ≥ +0,4 cálido, ≤ −1,0 frío, siguiendo las categorías ENFEN) y su
+   combinación en nueve casos (Niño con expresión costera, Niño costero sin
+   Niño global como 2017, Niño central sin expresión costera, Niña, etc.).
+   Con las cuatro regiones semanales, ubica el máximo: si está en Niño 1+2 o
+   Niño 3 y la diferencia máximo–mínimo supera 1 °C, patrón de tipo oriental;
+   si está en Niño 3.4 o Niño 4, patrón de tipo central; con menos de 1 °C de
+   diferencia, "parejo"; con todas por debajo de 0,5 °C en valor absoluto,
+   "cerca de lo normal".
+4. **Momento del año.** Septiembre–diciembre: fase de desarrollo (el máximo
+   del Pacífico central suele darse entre noviembre y enero; las lluvias de la
+   costa norte, entre enero y abril). Enero–abril: periodo de impacto. Mayo–
+   agosto: transición. Es climatología general del ENSO, no una predicción del
+   evento en curso.
+5. **Mapa.** Unidades en alerta moderada o alta, unidades con lluvia de 30
+   días por encima de +50 % o por debajo de −30 % de su normal (las tres más
+   extremas con su valor; las de normal muy baja no entran al porcentaje) y
+   cuántas tienen la temperatura máxima por encima de su normal, con la
+   mediana.
+6. **Sensibilidad** (solo si existe `sensibilidad*.json`). Unidades cuya lluvia
+   del mes en curso se asocia significativamente con el ONI (p < 0,05), con
+   signo. Hereda todas las advertencias de la sección anterior.
+
+Las analogías históricas (1982-83, 1997-98, 2017) son las configuraciones
+clásicas, nombradas solo para orientar; no se afirma que el evento en curso
+vaya a parecerse a ellas. El texto se regenera en cada corrida y queda en
+`estado*.json` para quien consuma el JSON directamente.
+
 ## Nivel de alerta
 
 Escala cualitativa de 0 a 3, diferenciada por zona porque el riesgo asociado a

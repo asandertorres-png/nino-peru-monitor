@@ -168,6 +168,13 @@ details.tabla .acciones{display:flex;align-items:center;gap:.7rem;padding:.55rem
             background:rgba(255,255,255,.08);font-size:.72rem;color:var(--tinta)}
 .tile .nota{margin-top:.1rem}
 .enso-mapa{margin-top:.6rem}
+.lectura{margin-top:.7rem;padding:.65rem .8rem .55rem;border-left:2px solid var(--acento);border-radius:0 8px 8px 0;
+         background:var(--superficie-2)}
+.lectura[hidden]{display:none}
+.lectura-titulo{margin:.2rem 0 .45rem;font-size:.98rem;font-weight:600;line-height:1.3;color:var(--tinta);letter-spacing:-.005em}
+.lectura-cuerpo p{margin:0 0 .45rem;font-size:.82rem;line-height:1.5;color:var(--tinta-2);font-variant-numeric:tabular-nums}
+.lectura-cuerpo p:last-child{margin-bottom:.1rem}
+.lectura .nota{margin:.35rem 0 0}
 #mapa-enso{height:150px;border-radius:8px 8px 0 0;border:1px solid var(--linea);border-bottom:0;background:#0b0e12;overflow:hidden}
 .chips-enso{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;border:1px solid var(--linea);border-top:0;
             border-radius:0 0 8px 8px;overflow:hidden;background:var(--linea)}

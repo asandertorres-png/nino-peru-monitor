@@ -304,7 +304,22 @@ function pintarCabecera(estado) {
     ` · actualizado hace ${hace < 1 ? Math.max(1, Math.round(hace * 60)) + " min" : hace < 48 ? Math.round(hace) + " h" : Math.round(hace / 24) + " d"}`;
   pintarFrescura(estado);
   pintarEnso(estado);
+  pintarLectura(estado.lectura);
   window.analitica?.cabecera();
+}
+
+// lectura automatica generada en scripts/lectura.py; si la corrida no la trae, queda la nota fija
+function pintarLectura(lec) {
+  const caja = document.getElementById("enso-lectura"), fija = document.getElementById("enso-nota-fija");
+  if (!caja) return;
+  const hay = lec && Array.isArray(lec.parrafos) && lec.parrafos.length;
+  caja.hidden = !hay;
+  if (fija) fija.hidden = !!hay;
+  if (!hay) return;
+  const esc = t => String(t).replace(/[&<>]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+  document.getElementById("lectura-titulo").textContent = lec.titulo || "";
+  document.getElementById("lectura-cuerpo").innerHTML = lec.parrafos.map(p => `<p>${esc(p)}</p>`).join("");
+  document.getElementById("lectura-nota").textContent = (lec.nota || "") + (lec.generada ? ` Generada: ${fmtFecha(lec.generada)}` : "");
 }
 
 function pintarFrescura(estado) {

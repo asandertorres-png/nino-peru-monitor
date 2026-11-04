@@ -226,6 +226,58 @@
     "url": "http://met.igp.gob.pe/datos/ICEN.txt"
   },
   "icen_error": null,
+  "lectura": {
+    "titulo": "El Niño muy fuerte en el Pacífico central y Niño costero extraordinario, los dos índices en ascenso",
+    "parrafos": [
+      "Pacífico central: el ONI de agosto–octubre de 2026 es +2,46, nivel de El Niño muy fuerte en la escala del monitor (umbrales de la NOAA/CPC), en ascenso (+1,07 en tres meses); lleva 5 trimestres seguidos por encima de +0,5 y cumple así el criterio de episodio de la NOAA. La anomalía semanal en Niño 3.4 (+3,4 °C, semana centrada el 28 de octubre de 2026) está por encima del promedio trimestral: el calentamiento no muestra señales de ceder.",
+      "Costa peruana: el ICEN con mes central agosto de 2026 es +3,98 °C, condición cálida extraordinaria según las categorías del ENFEN, en ascenso (+2,00 en tres meses). El ICEN llega con 3 meses de rezago; la señal más reciente de la costa es la anomalía semanal en Niño 1+2, +5,4 °C, muy por encima del ICEN: el calentamiento costero seguía creciendo.",
+      "Las dos cuencas están en fase cálida a la vez: El Niño del Pacífico central con expresión costera, como en 1982-83 y 1997-98. Entre las cuatro regiones la anomalía es mayor junto a la costa sudamericana (Niño 1+2, +5,4 °C) y disminuye hacia el oeste (Niño 4, +1,4 °C): el patrón de un evento de tipo oriental, el que históricamente ha tenido mayor impacto en la costa norte del Perú.",
+      "En noviembre los episodios del Pacífico central suelen acercarse a su máximo, que ocurre entre noviembre y enero, y el efecto sobre la lluvia de la costa norte se concentra entre enero y abril: el periodo de mayor riesgo está por delante.",
+      "En el mapa, 14 de 25 departamentos están en alerta moderada o alta. La lluvia de los últimos 30 días supera en más de 50 % su normal en 2 (Tumbes +1738 %, Piura +627 %) y queda más de 30 % por debajo en 11 (Ayacucho −82 %, Apurimac −78 %, Cusco −72 %, entre otros). La temperatura máxima de 30 días está por encima de su normal en los 25 departamentos (mediana +3,5 °C)."
+    ],
+    "nota": "Lectura generada automáticamente con reglas fijas a partir de los índices publicados; describe lo observado y la climatología conocida del ENSO. No es un pronóstico ni reemplaza los comunicados oficiales del ENFEN.",
+    "claves": {
+      "oni": 2.46,
+      "oni_estado": "El Niño muy fuerte",
+      "oni_fase": "calido",
+      "oni_tendencia": "en ascenso",
+      "oni_racha": 5,
+      "semanal_34": 3.4,
+      "semanal_34_vs_oni": "por encima",
+      "icen": 3.98,
+      "icen_categoria": "cálida extraordinaria",
+      "costa_fase": "calido",
+      "icen_tendencia": "en ascenso",
+      "semanal_12": 5.4,
+      "costa_fuente": "icen",
+      "configuracion": "nino_global_y_costero",
+      "patron": "oriental",
+      "fase_estacional": "desarrollo",
+      "mapa": {
+        "alerta_moderada_o_alta": 14,
+        "exceso": [
+          "Tumbes",
+          "Piura"
+        ],
+        "deficit": [
+          "Ayacucho",
+          "Apurimac",
+          "Cusco",
+          "Huancavelica",
+          "Cajamarca",
+          "Madre de Dios",
+          "Junin",
+          "Ancash",
+          "Arequipa",
+          "Amazonas",
+          "Puno"
+        ],
+        "mediana_anomalia_tmax_c": 3.51
+      }
+    },
+    "generada": "2026-11-03T20:23-05:00",
+    "metodo": "reglas fijas v1 (scripts/lectura.py)"
+  },
   "fuentes": {
     "normales": {
       "periodo": "1991-2020",

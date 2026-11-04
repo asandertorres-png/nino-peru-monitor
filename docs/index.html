@@ -62,6 +62,7 @@
           <tr><td>Altitud del punto de malla</td><td>Altitud que el modelo asigna al punto usado, frente a la altitud de referencia de la capital</td><td>Open-Meteo (elevación) y referencia cartográfica</td><td>Cada 6 h</td><td>m</td><td>Cuantifica el sesgo de representar un departamento por un punto</td></tr>
           <tr><td>Sensibilidad al ENSO</td><td>Correlación y pendiente de la anomalía mensual de lluvia frente al ONI, con rezagos de 0 a 3 meses; frecuencia de déficit y exceso con ONI ≥ +1</td><td>Derivado de las series 1991–2020 y del ONI</td><td>Se rehace al recalcular las normales</td><td>r, % por °C, p</td><td>p &lt; 0,05 orientativo (sin corrección por comparaciones múltiples); 30 años y 4–5 eventos; asociación, no causalidad</td></tr>
           <tr><td>Historial diario</td><td>ONI, TSM semanal, ICEN y anomalías por departamento, una fila por día</td><td>Derivado</td><td>Diario · la última corrida de cada día</td><td>—</td><td>Últimos 400 días; solo nivel departamental</td></tr>
+          <tr><td>Lectura automática</td><td>Texto que interpreta el ONI, la TSM semanal, el ICEN y el mapa con reglas fijas: fase y tendencia de cada cuenca, coincidencia entre ambas, patrón regional, momento del año y resumen del mapa</td><td>Derivado · provisional</td><td>Cada 6 h</td><td>—</td><td>Tendencia ±0,3 en 3 meses; semanal frente a media ±0,5 °C; gradiente 1 °C; fases con los umbrales de NOAA (±0,5) y ENFEN (+0,4 / −1,0). No es pronóstico</td></tr>
         </tbody>
       </table></div>
       <div class="acciones"><span class="nota">Detalle completo, limitaciones y fuentes en <a href="METODOLOGIA.md">METODOLOGIA.md</a>.</span></div>
@@ -95,7 +96,13 @@
         <div id="enso-chips" class="chips-enso" aria-label="Anomalía por región, de oeste a este"></div>
         <p id="enso-mapa-nota" class="nota"></p>
       </div>
-      <p class="nota" style="margin:.55rem 0 0">El ONI y la TSM semanal miden el Pacífico central (Niño 3.4); el ICEN del ENFEN mide el Niño costero sobre Niño 1+2. Pueden divergir: en 2017 hubo Niño costero intenso con Pacífico central casi neutro.</p>
+      <div class="lectura" id="enso-lectura" hidden aria-live="polite">
+        <span class="etiqueta">Lectura automática</span>
+        <p class="lectura-titulo" id="lectura-titulo"></p>
+        <div class="lectura-cuerpo" id="lectura-cuerpo"></div>
+        <p class="nota" id="lectura-nota"></p>
+      </div>
+      <p class="nota" id="enso-nota-fija" style="margin:.55rem 0 0">El ONI y la TSM semanal miden el Pacífico central (Niño 3.4); el ICEN del ENFEN mide el Niño costero sobre Niño 1+2. Pueden divergir: en 2017 hubo Niño costero intenso con Pacífico central casi neutro.</p>
       <div id="oni-grafico"></div>
     </section>
 

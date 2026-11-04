@@ -28,7 +28,8 @@ scripts/provincias.py         provincias desde el GeoJSON: punto y zona
 scripts/niveles.py            selector de nivel (departamento / provincia)
 scripts/fetch_oni.py          índice ONI y TSM semanal de la NOAA
 scripts/calcular_normales.py  normales 1991-2020 (se corre una sola vez)
-scripts/actualizar.py         construye data/estado.json (corre a diario)
+scripts/actualizar.py         construye data/estado.json (corre cada 6 horas)
+scripts/lectura.py            lectura automática del ENSO y del mapa (reglas fijas)
 docs/                         sitio publicado en GitHub Pages
 data/                         salidas en JSON, versionadas
 .github/workflows/            automatización diaria

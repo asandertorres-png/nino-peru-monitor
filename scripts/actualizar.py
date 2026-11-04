@@ -254,6 +254,12 @@ def main():
     }
 
     sin = sum(1 for r in registros if r.get("sin_datos") or r.get("sin_normal"))
+    try:
+        from lectura import cargar_sensibilidad, lectura_automatica
+        lectura = lectura_automatica(oni, registros, nivel, hoy, cargar_sensibilidad(nivel))
+    except Exception as exc:  # la lectura nunca debe tumbar la corrida de datos
+        print(f"aviso: la lectura automatica fallo ({exc}); se publica sin ella", flush=True)
+        lectura = None
     salida = {
         "actualizado": hoy.isoformat(timespec="minutes"),
         "nivel": nivel,
@@ -263,6 +269,7 @@ def main():
         "tsm_semanal": semanal,
         "icen": icen,
         "icen_error": oni.get("icen_error"),
+        "lectura": lectura,
         "fuentes": fuentes,
         "unidades_sin_datos": sin,
         "departamentos" if nivel == "departamento" else "provincias": registros,
