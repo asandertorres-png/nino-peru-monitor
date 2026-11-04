@@ -8,7 +8,7 @@
   const MESES = ["E", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D"];
   const ZONAS = { costa_norte: "Costa norte", costa_centro_sur: "Costa centro-sur", sierra_norte: "Sierra norte", sierra_sur: "Sierra sur", selva: "Selva" };
   const cache = {};
-  const traer = (ruta, opcional) => cache[ruta] || (cache[ruta] = fetch(ruta).then(r => {
+  const traer = (ruta, opcional) => cache[ruta] || (cache[ruta] = fetch(ruta, { cache: "no-cache" }).then(r => {
     if (!r.ok) { if (opcional) return null; throw new Error(`${ruta}: HTTP ${r.status}`); }
     return r.json();
   }).catch(e => { if (opcional) return null; throw e; }));

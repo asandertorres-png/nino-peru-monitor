@@ -114,7 +114,7 @@ L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
 
 // etiquetas de capitales (se ocultan si el zoom aleja demasiado)
 const capasEtiquetas = L.layerGroup().addTo(mapa);
-fetch("capitales.json").then(r => r.json()).then(caps => {
+fetch("capitales.json", { cache: "no-cache" }).then(r => r.json()).then(caps => {
   caps.forEach(c => L.marker([c.lat, c.lon], {
     interactive: false, keyboard: false,
     icon: L.divIcon({ className: "", iconSize: [0, 0], html: `<span class="etq-capital p${c.prioridad || 1}${c.lon > -70.5 ? " izq" : ""}">${c.nombre}</span>` })
@@ -256,7 +256,7 @@ function pintarEnso(estado) {
     L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 4 }).addTo(mapaEnso);
     mapaEnso.fitBounds([[-24, 150], [20, 295]]);
     // contorno del Peru, desplazado 360 grados a esta copia del mundo
-    (geoCache.departamento || (geoCache.departamento = fetch(NIVELES.departamento.geo).then(r => r.json())))
+    (geoCache.departamento || (geoCache.departamento = fetch(NIVELES.departamento.geo, { cache: "no-cache" }).then(r => r.json())))
       .then(geo => L.geoJSON(geo, {
         coordsToLatLng: p => L.latLng(p[1], p[0] + 360),
         style: { color: "#f0efec", weight: 1, fillColor: "#f0efec", fillOpacity: 0.12 }, interactive: false
@@ -373,13 +373,13 @@ function pintarTabla() {
 /* ---------- carga por nivel ---------- */
 function cargarNivel(nivel) {
   const cfg = NIVELES[nivel];
-  const geoP = geoCache[nivel] || (geoCache[nivel] = fetch(cfg.geo).then(r => r.json()));
+  const geoP = geoCache[nivel] || (geoCache[nivel] = fetch(cfg.geo, { cache: "no-cache" }).then(r => r.json()));
   // mientras llega el nivel nuevo, el anterior se mantiene atenuado: sin salto de layout
   const cont = document.getElementById("mapa");
   cont.classList.add("cargando");
   const fin = () => cont.classList.remove("cargando");
   return Promise.all([
-    fetch(cfg.estado).then(r => { if (!r.ok) throw new Error(`${cfg.estado}: HTTP ${r.status}`); return r.json(); }),
+    fetch(cfg.estado, { cache: "no-cache" }).then(r => { if (!r.ok) throw new Error(`${cfg.estado}: HTTP ${r.status}`); return r.json(); }),
     geoP
   ]).then(([estado, geo]) => {
     nivelActual = nivel;
@@ -437,7 +437,7 @@ cargarNivel(nivelInicial).catch(() => cargarNivel("departamento")).then(() => {
 
 // La opcion "Provincias" solo se habilita si su estado ya fue publicado: las normales
 // provinciales se calculan en una corrida larga y hasta entonces el archivo no existe.
-fetch(NIVELES.provincia.estado, { method: "HEAD" }).then(r => {
+fetch(NIVELES.provincia.estado, { method: "HEAD", cache: "no-cache" }).then(r => {
   const lab = document.getElementById("opcion-provincia");
   if (!r.ok) {
     lab.classList.add("deshabilitada");
