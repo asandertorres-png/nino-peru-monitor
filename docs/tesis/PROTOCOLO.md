@@ -217,9 +217,12 @@ Niño costero (ICEN) tienen efectos **distintos** sobre la inflación de aliment
 de las ciudades del Perú, y cómo varía esa diferencia entre regiones según el
 régimen de impacto climático?
 
-**Objetivo general.** Estimar y comparar el efecto dinámico del Niño del
-Pacífico central y del Niño costero sobre la inflación de alimentos a nivel de
-ciudad, identificando su heterogeneidad regional, 2010–2026.
+**Objetivo general.** Determinar el efecto diferenciado del Niño del Pacífico
+central y del Niño costero sobre la inflación de alimentos de las ciudades del
+Perú, según la exposición económica de cada ciudad, 2010–2026.
+
+*Un solo verbo rector, por coherencia con
+[MATRIZ_CONSISTENCIA.md](MATRIZ_CONSISTENCIA.md) §2.1.*
 
 **Objetivos específicos.**
 
@@ -228,11 +231,11 @@ ciudad, identificando su heterogeneidad regional, 2010–2026.
 2. **Comparar el poder explicativo** del Niño del Pacífico central (ONI) y del
    Niño costero (ICEN-réplica) sobre la inflación de alimentos por ciudad.
    *Es el objetivo que da el título.*
-3. Determinar la heterogeneidad regional del efecto según la exposición
+3. **Contrastar** la heterogeneidad regional del efecto según la exposición
    económica de cada ciudad, y establecer si el orden de importancia entre los
    dos índices cambia según la región.
-4. Evaluar si la integración de los mercados de alimentos entre ciudades se
-   reduce durante los episodios.
+4. **Determinar en qué medida** se reduce la integración de los mercados de
+   alimentos entre ciudades durante los episodios.
 
 > **Nota sobre un cambio.** Estos objetivos eran cinco y el primero era
 > "construir el panel y validar la réplica del ICEN". Al armar la matriz de

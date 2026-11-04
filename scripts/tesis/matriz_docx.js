@@ -519,14 +519,14 @@ const seccionMatrizSimple = {
 // [etiqueta, problema, objetivo, hipotesis, indicadores]
 const CONSISTENCIA = [
   ["General",
-   "¿En qué medida el Niño del Pacífico central (ONI) y el Niño costero (ICEN) tienen efectos distintos sobre la inflación de alimentos de las ciudades del Perú, y cómo varía esa diferencia entre regiones, 2010–2026?",
-   "Estimar y comparar el efecto del Niño del Pacífico central y del Niño costero sobre la inflación de alimentos a nivel de ciudad, identificando su heterogeneidad regional, 2010–2026.",
-   "Ambos fenómenos elevan la inflación de alimentos, pero su efecto no es el mismo: el Niño costero tiene mayor efecto que el del Pacífico central en las ciudades de la costa norte, y la magnitud difiere entre regiones según la exposición económica de cada ciudad y su régimen de impacto climático.",
+   "¿Cuál es el efecto diferenciado del Niño del Pacífico central (ONI) y del Niño costero (ICEN) sobre la inflación de alimentos de las ciudades del Perú, según la exposición económica de cada ciudad, en el periodo 2010–2026?",
+   "Determinar el efecto diferenciado del Niño del Pacífico central y del Niño costero sobre la inflación de alimentos de las ciudades del Perú, según la exposición económica de cada ciudad, 2010–2026.",
+   "El efecto del Niño costero sobre la inflación de alimentos es mayor que el del Niño del Pacífico central en las ciudades de la costa norte, y la magnitud del efecto de ambos fenómenos aumenta con la exposición económica de la ciudad.",
    "1 – 10"],
   ["Esp. 1",
    "¿Cuál es el efecto de las anomalías climáticas locales sobre la inflación de alimentos de las ciudades del Perú?",
    "Estimar el efecto de las anomalías locales de precipitación y temperatura sobre la inflación de alimentos por ciudad.",
-   "Las anomalías climáticas locales elevan la inflación de alimentos, con el efecto máximo dentro de los doce meses posteriores al shock.",
+   "Las anomalías climáticas locales elevan la inflación de alimentos, con el efecto máximo dentro de los dieciocho meses posteriores al shock.",
    "1, 2, 7, 8"],
   ["Esp. 2",
    "¿Cuál de los dos índices oceánicos —ONI o ICEN— explica mejor la inflación de alimentos de las ciudades del Perú?",
@@ -534,14 +534,14 @@ const CONSISTENCIA = [
    "El ICEN tiene mayor poder explicativo que el ONI en las ciudades de la costa norte, y el ONI no lo supera en ninguna región costera.",
    "3, 4, 7, 8"],
   ["Esp. 3",
-   "¿Cómo difiere el efecto entre regiones según la exposición económica de cada ciudad?",
-   "Determinar la heterogeneidad regional del efecto según la exposición económica de cada ciudad.",
-   "El efecto es mayor donde la participación del sector agropecuario y pesquero y el peso del alimento en la canasta son mayores, y puede diferir en signo entre la costa norte y la sierra sur.",
+   "¿En qué medida difiere el efecto entre regiones según la exposición económica de cada ciudad?",
+   "Contrastar la heterogeneidad regional del efecto según la exposición económica de cada ciudad.",
+   "El efecto es mayor cuanto mayores son la participación del sector agropecuario y pesquero y el peso del alimento en la canasta, y difiere en signo entre la costa norte y la sierra sur.",
    "5, 6, 1, 2"],
   ["Esp. 4",
-   "¿La integración de los mercados de alimentos entre ciudades disminuye durante los episodios?",
-   "Evaluar si la integración de los mercados de alimentos entre ciudades se reduce durante los episodios.",
-   "La integración disminuye durante los episodios, porque el fenómeno eleva los costos de transacción al dañar la infraestructura de transporte.",
+   "¿En qué medida se reduce la integración de los mercados de alimentos entre ciudades durante los episodios?",
+   "Determinar en qué medida se reduce la integración de los mercados de alimentos entre ciudades durante los episodios.",
+   "La integración de los mercados de alimentos entre ciudades disminuye durante los episodios.",
    "10, 3, 4"],
 ];
 
@@ -612,11 +612,12 @@ const seccionConsistencia = {
         return new TableRow({ children: celdas });
       }),
     ]),
-    p("Nota. La construcción del panel de datos y la validación de la réplica del ICEN no figuran " +
-      "como objetivos: son tareas previas a la estimación y se consignan en la columna de " +
-      "metodología. Las pruebas de asimetría del shock y de dependencia del nivel de existencias " +
-      "se tratan como análisis de robustez, no como hipótesis específicas.",
-      { antes: 200, tam: 17 }),
+    p("Nota. La construcción del panel y la validación de la réplica del ICEN no figuran como " +
+      "objetivos: son tareas previas a la estimación, consignadas en la columna de metodología. " +
+      "La asimetría del shock y la dependencia del nivel de existencias se tratan como análisis " +
+      "de robustez. En la hipótesis específica 4 se contrasta la predicción —que la integración " +
+      "cae— y no el mecanismo que la explica, porque no se dispone de datos de transporte.",
+      { antes: 160, tam: 16 }),
   ],
 };
 

@@ -30,25 +30,64 @@ como quedó en [OPERACIONALIZACION.md](OPERACIONALIZACION.md) §3.
 
 ## 2. Matriz de consistencia
 
-### Fila general
+### 2.1 Revisión de redacción (4 nov 2026)
+
+La primera versión se escribió cuidando el contenido y no la gramática
+metodológica. Al releerla con criterio de jurado aparecieron siete defectos.
+Cinco son de forma y dos son de fondo, y esos dos habrían dado pie a una
+observación seria en la sustentación.
+
+| # | Defecto | Antes | Después |
+|---|---|---|---|
+| 1 | **Dos verbos en el objetivo general.** La regla es un solo verbo rector; dos sugieren que son dos objetivos | "**Estimar y comparar** el efecto…" | "**Determinar** el efecto diferenciado…" |
+| 2 | **Dos preguntas en el problema general**, unidas por "y cómo varía" | "…¿tienen efectos distintos…, y cómo varía esa diferencia entre regiones?" | Una sola pregunta, con la variación regional como complemento y no como segunda pregunta |
+| 3 | **De fondo: hipótesis específica 3 no falsable.** "Puede diferir" no se puede rechazar: si no difiere, la hipótesis igual se sostiene | "…y **puede** diferir en signo…" | "…y **difiere** en signo entre la costa norte y la sierra sur" |
+| 4 | **De fondo: hipótesis específica 4 afirma un mecanismo que el diseño no observa.** No tenemos datos de costos de transacción ni de estado de la red vial | "La integración disminuye…, **porque** el fenómeno eleva los costos de transacción al dañar la infraestructura" | "La integración… **disminuye durante los episodios**". El mecanismo queda en el marco teórico, que es su lugar |
+| 5 | **Pregunta específica 4 de sí o no**, mientras las otras tres son abiertas | "¿La integración… **disminuye** durante los episodios?" | "**¿En qué medida** se reduce la integración…?" |
+| 6 | **Verbo débil para nivel explicativo.** "Evaluar si" describe; no determina | "**Evaluar si** la integración… se reduce" | "**Determinar en qué medida** se reduce la integración…" |
+| 7 | **Horizonte de la hipótesis 1 más corto que el antecedente peruano.** Jalil y Tamayo (2011) estiman el traspaso a inflación en el Perú entre **uno y seis trimestres**, es decir hasta 18 meses, y el diseño estima hasta h = 24 | "efecto máximo dentro de los **doce** meses" | "efecto máximo dentro de los **dieciocho** meses" |
+
+**Sobre la jerarquía de verbos.** Quedó así: *Determinar* en el general, y
+*Estimar*, *Comparar*, *Contrastar* y *Determinar* en los específicos. El verbo
+rector es más amplio que los subordinados, ninguno es de nivel descriptivo
+("describir", "conocer", "identificar"), que sería incoherente con un nivel
+explicativo declarado, y solo se repite *Determinar* una vez, con alcance
+estrictamente más estrecho que el del general.
+
+**Sobre el tipo de investigación.** "Aplicada" es defendible porque el trabajo
+se orienta a informar decisiones de política, pero es una clasificación de
+criterio: hay escuelas que la llamarían **básica** o **sustantiva**, porque
+produce conocimiento sobre una relación sin diseñar una intervención.
+**Verificar qué exige el reglamento de la escuela antes de imprimir**, que es
+más barato que discutirlo en la sustentación.
+
+### 2.2 Fila general
 
 | | |
 |---|---|
-| **Problema general** | ¿En qué medida el Niño del Pacífico central (ONI) y el Niño costero (ICEN) tienen efectos distintos sobre la inflación de alimentos de las ciudades del Perú, y cómo varía esa diferencia entre regiones, en el periodo 2010–2026? |
-| **Objetivo general** | Estimar y comparar el efecto del Niño del Pacífico central y del Niño costero sobre la inflación de alimentos a nivel de ciudad, identificando su heterogeneidad regional, 2010–2026. |
-| **Hipótesis general** | Ambos fenómenos elevan la inflación de alimentos, pero su efecto **no es el mismo**: el Niño costero tiene mayor efecto que el del Pacífico central en las ciudades de la costa norte, y la magnitud difiere entre regiones según la exposición económica de cada ciudad y su régimen de impacto climático. |
+| **Problema general** | ¿Cuál es el efecto diferenciado del Niño del Pacífico central (ONI) y del Niño costero (ICEN) sobre la inflación de alimentos de las ciudades del Perú, según la exposición económica de cada ciudad, en el periodo 2010–2026? |
+| **Objetivo general** | **Determinar** el efecto diferenciado del Niño del Pacífico central y del Niño costero sobre la inflación de alimentos de las ciudades del Perú, según la exposición económica de cada ciudad, 2010–2026. |
+| **Hipótesis general** | El efecto del Niño costero sobre la inflación de alimentos es mayor que el del Niño del Pacífico central en las ciudades de la costa norte, y la magnitud del efecto de ambos fenómenos aumenta con la exposición económica de la ciudad. |
 
-### Filas específicas
+### 2.3 Filas específicas
 
 | # | Problema específico | Objetivo específico | Hipótesis específica | Indicadores |
 |---|---|---|---|---|
-| **1** | ¿Cuál es el efecto de las anomalías climáticas locales sobre la inflación de alimentos de las ciudades del Perú? | Estimar el efecto de las anomalías locales de precipitación y temperatura sobre la inflación de alimentos por ciudad | Las anomalías climáticas locales elevan la inflación de alimentos, con el efecto máximo dentro de los doce meses posteriores al shock | 1, 2, 7, 8 |
-| **2** | ¿Cuál de los dos índices oceánicos —ONI o ICEN— explica mejor la inflación de alimentos de las ciudades del Perú? | Comparar el poder explicativo del ONI y del ICEN-réplica sobre la inflación de alimentos por ciudad | El ICEN tiene mayor poder explicativo que el ONI en las ciudades de la costa norte, y el ONI no lo supera en ninguna región costera | 3, 4, 7, 8 |
-| **3** | ¿Cómo difiere el efecto entre regiones según la exposición económica de cada ciudad? | Determinar la heterogeneidad regional del efecto según la exposición económica de cada ciudad | El efecto es mayor donde la participación del sector agropecuario y pesquero y el peso del alimento en la canasta son mayores, y puede **diferir en signo** entre la costa norte y la sierra sur | 5, 6, 1, 2 |
-| **4** | ¿La integración de los mercados de alimentos entre ciudades disminuye durante los episodios? | Evaluar si la integración de los mercados de alimentos entre ciudades se reduce durante los episodios | La integración disminuye durante los episodios, porque el fenómeno eleva los costos de transacción al dañar la infraestructura de transporte | 10, 3, 4 |
+| **1** | ¿Cuál es el efecto de las anomalías climáticas locales sobre la inflación de alimentos de las ciudades del Perú? | **Estimar** el efecto de las anomalías locales de precipitación y temperatura sobre la inflación de alimentos por ciudad | Las anomalías climáticas locales elevan la inflación de alimentos, con el efecto máximo dentro de los dieciocho meses posteriores al shock | 1, 2, 7, 8 |
+| **2** | ¿Cuál de los dos índices oceánicos —ONI o ICEN— explica mejor la inflación de alimentos de las ciudades del Perú? | **Comparar** el poder explicativo del ONI y del ICEN-réplica sobre la inflación de alimentos por ciudad | El ICEN tiene mayor poder explicativo que el ONI en las ciudades de la costa norte, y el ONI no lo supera en ninguna región costera | 3, 4, 7, 8 |
+| **3** | ¿En qué medida difiere el efecto entre regiones según la exposición económica de cada ciudad? | **Contrastar** la heterogeneidad regional del efecto según la exposición económica de cada ciudad | El efecto es mayor cuanto mayores son la participación del sector agropecuario y pesquero y el peso del alimento en la canasta, y difiere en signo entre la costa norte y la sierra sur | 5, 6, 1, 2 |
+| **4** | ¿En qué medida se reduce la integración de los mercados de alimentos entre ciudades durante los episodios? | **Determinar** en qué medida se reduce la integración de los mercados de alimentos entre ciudades durante los episodios | La integración de los mercados de alimentos entre ciudades disminuye durante los episodios | 10, 3, 4 |
 
 Los números de la última columna remiten a los 10 indicadores de la matriz de
 operacionalización simplificada.
+
+**Advertencia sobre la hipótesis específica 4.** Lo que se contrasta es la
+**predicción** —que la integración cae— y no el **mecanismo** que la explica,
+que es el alza de los costos de transacción documentada por McNew (1996) para
+la inundación del Misisipi de 1993. Ese mecanismo pertenece al marco teórico y
+no a la hipótesis, porque no tenemos datos de costos de transporte ni del
+estado de la red vial que permitan contrastarlo. Confundir predicción con
+mecanismo es el error que la corrección 4 de §2.1 eliminó.
 
 ## 3. Metodología
 
@@ -229,6 +268,12 @@ cada fila cierre. Revisión hecha:
 | ¿Hay objetivos sin hipótesis? | **Ya no.** Era el defecto corregido en §1 |
 | ¿Hay hipótesis que la matriz de operacionalización no sustente? | **No**, tras mover asimetría y dependencia del estado a robustez |
 | ¿El nivel declarado corresponde al diseño? | Sí: explicativo con panel y variación exógena |
+| ¿El objetivo general tiene un solo verbo rector? | **Sí**, tras la corrección 1 de §2.1 |
+| ¿Los verbos corresponden al nivel explicativo declarado? | Sí: determinar, estimar, comparar y contrastar. Ninguno es descriptivo |
+| ¿Toda hipótesis es una afirmación falsable? | **Sí**, tras eliminar el "puede" de la específica 3 |
+| ¿Alguna hipótesis afirma un mecanismo que el diseño no observa? | **Ya no**: se retiró la cláusula causal de la específica 4 |
+| ¿El horizonte de las hipótesis coincide con el de la estimación? | Sí: 18 meses, dentro del horizonte h = 24 de las proyecciones locales |
+| ¿Cada problema es una pregunta abierta y medible? | Sí, tras reformular la específica 4, que era de sí o no |
 | ¿La muestra permite contrastar las hipótesis? | Sí en tamaño (~5 200 observaciones); **con la salvedad de que 26 grupos están en el límite inferior para el agrupamiento de errores**, de ahí el bootstrap |
 
 ## 5. Referencias
