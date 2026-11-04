@@ -1,6 +1,8 @@
 {
   "periodo": "1991-2020",
   "fuente": "ERA5 via Open-Meteo Archive API",
+  "modelo": "era5",
+  "nivel": "departamento",
   "normales": {
     "Amazonas": {
       "01": {
@@ -1852,5 +1854,183 @@
         "anios_usados_precipitacion": 30
       }
     }
-  }
+  },
+  "unidades": {
+    "Amazonas": {
+      "nombre": "Amazonas",
+      "lat": -6.23,
+      "lon": -77.87,
+      "zona": "selva",
+      "elevacion_modelo_m": 2346.0
+    },
+    "Ancash": {
+      "nombre": "Ancash",
+      "lat": -9.53,
+      "lon": -77.53,
+      "zona": "sierra_norte",
+      "elevacion_modelo_m": 3051.0
+    },
+    "Apurimac": {
+      "nombre": "Apurimac",
+      "lat": -13.63,
+      "lon": -72.88,
+      "zona": "sierra_sur",
+      "elevacion_modelo_m": 2467.0
+    },
+    "Arequipa": {
+      "nombre": "Arequipa",
+      "lat": -16.41,
+      "lon": -71.54,
+      "zona": "sierra_sur",
+      "elevacion_modelo_m": 2312.0
+    },
+    "Ayacucho": {
+      "nombre": "Ayacucho",
+      "lat": -13.16,
+      "lon": -74.22,
+      "zona": "sierra_sur",
+      "elevacion_modelo_m": 2740.0
+    },
+    "Cajamarca": {
+      "nombre": "Cajamarca",
+      "lat": -7.16,
+      "lon": -78.51,
+      "zona": "sierra_norte",
+      "elevacion_modelo_m": 2703.0
+    },
+    "Callao": {
+      "nombre": "Callao",
+      "lat": -12.05,
+      "lon": -77.12,
+      "zona": "costa_centro_sur",
+      "elevacion_modelo_m": 22.0
+    },
+    "Cusco": {
+      "nombre": "Cusco",
+      "lat": -13.52,
+      "lon": -71.97,
+      "zona": "sierra_sur",
+      "elevacion_modelo_m": 3382.0
+    },
+    "Huancavelica": {
+      "nombre": "Huancavelica",
+      "lat": -12.79,
+      "lon": -74.97,
+      "zona": "sierra_sur",
+      "elevacion_modelo_m": 3727.0
+    },
+    "Huanuco": {
+      "nombre": "Huanuco",
+      "lat": -9.93,
+      "lon": -76.24,
+      "zona": "sierra_norte",
+      "elevacion_modelo_m": 1902.0
+    },
+    "Ica": {
+      "nombre": "Ica",
+      "lat": -14.07,
+      "lon": -75.73,
+      "zona": "costa_centro_sur",
+      "elevacion_modelo_m": 406.0
+    },
+    "Junin": {
+      "nombre": "Junin",
+      "lat": -12.07,
+      "lon": -75.21,
+      "zona": "sierra_sur",
+      "elevacion_modelo_m": 3254.0
+    },
+    "La Libertad": {
+      "nombre": "La Libertad",
+      "lat": -8.11,
+      "lon": -79.03,
+      "zona": "costa_norte",
+      "elevacion_modelo_m": 36.0
+    },
+    "Lambayeque": {
+      "nombre": "Lambayeque",
+      "lat": -6.77,
+      "lon": -79.84,
+      "zona": "costa_norte",
+      "elevacion_modelo_m": 33.0
+    },
+    "Lima": {
+      "nombre": "Lima",
+      "lat": -12.05,
+      "lon": -77.04,
+      "zona": "costa_centro_sur",
+      "elevacion_modelo_m": 148.0
+    },
+    "Loreto": {
+      "nombre": "Loreto",
+      "lat": -3.75,
+      "lon": -73.25,
+      "zona": "selva",
+      "elevacion_modelo_m": 96.0
+    },
+    "Madre de Dios": {
+      "nombre": "Madre de Dios",
+      "lat": -12.6,
+      "lon": -69.19,
+      "zona": "selva",
+      "elevacion_modelo_m": 199.0
+    },
+    "Moquegua": {
+      "nombre": "Moquegua",
+      "lat": -17.19,
+      "lon": -70.93,
+      "zona": "costa_centro_sur",
+      "elevacion_modelo_m": 1412.0
+    },
+    "Pasco": {
+      "nombre": "Pasco",
+      "lat": -10.68,
+      "lon": -76.26,
+      "zona": "sierra_norte",
+      "elevacion_modelo_m": 4052.0
+    },
+    "Piura": {
+      "nombre": "Piura",
+      "lat": -5.19,
+      "lon": -80.63,
+      "zona": "costa_norte",
+      "elevacion_modelo_m": 31.0
+    },
+    "Puno": {
+      "nombre": "Puno",
+      "lat": -15.84,
+      "lon": -70.03,
+      "zona": "sierra_sur",
+      "elevacion_modelo_m": 3843.0
+    },
+    "San Martin": {
+      "nombre": "San Martin",
+      "lat": -6.03,
+      "lon": -76.97,
+      "zona": "selva",
+      "elevacion_modelo_m": 881.0
+    },
+    "Tacna": {
+      "nombre": "Tacna",
+      "lat": -18.01,
+      "lon": -70.25,
+      "zona": "costa_centro_sur",
+      "elevacion_modelo_m": 571.0
+    },
+    "Tumbes": {
+      "nombre": "Tumbes",
+      "lat": -3.57,
+      "lon": -80.46,
+      "zona": "costa_norte",
+      "elevacion_modelo_m": 8.0
+    },
+    "Ucayali": {
+      "nombre": "Ucayali",
+      "lat": -8.38,
+      "lon": -74.55,
+      "zona": "selva",
+      "elevacion_modelo_m": 153.0
+    }
+  },
+  "sin_datos": {}
 }
