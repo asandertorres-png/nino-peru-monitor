@@ -78,6 +78,7 @@ function escribirHash(u) {
 }
 let seleccionPendiente = leerHash().u;
 let claveSeleccion = null;
+let actualizadoISO = "";
 
 function seleccionar(layer, clave) {
   if (capaSeleccion && capaSeleccion !== layer) capaGeo.resetStyle(capaSeleccion);
@@ -291,6 +292,7 @@ function pintarCabecera(estado) {
   document.getElementById("semanal-valor").textContent = s ? (s.anomalia > 0 ? "+" : "") + s.anomalia.toFixed(2) + " °C" : "s/d";
   document.getElementById("semanal-nota").textContent = s ? `semana centrada en ${fmtDia(s.semana_centrada)}` : "no publicada en la última corrida";
   document.getElementById("actualizado").textContent = fmtFecha(estado.actualizado);
+  actualizadoISO = estado.actualizado || "";
   const hace = (Date.now() - Date.parse(conZona(estado.actualizado))) / 36e5;
   document.getElementById("hace").textContent = isNaN(hace) ? "" :
     ` · actualizado hace ${hace < 1 ? Math.max(1, Math.round(hace * 60)) + " min" : hace < 48 ? Math.round(hace) + " h" : Math.round(hace / 24) + " d"}`;
@@ -470,6 +472,6 @@ document.getElementById("descargar-csv").addEventListener("click", () => {
   const lineas = [cols.map(c => c[0]).join(","), ...registros.map(d => cols.map(c => celda(c[1](d))).join(","))];
   const blob = new Blob(["\ufeff" + lineas.join("\n")], { type: "text/csv;charset=utf-8" });
   const a = Object.assign(document.createElement("a"), { href: URL.createObjectURL(blob),
-    download: `monitor-nino-${nivelActual}-${(document.getElementById("actualizado").textContent || "").replace(/[^0-9]+/g, "-").replace(/^-|-$/g, "") || "datos"}.csv` });
+    download: `monitor-nino-${nivelActual}-${(actualizadoISO.slice(0, 16) || "datos").replace(/[:T]/g, "-")}.csv` });
   document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(a.href);
 });
