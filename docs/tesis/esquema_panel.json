@@ -1,0 +1,281 @@
+{
+ "unidad_de_observacion": "ciudad-mes",
+ "formato": "largo: una fila por ciudad y periodo",
+ "ciudades": 26,
+ "periodo_inicio": "2010-01",
+ "periodo_fin": "2026-09",
+ "periodos": 201,
+ "filas_esperadas": 5226,
+ "campos": [
+  {
+   "orden": 1,
+   "nombre": "ciudad_id",
+   "etiqueta": "Código de ciudad",
+   "tipo": "entero",
+   "escala": "Nominal",
+   "rango": "1 a 26",
+   "fuente": "Asignado por el autor",
+   "indicador": "–"
+  },
+  {
+   "orden": 2,
+   "nombre": "ciudad",
+   "etiqueta": "Nombre de la ciudad",
+   "tipo": "texto",
+   "escala": "Nominal",
+   "rango": "26 nombres válidos",
+   "fuente": "INEI, IPC de 26 ciudades",
+   "indicador": "–"
+  },
+  {
+   "orden": 3,
+   "nombre": "ubigeo",
+   "etiqueta": "Código UBIGEO de la ciudad",
+   "tipo": "texto",
+   "escala": "Nominal",
+   "rango": "6 dígitos",
+   "fuente": "INEI",
+   "indicador": "–"
+  },
+  {
+   "orden": 4,
+   "nombre": "departamento",
+   "etiqueta": "Departamento al que pertenece",
+   "tipo": "texto",
+   "escala": "Nominal",
+   "rango": "25 departamentos",
+   "fuente": "INEI",
+   "indicador": "–"
+  },
+  {
+   "orden": 5,
+   "nombre": "zona",
+   "etiqueta": "Régimen de impacto climático",
+   "tipo": "texto",
+   "escala": "Nominal",
+   "rango": "costa_norte, costa_centro_sur, sierra_norte, sierra_sur, selva",
+   "fuente": "scripts/config.py del monitor",
+   "indicador": "–"
+  },
+  {
+   "orden": 6,
+   "nombre": "lat",
+   "etiqueta": "Latitud del punto de la ciudad",
+   "tipo": "decimal",
+   "escala": "Razón",
+   "rango": "−18,5 a −3,5",
+   "fuente": "GeoJSON / config del monitor",
+   "indicador": "–"
+  },
+  {
+   "orden": 7,
+   "nombre": "lon",
+   "etiqueta": "Longitud del punto de la ciudad",
+   "tipo": "decimal",
+   "escala": "Razón",
+   "rango": "−81,5 a −68,5",
+   "fuente": "GeoJSON / config del monitor",
+   "indicador": "–"
+  },
+  {
+   "orden": 8,
+   "nombre": "anio",
+   "etiqueta": "Año del periodo",
+   "tipo": "entero",
+   "escala": "Intervalo",
+   "rango": "2010 a 2026",
+   "fuente": "Derivado",
+   "indicador": "–"
+  },
+  {
+   "orden": 9,
+   "nombre": "mes",
+   "etiqueta": "Mes del periodo",
+   "tipo": "entero",
+   "escala": "Intervalo",
+   "rango": "1 a 12",
+   "fuente": "Derivado",
+   "indicador": "–"
+  },
+  {
+   "orden": 10,
+   "nombre": "periodo",
+   "etiqueta": "Periodo en formato AAAA-MM",
+   "tipo": "texto",
+   "escala": "Ordinal",
+   "rango": "2010-01 a 2026-09",
+   "fuente": "Derivado",
+   "indicador": "–"
+  },
+  {
+   "orden": 11,
+   "nombre": "anom_pp",
+   "etiqueta": "Anomalía estandarizada de precipitación",
+   "tipo": "decimal",
+   "escala": "Razón",
+   "rango": "aprox. −4 a 4 desviaciones estándar",
+   "fuente": "ERA5 vía Open-Meteo",
+   "indicador": "1"
+  },
+  {
+   "orden": 12,
+   "nombre": "anom_tx",
+   "etiqueta": "Anomalía estandarizada de temperatura máxima",
+   "tipo": "decimal",
+   "escala": "Razón",
+   "rango": "aprox. −4 a 4 desviaciones estándar",
+   "fuente": "ERA5 vía Open-Meteo",
+   "indicador": "2"
+  },
+  {
+   "orden": 13,
+   "nombre": "oni",
+   "etiqueta": "Índice ONI, región Niño 3.4",
+   "tipo": "decimal",
+   "escala": "Razón",
+   "rango": "−3,0 a 3,0 °C",
+   "fuente": "NOAA/CPC",
+   "indicador": "3"
+  },
+  {
+   "orden": 14,
+   "nombre": "icen_rep",
+   "etiqueta": "ICEN-réplica, región Niño 1+2",
+   "tipo": "decimal",
+   "escala": "Razón",
+   "rango": "−4,0 a 5,0 °C",
+   "fuente": "NOAA/CPC, calculado",
+   "indicador": "4"
+  },
+  {
+   "orden": 15,
+   "nombre": "exp_vab_prim",
+   "etiqueta": "Peso de agropecuario y pesca en el VAB departamental",
+   "tipo": "decimal",
+   "escala": "Razón",
+   "rango": "0 a 100 %",
+   "fuente": "INEI, cuentas departamentales",
+   "indicador": "5"
+  },
+  {
+   "orden": 16,
+   "nombre": "exp_peso_alim",
+   "etiqueta": "Peso del alimento en la canasta del IPC de la ciudad",
+   "tipo": "decimal",
+   "escala": "Razón",
+   "rango": "0 a 100 %",
+   "fuente": "INEI, ponderaciones del IPC",
+   "indicador": "6"
+  },
+  {
+   "orden": 17,
+   "nombre": "ipc_alim",
+   "etiqueta": "Índice de precios de alimentos de la ciudad",
+   "tipo": "decimal",
+   "escala": "Razón",
+   "rango": "mayor que 0; base diciembre 2021 = 100",
+   "fuente": "INEI",
+   "indicador": "base de 7 a 10"
+  },
+  {
+   "orden": 18,
+   "nombre": "infl_alim_m",
+   "etiqueta": "Variación mensual del IPC de alimentos",
+   "tipo": "decimal",
+   "escala": "Razón",
+   "rango": "aprox. −20 a 20 %",
+   "fuente": "Derivado de ipc_alim",
+   "indicador": "7"
+  },
+  {
+   "orden": 19,
+   "nombre": "infl_alim_12",
+   "etiqueta": "Variación a doce meses del IPC de alimentos",
+   "tipo": "decimal",
+   "escala": "Razón",
+   "rango": "aprox. −30 a 60 %",
+   "fuente": "Derivado de ipc_alim",
+   "indicador": "8"
+  },
+  {
+   "orden": 20,
+   "nombre": "volat_12",
+   "etiqueta": "Desviación estándar móvil de 12 meses de infl_alim_m",
+   "tipo": "decimal",
+   "escala": "Razón",
+   "rango": "mayor o igual que 0",
+   "fuente": "Derivado de infl_alim_m",
+   "indicador": "9"
+  },
+  {
+   "orden": 21,
+   "nombre": "integr_media",
+   "etiqueta": "Correlación media de infl_alim_m con las demás ciudades",
+   "tipo": "decimal",
+   "escala": "Razón",
+   "rango": "−1 a 1",
+   "fuente": "Derivado de infl_alim_m",
+   "indicador": "10"
+  },
+  {
+   "orden": 22,
+   "nombre": "ipc_general",
+   "etiqueta": "Índice de precios al consumidor general de la ciudad",
+   "tipo": "decimal",
+   "escala": "Razón",
+   "rango": "mayor que 0",
+   "fuente": "INEI",
+   "indicador": "auxiliar"
+  },
+  {
+   "orden": 23,
+   "nombre": "normal_pp_mm",
+   "etiqueta": "Normal mensual de precipitación, 1991–2020",
+   "tipo": "decimal",
+   "escala": "Razón",
+   "rango": "mayor o igual que 0 mm",
+   "fuente": "ERA5, calculado",
+   "indicador": "auxiliar"
+  },
+  {
+   "orden": 24,
+   "nombre": "sigma_pp_mm",
+   "etiqueta": "Desviación estándar de la precipitación mensual, 1991–2020",
+   "tipo": "decimal",
+   "escala": "Razón",
+   "rango": "mayor o igual que 0 mm",
+   "fuente": "ERA5, calculado",
+   "indicador": "auxiliar"
+  },
+  {
+   "orden": 25,
+   "nombre": "anios_normal",
+   "etiqueta": "Años utilizados en la normal de ese mes",
+   "tipo": "entero",
+   "escala": "Razón",
+   "rango": "0 a 30",
+   "fuente": "ERA5, calculado",
+   "indicador": "control de calidad"
+  },
+  {
+   "orden": 26,
+   "nombre": "base_ipc",
+   "etiqueta": "Base del índice en ese periodo",
+   "tipo": "texto",
+   "escala": "Nominal",
+   "rango": "2009 o dic2021",
+   "fuente": "INEI",
+   "indicador": "control de empalme"
+  },
+  {
+   "orden": 27,
+   "nombre": "fuente_ipc",
+   "etiqueta": "De dónde se obtuvo el dato de IPC",
+   "tipo": "texto",
+   "escala": "Nominal",
+   "rango": "serie, boletin_pdf o imputado",
+   "fuente": "Registro del autor",
+   "indicador": "trazabilidad"
+  }
+ ]
+}

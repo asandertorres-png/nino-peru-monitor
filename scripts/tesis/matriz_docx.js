@@ -595,6 +595,79 @@ const seccionConsistencia = {
   ],
 };
 
+// ------------------------------------------------------- matriz de datos
+
+// El esquema lo define scripts/tesis/esquema_panel.py y se lee desde el JSON
+// que ese script genera, para que la tabla del documento y el archivo real no
+// puedan decir cosas distintas. Si falta el JSON, se avisa y se omite la
+// seccion en lugar de inventar su contenido.
+const RUTA_ESQUEMA = path.join(__dirname, "..", "..", "docs", "tesis",
+                               "esquema_panel.json");
+let ESQUEMA = null;
+try {
+  ESQUEMA = JSON.parse(fs.readFileSync(RUTA_ESQUEMA, "utf-8"));
+} catch (e) {
+  console.warn(`AVISO: no se pudo leer ${RUTA_ESQUEMA}. `
+             + "Se omite la seccion de matriz de datos. "
+             + "Correr antes: python scripts/tesis/esquema_panel.py --plantilla");
+}
+
+// Suman UTIL_H = 13680
+const A_DAT = [500, 1700, 3100, 1000, 1200, 2800, 2380, 1000];
+
+function seccionDatos() {
+  if (!ESQUEMA) return null;
+  return {
+    properties: {
+      page: {
+        size: { width: LETTER.width, height: LETTER.height, orientation: PageOrientation.LANDSCAPE },
+        margin: { top: MARGEN, right: MARGEN, bottom: MARGEN, left: MARGEN },
+      },
+    },
+    children: [
+      new Paragraph({
+        heading: HeadingLevel.HEADING_1, spacing: { after: 60 },
+        children: [new TextRun({
+          text: "6. Matriz de datos", size: 26, bold: true, color: AZUL, font: "Arial",
+        })],
+      }),
+      p(`Unidad de observación: la ciudad-mes · formato largo · `
+        + `${ESQUEMA.ciudades} ciudades × ${ESQUEMA.periodos} periodos = `
+        + `${ESQUEMA.filas_esperadas} filas · ${ESQUEMA.campos.length} campos · `
+        + `${ESQUEMA.periodo_inicio} a ${ESQUEMA.periodo_fin}`,
+        { cursiva: true, tam: 18, despues: 140 }),
+      tabla(A_DAT, [
+        encabezado(["N°", "Campo", "Etiqueta", "Tipo", "Escala", "Rango válido",
+                    "Fuente", "Ind."], A_DAT),
+        ...ESQUEMA.campos.map((c, i) => new TableRow({
+          children: [
+            celda(String(c.orden), A_DAT[0], { tam: 14, alineacion: AlignmentType.CENTER,
+                                               fondo: i % 2 ? GRIS : undefined }),
+            celda(c.nombre, A_DAT[1], { tam: 14, negrita: true, mono: true,
+                                        fondo: i % 2 ? GRIS : undefined }),
+            celda(c.etiqueta, A_DAT[2], { tam: 14, fondo: i % 2 ? GRIS : undefined }),
+            celda(c.tipo, A_DAT[3], { tam: 14, alineacion: AlignmentType.CENTER,
+                                      fondo: i % 2 ? GRIS : undefined }),
+            celda(c.escala, A_DAT[4], { tam: 14, alineacion: AlignmentType.CENTER,
+                                        fondo: i % 2 ? GRIS : undefined }),
+            celda(c.rango, A_DAT[5], { tam: 13, fondo: i % 2 ? GRIS : undefined }),
+            celda(c.fuente, A_DAT[6], { tam: 13, fondo: i % 2 ? GRIS : undefined }),
+            celda(c.indicador, A_DAT[7], { tam: 14, negrita: true,
+                                           alineacion: AlignmentType.CENTER,
+                                           fondo: i % 2 ? GRIS : undefined }),
+          ],
+        })),
+      ]),
+      p("Nota. Los vacíos se dejan en blanco, nunca como 0 ni como −99: un cero es un dato y un "
+        + "vacío es su ausencia. Los campos sigma_pp_mm, anios_normal, base_ipc y fuente_ipc no "
+        + "entran en las regresiones; son controles de calidad y de trazabilidad, y son los que "
+        + "permiten auditar el panel. El esquema se define en scripts/tesis/esquema_panel.py, que "
+        + "genera la plantilla y un validador.",
+        { antes: 160, tam: 16 }),
+    ],
+  };
+}
+
 const seccionHorizontal = {
   properties: {
     page: {
@@ -679,7 +752,8 @@ const doc = new Document({
       },
     },
   },
-  sections: [seccionVertical, seccionMatrizSimple, seccionConsistencia, seccionProcesamiento, seccionHorizontal],
+  sections: [seccionVertical, seccionMatrizSimple, seccionConsistencia,
+             seccionProcesamiento, seccionDatos(), seccionHorizontal].filter(Boolean),
 });
 
 const salida = path.join(__dirname, "..", "..", "docs", "tesis",
