@@ -19,6 +19,14 @@ resume no sirve para construir la brecha.
 
 ---
 
+> **Propuesta de revisión sistemática.** Este capítulo se construyó con
+> búsquedas temáticas, no con un protocolo sistemático. La propuesta para
+> hacerlo de forma sistemática —con PRISMA 2020 y las guías de MAER-Net,
+> incluida la literatura gris y las fuentes iberoamericanas— está en
+> [REVISION_SISTEMATICA.md](REVISION_SISTEMATICA.md). Si se ejecuta, la
+> brecha de escala espacial dejaría de ser una afirmación del autor y pasaría
+> a ser un hallazgo cuantificado.
+
 > **Versión en matriz.** Los 21 antecedentes de este documento están también
 > como tabla —autor y año, título, metodología, resultados principales y
 > aporte o vacío que deja— en
