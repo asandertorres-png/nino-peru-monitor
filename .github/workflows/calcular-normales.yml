@@ -32,7 +32,7 @@ permissions:
 jobs:
   normales:
     runs-on: ubuntu-latest
-    timeout-minutes: 350   # el tope de GitHub son 360; deja margen para commitear
+    timeout-minutes: 355   # el tope de GitHub son 360; el paso de calculo se corta antes (325)
 
     steps:
       - uses: actions/checkout@v4
@@ -43,6 +43,7 @@ jobs:
 
       - name: Calcular normales
         id: calculo
+        timeout-minutes: 325   # corta el paso, no el trabajo: asi "Publicar resultado" commitea el parcial
         env:
           PYTHONPATH: scripts
           PYTHONUNBUFFERED: "1"
