@@ -33,85 +33,10 @@ const TITULO =
 const AUTOR = "Alexander Torres Uchupe";
 const CASA = "Universidad Nacional de San Antonio Abad del Cusco";
 
-const AZUL = "1F3864";
-const GRIS = "F2F2F2";
-const GRIS_OSCURO = "D9D9D9";
-
-// Letter en DXA. Para horizontal se pasan las medidas verticales y docx-js
-// intercambia ancho y alto al aplicar la orientacion.
-const LETTER = { width: 12240, height: 15840 };
-const MARGEN = 1080;
-const UTIL_V = LETTER.width - 2 * MARGEN;   // 10080, pagina vertical
-const UTIL_H = LETTER.height - 2 * MARGEN;  // 13680, pagina horizontal
-
-// ------------------------------------------------------------------ utiles
-
-const p = (texto, opciones = {}) =>
-  new Paragraph({
-    alignment: opciones.alineacion || AlignmentType.JUSTIFIED,
-    spacing: { before: opciones.antes ?? 0, after: opciones.despues ?? 120 },
-    children: [new TextRun({
-      text: texto,
-      size: opciones.tam || 22,
-      bold: !!opciones.negrita,
-      italics: !!opciones.cursiva,
-      color: opciones.color,
-      font: "Arial",
-    })],
-  });
-
-/** Celda de tabla. */
-const celda = (texto, ancho, opciones = {}) =>
-  new TableCell({
-    width: { size: ancho, type: WidthType.DXA },
-    shading: opciones.fondo
-      ? { type: ShadingType.CLEAR, fill: opciones.fondo, color: "auto" }
-      : undefined,
-    verticalAlign: VerticalAlign.CENTER,
-    rowSpan: opciones.filas,
-    margins: { top: 60, bottom: 60, left: 80, right: 80 },
-    children: (Array.isArray(texto) ? texto : [texto]).map((linea) =>
-      new Paragraph({
-        alignment: opciones.alineacion || AlignmentType.LEFT,
-        spacing: { before: 0, after: 0 },
-        children: [new TextRun({
-          text: linea,
-          size: opciones.tam || 16,
-          bold: !!opciones.negrita,
-          italics: !!opciones.cursiva,
-          color: opciones.color,
-          font: opciones.mono ? "Consolas" : "Arial",
-        })],
-      })),
-  });
-
-/** Fila de encabezado con fondo azul y texto blanco. */
-const encabezado = (textos, anchos) =>
-  new TableRow({
-    tableHeader: true,
-    children: textos.map((t, i) =>
-      celda(t, anchos[i], {
-        fondo: AZUL, negrita: true, color: "FFFFFF", tam: 16,
-        alineacion: AlignmentType.CENTER,
-      })),
-  });
-
-const salto = () => new Paragraph({ children: [new PageBreak()] });
-
-const tabla = (anchos, filas) =>
-  new Table({
-    columnWidths: anchos,
-    width: { size: anchos.reduce((a, b) => a + b, 0), type: WidthType.DXA },
-    borders: {
-      top: { style: BorderStyle.SINGLE, size: 4, color: "808080" },
-      bottom: { style: BorderStyle.SINGLE, size: 4, color: "808080" },
-      left: { style: BorderStyle.SINGLE, size: 4, color: "808080" },
-      right: { style: BorderStyle.SINGLE, size: 4, color: "808080" },
-      insideHorizontal: { style: BorderStyle.SINGLE, size: 2, color: "BFBFBF" },
-      insideVertical: { style: BorderStyle.SINGLE, size: 2, color: "BFBFBF" },
-    },
-    rows: filas,
-  });
+const {
+  AZUL, GRIS, GRIS_OSCURO, LETTER, MARGEN, UTIL_V, UTIL_H,
+  p, celda, encabezado, salto, tabla,
+} = require("./docx_util.js");
 
 // --------------------------------------------- datos de la matriz: variable X
 
@@ -556,18 +481,67 @@ const METODOLOGIA = [
   "Muestra: censal, las 26 ciudades; aproximadamente 5 200 observaciones ciudad-mes",
   "Unidad de análisis: la ciudad-mes",
   "",
-  "Técnica: análisis documental de fuentes secundarias de acceso abierto",
+  "Técnica de recolección: análisis documental de fuentes secundarias de acceso abierto",
   "Instrumento: ficha de registro de datos secundarios",
   "",
-  "Técnica principal de análisis: proyecciones locales en panel con AUMENTO DE REZAGOS, con efectos fijos de ciudad y de tiempo (Jordà, 2005; Montiel Olea y Plagborg-Møller, 2021)",
-  "Corrección de sesgo: jackknife de medio panel, para el sesgo de Nickell implícito en el panel con efectos fijos (Mei, Sheng y Shi, 2023)",
-  "Inferencia: rezagos como controles y agrupamiento en la dimensión transversal (Almuzara y Sarto, 2024); Driscoll–Kraay y bootstrap wild cluster como contraste",
-  "Objetivo específico 4: modelo de corrección de error con umbral (Goodwin y Piggott, 2001)",
-  "",
-  "Robustez: prueba de dependencia espacial sobre los residuos y panel espacial si resulta significativa (Baltagi y Pirotte, 2010); pruebas de quiebre estructural y estimación por submuestras (Duran y Dindaroğlu, 2021); proyecciones locales suavizadas (Barnichon y Brownlees, 2019)",
-  "",
-  "Procesamiento: Python, con código y datos derivados versionados en repositorio público",
+  "Procesamiento y análisis: ver la sección 5",
 ];
+
+// El tratamiento estadistico -- estimador, correccion de sesgo, inferencia y
+// robustez -- NO va en la matriz de consistencia: su lugar es el acapite de
+// procesamiento y analisis de datos. Va en PROCESAMIENTO, abajo.
+const PROCESAMIENTO = [
+  ["Preparación de los datos",
+   "Construcción del panel ciudad-mes 2010–2026 a partir de las series diarias de ERA5 y del IPC del INEI; cálculo de la media y la desviación estándar por unidad y mes del año sobre 1991–2020; empalme de las bases 2009 y diciembre 2021 del IPC; cálculo de la réplica del ICEN y su validación contra los informes del IGP"],
+  ["Técnica principal de estimación",
+   "Proyecciones locales en panel con AUMENTO DE REZAGOS, con efectos fijos de ciudad y de tiempo, para horizontes h = 0 a 24 meses (Jordà, 2005; Montiel Olea y Plagborg-Møller, 2021)"],
+  ["Corrección de sesgo",
+   "Jackknife de medio panel, por el sesgo de Nickell implícito en el panel con efectos fijos, que subestima los efectos (Mei, Sheng y Shi, 2023)"],
+  ["Procedimiento de inferencia",
+   "Rezagos como controles y agrupamiento en la dimensión transversal, por tratarse de un shock macroeconómico en un panel (Almuzara y Sarto, 2024). Driscoll–Kraay y bootstrap wild cluster como contraste, por los 26 grupos"],
+  ["Tratamiento por objetivo",
+   "Obj. 2: dos estimaciones paralelas, ONI e ICEN, y comparación de ajuste por zona. Obj. 3: interacción exposición × shock con heterogeneidad de parámetros por subregión (Ponce, 2020). Obj. 4: correlaciones móviles entre pares de ciudades y modelo de corrección de error con umbral (Goodwin y Piggott, 2001)"],
+  ["Pruebas de robustez",
+   "Dependencia espacial sobre los residuos y panel espacial si resulta significativa (Baltagi y Pirotte, 2010); quiebre estructural y estimación por submuestras (Duran y Dindaroğlu, 2021); proyecciones locales suavizadas (Barnichon y Brownlees, 2019); placebo con rezagos adelantados; exclusión de 2017 y 2023; comparación entre niveles de agregación del clima"],
+  ["Software y reproducibilidad",
+   "Python. Código y datos derivados versionados en repositorio público, de modo que toda la cadena sea reproducible"],
+];
+
+// Suman UTIL_H = 13680
+const A_PROC = [3200, 10480];
+
+const seccionProcesamiento = {
+  properties: {
+    page: {
+      size: { width: LETTER.width, height: LETTER.height, orientation: PageOrientation.LANDSCAPE },
+      margin: { top: MARGEN, right: MARGEN, bottom: MARGEN, left: MARGEN },
+    },
+  },
+  children: [
+    new Paragraph({
+      heading: HeadingLevel.HEADING_1,
+      spacing: { after: 60 },
+      children: [new TextRun({
+        text: "5. Procesamiento y análisis de datos",
+        size: 26, bold: true, color: AZUL, font: "Arial",
+      })],
+    }),
+    p("El tratamiento estadístico no forma parte de la matriz de consistencia: la matriz declara " +
+      "el diseño, la población, la muestra, la técnica y el instrumento, mientras que el estimador, " +
+      "la corrección de sesgo, el procedimiento de inferencia y las pruebas de robustez corresponden " +
+      "a este acápite.",
+      { tam: 18, despues: 160 }),
+    tabla(A_PROC, [
+      encabezado(["Aspecto", "Descripción"], A_PROC),
+      ...PROCESAMIENTO.map((f, i) => new TableRow({
+        children: [
+          celda(f[0], A_PROC[0], { negrita: true, tam: 16, fondo: i % 2 ? GRIS : undefined }),
+          celda(f[1], A_PROC[1], { tam: 15, fondo: i % 2 ? GRIS : undefined }),
+        ],
+      })),
+    ]),
+  ],
+};
 
 // Suman UTIL_H = 13680
 const A_CONS = [760, 2900, 2900, 3200, 920, 3000];
@@ -705,7 +679,7 @@ const doc = new Document({
       },
     },
   },
-  sections: [seccionVertical, seccionMatrizSimple, seccionConsistencia, seccionHorizontal],
+  sections: [seccionVertical, seccionMatrizSimple, seccionConsistencia, seccionProcesamiento, seccionHorizontal],
 });
 
 const salida = path.join(__dirname, "..", "..", "docs", "tesis",

@@ -136,11 +136,18 @@ mecanismo es el error que la corrección 4 de §2.1 eliminó.
 | **Unidad de análisis** | La ciudad-mes |
 | **Técnica de recolección** | Análisis documental de fuentes secundarias de acceso abierto |
 | **Instrumento** | Ficha de registro de datos secundarios |
-| **Técnicas de análisis** | Proyecciones locales en panel **con aumento de rezagos**, con efectos fijos de ciudad y de tiempo; **corrección de sesgo por jackknife de medio panel**; modelo de corrección de error con umbral para la integración de mercados; pruebas de dependencia espacial y de estabilidad de parámetros (ver §3.1) |
-| **Inferencia** | **Rezagos como controles y agrupamiento en la dimensión transversal** como procedimiento principal; Driscoll–Kraay y bootstrap *wild cluster* como contraste (ver §3.1) |
-| **Procesamiento** | Python, con el código y los datos derivados versionados en repositorio público |
+| **Procesamiento y análisis** | Ver sección 4. **El tratamiento estadístico no forma parte de la matriz de consistencia**: su lugar es el acápite de procesamiento y análisis de datos |
 
-### 3.1 Revisión de las técnicas contra los antecedentes
+## 4. Procesamiento y análisis de datos
+
+Este acápite contiene lo que la matriz de consistencia **no** debe
+contener. La matriz declara el diseño, la población, la muestra, la técnica
+y el instrumento; el estimador, la corrección de sesgo, el procedimiento de
+inferencia y las pruebas de robustez son tratamiento de datos y van aquí.
+Mezclarlos es un error de forma frecuente y fácil de observar en una
+sustentación.
+
+### 4.1 Revisión de las técnicas contra los antecedentes
 
 Las técnicas de la primera versión de esta matriz —panel con efectos fijos,
 proyecciones locales y errores de Driscoll–Kraay— se eligieron desde el marco
@@ -225,7 +232,10 @@ trabajos documentan**.
 > de datos, y además con panel espacial. Es el antecedente metodológico más
 > parecido que encontré y conviene seguirlo de cerca.
 
-#### Técnicas finales
+**Software.** Python, con el código y los datos derivados versionados en un
+repositorio público, de modo que toda la cadena sea reproducible.
+
+### 4.2 Técnicas finales
 
 | Objetivo | Técnica principal | Fundamento |
 |---|---|---|
@@ -245,7 +255,7 @@ trabajos documentan**.
 | Dependencia transversal | Efectos comunes correlacionados o efectos fijos interactivos | Thombs (2022); Gospodinov et al. (2025) |
 | Tendencias | Tendencias temporales específicas por ciudad | Yilmazkuday (2025) |
 
-#### Lo que se revisó y se descartó, con la razón
+### 4.3 Lo que se revisó y se descartó, con la razón
 
 Importa decirlo: varias técnicas de los antecedentes son buenas y **no** se
 adoptan, y la razón no es que sean malas sino que exceden el alcance de una
@@ -287,7 +297,7 @@ objetivos.
 | 3 | Extender la serie ONI a 1950 y corregir el parser de TSM semanal | El producto actual arranca en 2021 |
 | 4 | Calcular la réplica del ICEN y validarla contra los informes del IGP | Sostiene el título y la hipótesis específica 2 |
 
-## 4. Verificación de la coherencia
+## 5. Verificación de la coherencia
 
 Una matriz de consistencia se valida leyéndola por columnas y comprobando que
 cada fila cierre. Revisión hecha:
@@ -312,7 +322,7 @@ cada fila cierre. Revisión hecha:
 | ¿Cada problema es una pregunta abierta y medible? | Sí, tras reformular la específica 4, que era de sí o no |
 | ¿La muestra permite contrastar las hipótesis? | Sí en tamaño (~5 200 observaciones); **con la salvedad de que 26 grupos están en el límite inferior para el agrupamiento de errores**, de ahí el bootstrap |
 
-## 5. Referencias
+## 6. Referencias
 
 - Almuzara, M. y Sarto, A. (2024). Micro Responses to Macro Shocks. *Staff
   Reports*, Federal Reserve Bank of New York.

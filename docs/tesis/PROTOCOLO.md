@@ -412,7 +412,7 @@ eso Driscoll–Kraay pasa de procedimiento principal a contraste. Y se incorpora
 el **jackknife de medio panel**: Mei, Sheng y Shi (2023) muestran que el panel
 con proyecciones locales y efectos fijos arrastra un sesgo de Nickell implícito
 que **subestima** los efectos. Ver [MATRIZ_CONSISTENCIA.md](MATRIZ_CONSISTENCIA.md)
-§3.1.
+§4.1.
 
 **Advertencia sobre los efectos fijos en dos vías.** Kropko y Kubinec (2020)
 muestran que el modelo de dos vías mezcla variación intra-unidad y transversal
