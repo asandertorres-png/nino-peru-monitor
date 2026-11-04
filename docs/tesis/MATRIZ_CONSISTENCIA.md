@@ -61,22 +61,55 @@ produce conocimiento sobre una relación sin diseñar una intervención.
 **Verificar qué exige el reglamento de la escuela antes de imprimir**, que es
 más barato que discutirlo en la sustentación.
 
-### 2.2 Fila general
+### 2.2 Revisión específica de las hipótesis
+
+Las correcciones de §2.1 arreglaron la falsabilidad y el mecanismo. Una lectura
+dedicada a la **redacción de las hipótesis** encontró cuatro problemas más, de
+los cuales uno es sustantivo.
+
+| # | Problema | Por qué importa |
+|---|---|---|
+| 1 | **Ninguna hipótesis llevaba delimitación espacio-temporal.** Decían "las ciudades" y "los episodios" sin decir cuáles ni cuándo | Una hipótesis debe poder leerse sola, fuera de la matriz, y seguir siendo precisa. Si se cita suelta en el capítulo de resultados, "los episodios" no significa nada |
+| 2 | **Antecedente indefinido.** La específica 3 empezaba con "El efecto es mayor…" sin decir el efecto de qué | Misma razón: fuera de la fila de la tabla, la oración queda huérfana |
+| 3 | **Proposiciones coordinadas con "y".** Las específicas 1, 2 y 3 unían dos afirmaciones con una conjunción, de modo que bastaba que una fallara para rechazar toda la hipótesis | Si el efecto existe pero el máximo cae en el mes 20, ¿se rechaza H1? Con dos oraciones coordinadas, sí. Con una afirmación principal y un calificativo subordinado, no: se reporta la afirmación principal y se matiza el plazo |
+| 4 | **Sustantivo: la específica 1 declaraba una dirección que el diseño no sostiene.** Decía que las anomalías "**elevan**" la inflación. Pero el indicador 1 es una anomalía **con signo**: un mes más lluvioso de lo normal es positivo y uno más seco es negativo, y el daño viene de los dos extremos según la región — exceso en la costa norte, déficit en la sierra sur | Afirmar que toda anomalía eleva el precio implica que más lluvia en Puno encarece los alimentos, que no es lo que la teoría dice. La dirección por región es el objeto de la hipótesis 3, no de la 1 |
+
+**Cómo se resolvió el problema 4.** La específica 1 pasa a afirmar que las
+anomalías **afectan** la inflación y que el efecto alcanza su máximo dentro de
+cierto plazo, sin comprometer un signo único para todo el país; **el signo y su
+variación regional quedan íntegramente en la hipótesis 3**, que es donde el
+diseño puede sostenerlos. No es una hipótesis más débil: es la misma afirmación
+sin una dirección que los datos no respaldarían de manera uniforme.
+
+**Sobre la hipótesis nula.** Cada hipótesis de arriba es la alternativa; la nula
+correspondiente es la de ausencia de efecto —coeficiente igual a cero, ausencia
+de diferencia entre índices, ausencia de heterogeneidad, ausencia de caída de la
+integración— y es contra ella que se contrastan los coeficientes estimados.
+**Si el reglamento de la escuela exige enunciar H₀ y H₁ por separado, hay que
+desdoblar cada fila**; la matriz está escrita para que ese desdoblamiento sea
+mecánico.
+
+**Sobre la hipótesis general.** Sigue siendo compuesta, y eso es deliberado: la
+hipótesis general debe abarcar a las específicas, y abarcar varias
+afirmaciones es su función. La exigencia de proposición única aplica a las
+específicas.
+
+### 2.3 Fila general
 
 | | |
 |---|---|
 | **Problema general** | ¿Cuál es el efecto diferenciado del Niño del Pacífico central (ONI) y del Niño costero (ICEN) sobre la inflación de alimentos de las ciudades del Perú, según la exposición económica de cada ciudad, en el periodo 2010–2026? |
 | **Objetivo general** | **Determinar** el efecto diferenciado del Niño del Pacífico central y del Niño costero sobre la inflación de alimentos de las ciudades del Perú, según la exposición económica de cada ciudad, 2010–2026. |
-| **Hipótesis general** | El efecto del Niño costero sobre la inflación de alimentos es mayor que el del Niño del Pacífico central en las ciudades de la costa norte, y la magnitud del efecto de ambos fenómenos aumenta con la exposición económica de la ciudad. |
+| **Hipótesis general** | En las ciudades del Perú, entre 2010 y 2026, el Niño costero y el Niño del Pacífico central producen efectos de magnitud distinta sobre la inflación de alimentos: el del Niño costero es mayor en las ciudades de la costa norte, y la magnitud de ambos aumenta con la exposición económica de la ciudad. |
 
-### 2.3 Filas específicas
+### 2.4 Filas específicas
 
 | # | Problema específico | Objetivo específico | Hipótesis específica | Indicadores |
 |---|---|---|---|---|
-| **1** | ¿Cuál es el efecto de las anomalías climáticas locales sobre la inflación de alimentos de las ciudades del Perú? | **Estimar** el efecto de las anomalías locales de precipitación y temperatura sobre la inflación de alimentos por ciudad | Las anomalías climáticas locales elevan la inflación de alimentos, con el efecto máximo dentro de los dieciocho meses posteriores al shock | 1, 2, 7, 8 |
-| **2** | ¿Cuál de los dos índices oceánicos —ONI o ICEN— explica mejor la inflación de alimentos de las ciudades del Perú? | **Comparar** el poder explicativo del ONI y del ICEN-réplica sobre la inflación de alimentos por ciudad | El ICEN tiene mayor poder explicativo que el ONI en las ciudades de la costa norte, y el ONI no lo supera en ninguna región costera | 3, 4, 7, 8 |
-| **3** | ¿En qué medida difiere el efecto entre regiones según la exposición económica de cada ciudad? | **Contrastar** la heterogeneidad regional del efecto según la exposición económica de cada ciudad | El efecto es mayor cuanto mayores son la participación del sector agropecuario y pesquero y el peso del alimento en la canasta, y difiere en signo entre la costa norte y la sierra sur | 5, 6, 1, 2 |
-| **4** | ¿En qué medida se reduce la integración de los mercados de alimentos entre ciudades durante los episodios? | **Determinar** en qué medida se reduce la integración de los mercados de alimentos entre ciudades durante los episodios | La integración de los mercados de alimentos entre ciudades disminuye durante los episodios | 10, 3, 4 |
+| **1** | ¿Cuál es el efecto de las anomalías climáticas locales sobre la inflación de alimentos de las ciudades del Perú? | **Estimar** el efecto de las anomalías locales de precipitación y temperatura sobre la inflación de alimentos por ciudad | Las anomalías locales de precipitación y temperatura afectan la inflación de alimentos de las ciudades del Perú, alcanzando su efecto máximo dentro de los dieciocho meses posteriores al shock | 1, 2, 7, 8 |
+| **2** | ¿Cuál de los dos índices oceánicos —ONI o ICEN— explica mejor la inflación de alimentos de las ciudades del Perú? | **Comparar** el poder explicativo del ONI y del ICEN-réplica sobre la inflación de alimentos por ciudad | En las ciudades de la costa norte del Perú, el ICEN explica la inflación de alimentos mejor que el ONI | 3, 4, 7, 8 |
+| **3** | ¿En qué medida difiere el efecto entre regiones según la exposición económica de cada ciudad? | **Contrastar** la heterogeneidad regional del efecto según la exposición económica de cada ciudad | El efecto de las anomalías climáticas sobre la inflación de alimentos aumenta con la participación del sector agropecuario y pesquero en el VAB departamental y con el peso del alimento en la canasta de la ciudad, y difiere en signo entre la costa norte y la sierra sur | 5, 6, 1, 2 |
+| **4** | ¿En qué medida se reduce la integración de los mercados de alimentos entre las ciudades del Perú durante los episodios cálidos del ENSO? | **Determinar** en qué medida se reduce la integración de los mercados de alimentos entre las ciudades del Perú durante los episodios cálidos del ENSO | La integración de los mercados de alimentos entre las ciudades del Perú disminuye durante los episodios cálidos del ENSO | 10, 3, 4 |
 
 Los números de la última columna remiten a los 10 indicadores de la matriz de
 operacionalización simplificada.
@@ -273,6 +306,9 @@ cada fila cierre. Revisión hecha:
 | ¿Toda hipótesis es una afirmación falsable? | **Sí**, tras eliminar el "puede" de la específica 3 |
 | ¿Alguna hipótesis afirma un mecanismo que el diseño no observa? | **Ya no**: se retiró la cláusula causal de la específica 4 |
 | ¿El horizonte de las hipótesis coincide con el de la estimación? | Sí: 18 meses, dentro del horizonte h = 24 de las proyecciones locales |
+| ¿Cada hipótesis específica es una proposición única? | **Sí**, tras subordinar los calificativos en lugar de coordinarlos con "y" (§2.2) |
+| ¿Cada hipótesis se entiende leída fuera de la tabla? | **Sí**, tras añadir delimitación espacio-temporal y resolver el antecedente de "el efecto" |
+| ¿Alguna hipótesis declara una dirección que el diseño no sostiene? | **Ya no**: la específica 1 decía que las anomalías "elevan" el precio, y el signo varía por región (§2.2, problema 4) |
 | ¿Cada problema es una pregunta abierta y medible? | Sí, tras reformular la específica 4, que era de sí o no |
 | ¿La muestra permite contrastar las hipótesis? | Sí en tamaño (~5 200 observaciones); **con la salvedad de que 26 grupos están en el límite inferior para el agrupamiento de errores**, de ahí el bootstrap |
 
