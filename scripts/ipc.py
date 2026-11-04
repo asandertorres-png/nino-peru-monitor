@@ -138,7 +138,7 @@ def inspeccionar_catalogo():
         # se busca en toda la fila: el nombre de la ciudad puede venir en la columna de geografia o en la categoria
         texto_fila = sin_tildes(" ".join(f)).lower()
         geo = col(f, i_geo)
-        es_ciudad = any(c in texto_fila for c in ciudades)
+        es_ciudad = any(re.search(r"\b" + re.escape(c) + r"\b", texto_fila) for c in ciudades)
         frec = col(f, i_frec)
         if any(re.search(p.lower(), texto_fila) for p in PATRONES_CATALOGO):
             if frec and "mensual" not in sin_tildes(frec).lower():
@@ -163,6 +163,50 @@ def inspeccionar_catalogo():
             geos[g] = geos.get(g, 0) + 1
     print("valores de la columna de geografia:", ", ".join(f"{g}={n}" for g, n in sorted(geos.items(), key=lambda x: -x[1])[:40]), flush=True)
     return encontradas
+
+
+# El catalogo del BCRP solo trae el IPC de Lima Metropolitana: las ciudades las
+# publica el INEI. Estas paginas se revisan en busca de archivos descargables.
+PAGINAS_INEI = [
+    "https://m.inei.gob.pe/estadisticas/indice-tematico/price-indexes/",
+    "https://www.inei.gob.pe/estadisticas/indice-tematico/price-indexes/",
+    "https://m.inei.gob.pe/estadisticas/indice-tematico/economia/",
+    "https://m.inei.gob.pe/biblioteca-virtual/boletines/informe-de-precios/1/",
+    "https://www.inei.gob.pe/biblioteca-virtual/boletines/informe-de-precios/1/",
+    "http://webapp.inei.gob.pe:8080/sirtod-series/",
+    "https://systems.inei.gob.pe/SIRTOD/",
+    "https://www.datosabiertos.gob.pe/api/3/action/package_search?q=indice%20precios%20consumidor%20ciudades&rows=10",
+    "https://www.datosabiertos.gob.pe/dataset?q=IPC+ciudades",
+]
+
+
+def inspeccionar_inei():
+    print("== fuentes INEI (archivos descargables con IPC por ciudad) ==", flush=True)
+    for url in PAGINAS_INEI:
+        try:
+            b = descargar(url, intentos=2, timeout=60)
+        except Exception as exc:
+            print(f"- {url}: error {exc}", flush=True)
+            continue
+        t = decodificar(b)
+        tl = sin_tildes(t).lower()
+        print(f"- {url}: {len(b):,} bytes", flush=True)
+        if url.endswith("rows=10"):
+            print("    " + t[:1500].replace("\n", " "), flush=True)
+            continue
+        enlaces = re.findall(r'href=["\']([^"\']+)["\']', t)
+        interesantes = [e for e in enlaces if re.search(r"\.(xlsx?|csv|zip)(\?|$)", e, re.I)]
+        con_pista = [e for e in interesantes if re.search(r"ciud|precio|ipc|cap27|cap_27|indice", sin_tildes(e).lower())]
+        print(f"    enlaces: {len(enlaces)}, descargables: {len(interesantes)}, con pista de precios/ciudades: {len(con_pista)}", flush=True)
+        for e in (con_pista or interesantes)[:60]:
+            # el texto cercano al enlace ayuda a saber que cuadro es
+            i = t.find(e)
+            contexto = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", t[max(0, i - 220):i + len(e) + 120]))
+            print(f"      {e}  ::  {contexto[:160]}", flush=True)
+        for pista in ("sirtod", "api/", "series/", "exportar", "json"):
+            i = tl.find(pista)
+            if i >= 0:
+                print(f"    pista '{pista}': ..." + re.sub(r"\s+", " ", t[max(0, i - 120):i + 160]) + "...", flush=True)
 
 
 def inspeccionar_api(codigo):
@@ -242,6 +286,7 @@ def main():
                 inspeccionar_api(prueba)
             except Exception as exc:
                 print(f"  la prueba del API fallo: {exc}", flush=True)
+        inspeccionar_inei()
         print("modo inspeccion: no se escribe nada", flush=True)
         return
     if not CIUDADES:
