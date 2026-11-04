@@ -36,15 +36,10 @@
   "semanal_error": null,
   "icen": {
     "anio": 2026,
-    "mes": 8,
-    "icen": 3.98,
+    "mes": 9,
+    "icen": 4.5,
     "categoria": "calida extraordinaria",
     "serie": [
-      {
-        "anio": 2023,
-        "mes": 9,
-        "icen": 2.68
-      },
       {
         "anio": 2023,
         "mes": 10,
@@ -219,6 +214,11 @@
         "anio": 2026,
         "mes": 8,
         "icen": 3.98
+      },
+      {
+        "anio": 2026,
+        "mes": 9,
+        "icen": 4.5
       }
     ],
     "fuente": "ENFEN/IGP - ICEN (Nino 1+2, ERSSTv5, base 1991-2020)",
