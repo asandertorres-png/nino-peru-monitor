@@ -1,0 +1,498 @@
+/**
+ * Genera el documento Word con el titulo y la matriz de operacionalizacion.
+ *
+ * Salida: docs/tesis/Matriz_operacionalizacion.docx
+ *
+ * La fuente de verdad del contenido es docs/tesis/OPERACIONALIZACION.md y la
+ * seccion 1 de docs/tesis/PROTOCOLO.md. Si cambia una ficha alli, hay que
+ * cambiarla aqui y volver a generar.
+ *
+ * NOTA SOBRE LA CONVENCION DEL PROYECTO. CLAUDE.md pide Python estandar sin
+ * dependencias externas. Esta es la unica pieza en Node, y la razon es que el
+ * entregable es un .docx con tablas y el paquete docx de npm esta preinstalado
+ * en el entorno. No es parte del monitor ni de su flujo diario: solo produce
+ * un documento de la tesis.
+ *
+ * Uso:  node scripts/tesis/matriz_docx.js
+ */
+
+const fs = require("fs");
+const path = require("path");
+const {
+  Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell,
+  WidthType, ShadingType, AlignmentType, HeadingLevel, PageOrientation,
+  BorderStyle, VerticalAlign, PageBreak,
+} = require("docx");
+
+// ---------------------------------------------------------------- constantes
+
+const TITULO =
+  "Niño del Pacífico central y Niño costero: efecto diferenciado sobre la " +
+  "inflación de alimentos en 26 ciudades del Perú, 2010–2026";
+
+const AUTOR = "Alexander Torres Uchupe";
+const CASA = "Universidad Nacional de San Antonio Abad del Cusco";
+
+const AZUL = "1F3864";
+const GRIS = "F2F2F2";
+const GRIS_OSCURO = "D9D9D9";
+
+// Letter en DXA. Para horizontal se pasan las medidas verticales y docx-js
+// intercambia ancho y alto al aplicar la orientacion.
+const LETTER = { width: 12240, height: 15840 };
+const MARGEN = 1080;
+const UTIL_V = LETTER.width - 2 * MARGEN;   // 10080, pagina vertical
+const UTIL_H = LETTER.height - 2 * MARGEN;  // 13680, pagina horizontal
+
+// ------------------------------------------------------------------ utiles
+
+const p = (texto, opciones = {}) =>
+  new Paragraph({
+    alignment: opciones.alineacion || AlignmentType.JUSTIFIED,
+    spacing: { before: opciones.antes ?? 0, after: opciones.despues ?? 120 },
+    children: [new TextRun({
+      text: texto,
+      size: opciones.tam || 22,
+      bold: !!opciones.negrita,
+      italics: !!opciones.cursiva,
+      color: opciones.color,
+      font: "Arial",
+    })],
+  });
+
+/** Celda de tabla. */
+const celda = (texto, ancho, opciones = {}) =>
+  new TableCell({
+    width: { size: ancho, type: WidthType.DXA },
+    shading: opciones.fondo
+      ? { type: ShadingType.CLEAR, fill: opciones.fondo, color: "auto" }
+      : undefined,
+    verticalAlign: VerticalAlign.CENTER,
+    margins: { top: 60, bottom: 60, left: 80, right: 80 },
+    children: (Array.isArray(texto) ? texto : [texto]).map((linea) =>
+      new Paragraph({
+        alignment: opciones.alineacion || AlignmentType.LEFT,
+        spacing: { before: 0, after: 0 },
+        children: [new TextRun({
+          text: linea,
+          size: opciones.tam || 16,
+          bold: !!opciones.negrita,
+          italics: !!opciones.cursiva,
+          color: opciones.color,
+          font: opciones.mono ? "Consolas" : "Arial",
+        })],
+      })),
+  });
+
+/** Fila de encabezado con fondo azul y texto blanco. */
+const encabezado = (textos, anchos) =>
+  new TableRow({
+    tableHeader: true,
+    children: textos.map((t, i) =>
+      celda(t, anchos[i], {
+        fondo: AZUL, negrita: true, color: "FFFFFF", tam: 16,
+        alineacion: AlignmentType.CENTER,
+      })),
+  });
+
+const salto = () => new Paragraph({ children: [new PageBreak()] });
+
+const tabla = (anchos, filas) =>
+  new Table({
+    columnWidths: anchos,
+    width: { size: anchos.reduce((a, b) => a + b, 0), type: WidthType.DXA },
+    borders: {
+      top: { style: BorderStyle.SINGLE, size: 4, color: "808080" },
+      bottom: { style: BorderStyle.SINGLE, size: 4, color: "808080" },
+      left: { style: BorderStyle.SINGLE, size: 4, color: "808080" },
+      right: { style: BorderStyle.SINGLE, size: 4, color: "808080" },
+      insideHorizontal: { style: BorderStyle.SINGLE, size: 2, color: "BFBFBF" },
+      insideVertical: { style: BorderStyle.SINGLE, size: 2, color: "BFBFBF" },
+    },
+    rows: filas,
+  });
+
+// --------------------------------------------- datos de la matriz: variable X
+
+// [dimension, codigo, indicador, definicion/formula, unidad y escala, fuente, hipotesis]
+const FILAS_X = [
+  ["D1 Magnitud", "X1", "Anomalía estandarizada de precipitación",
+   "A_pp(c,t) = [PP(c,t) − μ_pp(c,m)] / σ_pp(c,m), base 1991–2020",
+   "σ · Razón", "ERA5 / ERA5-Land (Open-Meteo)", "H1, H2, H6"],
+  ["D1 Magnitud", "X2", "Anomalía estandarizada de temperatura máxima",
+   "A_tx(c,t) = [TX(c,t) − μ_tx(c,m)] / σ_tx(c,m), base 1991–2020",
+   "σ · Razón", "ERA5 / ERA5-Land", "H1, H2, H6"],
+
+  ["D2 Signo", "X3", "Exceso de lluvia", "A⁺_pp(c,t) = máx[A_pp(c,t), 0]",
+   "σ · Razón", "ERA5 / ERA5-Land", "H4"],
+  ["D2 Signo", "X4", "Déficit de lluvia", "A⁻_pp(c,t) = máx[−A_pp(c,t), 0]",
+   "σ · Razón", "ERA5 / ERA5-Land", "H4"],
+  ["D2 Signo", "X5", "Exceso de calor", "A⁺_tx(c,t) = máx[A_tx(c,t), 0]",
+   "σ · Razón", "ERA5 / ERA5-Land", "H4"],
+
+  ["D3 Persistencia", "X6", "Racha de meses consecutivos sobre umbral",
+   "Meses consecutivos terminados en t con |A(c,·)| ≥ 1, por signo. Umbral 1σ, convencional; contraste externo: criterio ENFEN de 3 meses",
+   "Meses · Razón", "ERA5, NOAA/CPC", "H4b"],
+  ["D3 Persistencia", "X7", "Shock acumulado a 3, 6 y 12 meses",
+   "S_k(c,t) = Σ A(c,t−j), j = 0…k−1, con k = 3, 6, 12",
+   "σ acumuladas · Razón", "ERA5, NOAA/CPC", "H4b"],
+
+  ["D4 Anticipación", "X8", "ONI rezagado",
+   "ONI(t−k), k = 0…12. Media móvil trimestral de la anomalía de TSM de la región Niño 3.4, base 1991–2020, criterio NOAA",
+   "°C · Razón", "NOAA/CPC", "H1, H3"],
+  ["D4 Anticipación", "X9", "ICEN-réplica rezagado",
+   "ICEN*(t) = (1/3) Σ a₁₊₂(t−j), j = 0…2, donde a₁₊₂ es la anomalía mensual de TSM de la región Niño 1+2",
+   "°C · Razón", "NOAA/CPC (Niño 1+2)", "H1, H3"],
+  ["D4 Anticipación", "X10", "Aviso del ENFEN",
+   "Indicadora = 1 en el mes de un pronunciamiento que declara o eleva el estado de alerta. Único indicador estrictamente informacional de la matriz",
+   "Dicotómica · Nominal", "Comunicados del ENFEN", "H1"],
+  ["D4 Anticipación", "X11", "Antelación del aviso",
+   "Días entre el aviso (X10 = 1) y el primer mes con |A(c,·)| ≥ 1 en la unidad c. Puede ser negativa, y ese caso es informativo",
+   "Días · Intervalo", "ENFEN, ERA5", "H1"],
+
+  ["D5 Exposición económica", "X12", "Peso del sector primario en el VAB departamental",
+   "E1(d) = [VAB agropecuario(d) + VAB pesca(d)] / VAB total(d)",
+   "% · Razón", "INEI, cuentas departamentales", "H2"],
+  ["D5 Exposición económica", "X13", "Peso del alimento en la canasta del IPC de la ciudad",
+   "E2(c) = ponderación de la división 01 (alimentos y bebidas no alcohólicas) en la estructura del IPC de la ciudad c",
+   "% · Razón", "INEI, ponderaciones del IPC", "H2"],
+  ["D5 Exposición económica", "X14", "Sensibilidad climática estimada (exposición continua)",
+   "β(c) de A_pp(c,τ) = α(c) + β(c)·ONI(τ) + ε, estimado SOLO en 1991–2020, fuera del periodo de estimación",
+   "Coeficiente · Razón", "Derivado de ERA5 y NOAA", "H2"],
+  ["D5 Exposición económica", "X15", "Aislamiento respecto de zonas productoras",
+   "Distancia o índice de conectividad entre la ciudad y su principal zona abastecedora",
+   "km o índice · Razón", "Por definir", "H2, H5"],
+
+  ["D6 Calendario productivo", "X16", "Fase del calendario agrícola de la zona abastecedora",
+   "Categórica: siembra, crecimiento, cosecha, poscosecha. Interactúa con X1–X5",
+   "4 categorías · Nominal", "MIDAGRI", "H4b"],
+];
+
+// --------------------------------------------- datos de la matriz: variable Y
+
+const FILAS_Y = [
+  ["D1 Nivel y tendencia", "Y1", "Inflación mensual de alimentos",
+   "π(c,t) = ln[IPC_alim(c,t)] − ln[IPC_alim(c,t−1)]",
+   "% · Razón", "INEI, IPC de 26 ciudades", "H1–H4"],
+  ["D1 Nivel y tendencia", "Y2", "Inflación a 12 meses",
+   "π¹²(c,t) = ln[IPC_alim(c,t)] − ln[IPC_alim(c,t−12)]",
+   "% · Razón", "INEI", "H1–H4"],
+  ["D1 Nivel y tendencia", "Y3", "Nivel acumulado del logaritmo del índice",
+   "p(c,t+h) − p(c,t−1), con p = ln(IPC_alim). Es la dependiente de las proyecciones locales: interesa cuánto más caro está el alimento h meses después, no la tasa de ese mes",
+   "Logaritmo · Razón", "INEI", "H1, H2"],
+
+  ["D2 Volatilidad", "Y4", "Desviación estándar móvil de 12 meses",
+   "Desviación estándar de π(c,·) en la ventana de los 12 meses terminados en t",
+   "% · Razón", "Derivado de Y1", "H4b"],
+  ["D2 Volatilidad", "Y5", "Varianza condicional GARCH",
+   "h(c,t) de un GARCH(1,1) sobre π(c,t). Con T ≈ 200 por ciudad es estimable pero justo; se reporta como contraste de Y4",
+   "Varianza · Razón", "Derivado de Y1", "H4b"],
+
+  ["D3 Picos", "Y6", "Indicador de pico",
+   "1[π(c,t) > q₉₀(π(c,·))], con el percentil calculado sobre la distribución PROPIA de la ciudad, para no confundir ciudad volátil con mes extremo",
+   "Dicotómica · Nominal", "Derivado de Y1", "H4b"],
+  ["D3 Picos", "Y7", "Magnitud del exceso sobre el percentil 90",
+   "máx[π(c,t) − q₉₀(π(c,·)), 0]",
+   "% · Razón", "Derivado de Y1", "H4b"],
+
+  ["D4 Traspaso", "Y8", "Elasticidad del IPC general respecto del de alimentos",
+   "λ en: Δln IPC_gen(c,t) = κ(c) + λ·Δln IPC_alim(c,t) + controles. Referencia: traspaso incompleto de 1 a 6 trimestres (Jalil y Tamayo, 2011)",
+   "Coeficiente · Razón", "INEI, BCRP", "Supuesto P8"],
+  ["D4 Traspaso", "Y9", "Elasticidad del IPC subyacente respecto del de alimentos",
+   "Igual que Y8, reemplazando el índice general por el subyacente",
+   "Coeficiente · Razón", "INEI, BCRP", "Supuesto P8"],
+
+  ["D5 Integración espacial", "Y10", "Correlación móvil entre pares de ciudades",
+   "Correlación de π entre las ciudades c y c′ en la ventana de 12 meses terminada en t; se resume por ciudad como la media de sus correlaciones con las demás",
+   "Coeficiente · Razón", "Derivado de Y1", "H5"],
+  ["D5 Integración espacial", "Y11", "Ancho de la banda neutral",
+   "Umbral estimado en un modelo de corrección de error con umbral (TVECM) por par de ciudades. Representa los costos de transacción",
+   "% · Razón", "Derivado de Y1 y del nivel del índice", "H5"],
+];
+
+// ------------------------------------------------------------ Ricitos de Oro
+
+const RICITOS = [
+  ["Demasiado amplio",
+   "«Impacto económico del fenómeno El Niño en el Perú»",
+   "No delimita variable dependiente, ni unidad de análisis, ni periodo. Abarca producción, empleo, precios, infraestructura y salud a la vez. No es abordable con el tiempo y los datos de una tesis, y no permite identificar aporte frente a lo ya publicado."],
+  ["Demasiado estrecho",
+   "«Efecto del Niño costero de marzo de 2017 sobre el precio de la papa en el mercado de Wanchaq, Cusco»",
+   "Un solo evento, un producto y un mercado. Se responde con estadística descriptiva: no admite diseño de panel ni inferencia, y la literatura específica sobre ese caso puntual es insuficiente para sostener un marco teórico."],
+  ["Calibrado · Ricitos de Oro",
+   "«Niño del Pacífico central y Niño costero: efecto diferenciado sobre la inflación de alimentos en 26 ciudades del Perú, 2010–2026»",
+   "Delimita las dos variables, la unidad de análisis (26 ciudades), el ámbito (Perú) y el periodo (2010–2026). Hay literatura suficiente y el aporte es identificable y enunciable en una frase: la separación ONI / ICEN a nivel subnacional."],
+];
+
+const CRITERIOS = [
+  ["Literatura suficiente", "Cumple",
+   "Antecedentes internacionales, nacionales y locales documentados, con la distinción CP/EP ya establecida entre países (Gallegati et al., 2026; Solomou et al., 2025)."],
+  ["Aporte identificable", "Cumple",
+   "La separación ONI / ICEN a nivel subnacional no se encuentra en la literatura revisada. El efecto agregado, en cambio, ya está cuantificado (Calero y Rodríguez, 2026; Crofils et al., 2024)."],
+  ["Variables delimitadas", "Cumple",
+   "Una variable independiente y una dependiente, con 27 indicadores en total."],
+  ["Unidad de análisis y periodo", "Cumple",
+   "26 ciudades, frecuencia mensual, 2010–2026."],
+  ["Factibilidad de los datos", "Cumple en parte",
+   "Es el criterio no satisfecho del todo, y se declara: 8 de los 27 indicadores dependen de persistir el panel climático mensual, y la existencia del IPC por ciudad y división de gasto no está verificada. Ver el cuadro de estado."],
+];
+
+const ESTADO = [
+  ["X1, X2", "Bloqueado",
+   "σ por unidad y mes del año no existe en el producto actual de normales; requiere persistir el panel climático mensual 1991–2026"],
+  ["X3 – X7", "Bloqueado", "Derivan de X1 y X2"],
+  ["X8", "Parcial", "La serie ONI guardada arranca en 2021; hay que extenderla a 1950"],
+  ["X9", "Parcial",
+   "Calculable desde la NOAA; falta validarla contra los informes del IGP. El nombre «ICEN-réplica» es obligatorio hasta esa validación"],
+  ["X10, X11", "No verificado",
+   "Disponibilidad histórica y codificación consistente de los comunicados del ENFEN"],
+  ["X12", "No verificado", "Ruta de descarga del VAB departamental en formato utilizable"],
+  ["X13", "En riesgo",
+   "Si las ponderaciones del IPC solo existen para Lima Metropolitana, el indicador no varía entre ciudades. Plan alternativo: peso nacional, declarando la pérdida de variación"],
+  ["X14", "Bloqueado", "Requiere el panel climático largo"],
+  ["X15, X16", "En riesgo",
+   "Falta el dato de qué zona abastece a cada ciudad (flujos comerciales). Sustituto admisible con supuesto declarado"],
+  ["Y1 – Y3", "En riesgo · decide el diseño",
+   "Que el INEI publique el IPC por ciudad y por división de gasto. Si solo existe el índice general por ciudad, se aplica el plan alternativo del protocolo"],
+  ["Y4 – Y7, Y10, Y11", "Derivado", "Disponibles en cuanto exista Y1"],
+  ["Y8", "No verificado", "IPC general por ciudad"],
+  ["Y9", "En riesgo", "IPC subyacente por ciudad, dudoso. Si no existe, se elimina de la matriz"],
+];
+
+// ------------------------------------------------------------------ secciones
+
+// Anchos de columna, pagina horizontal: suman UTIL_H = 13680
+const A_MATRIZ = [1750, 620, 2300, 4650, 1500, 1660, 1200];
+// Pagina vertical: suman UTIL_V = 10080
+const A_RICITOS = [1700, 4180, 4200];
+const A_CRITERIOS = [2100, 1500, 6480];
+// Pagina horizontal
+const A_ESTADO = [2100, 2300, 9280];
+
+const filaMatriz = (f, i) =>
+  new TableRow({
+    children: [
+      celda(f[0], A_MATRIZ[0], { fondo: i % 2 ? GRIS : undefined, tam: 15 }),
+      celda(f[1], A_MATRIZ[1], { fondo: i % 2 ? GRIS : undefined, negrita: true, alineacion: AlignmentType.CENTER }),
+      celda(f[2], A_MATRIZ[2], { fondo: i % 2 ? GRIS : undefined, tam: 15 }),
+      celda(f[3], A_MATRIZ[3], { fondo: i % 2 ? GRIS : undefined, tam: 14 }),
+      celda(f[4], A_MATRIZ[4], { fondo: i % 2 ? GRIS : undefined, tam: 14, alineacion: AlignmentType.CENTER }),
+      celda(f[5], A_MATRIZ[5], { fondo: i % 2 ? GRIS : undefined, tam: 14 }),
+      celda(f[6], A_MATRIZ[6], { fondo: i % 2 ? GRIS : undefined, tam: 14, alineacion: AlignmentType.CENTER }),
+    ],
+  });
+
+const CAB_MATRIZ = ["Dimensión", "Cód.", "Indicador",
+  "Definición operacional / fórmula", "Unidad y escala", "Fuente", "Hipótesis"];
+
+const seccionVertical = {
+  properties: {
+    page: {
+      size: { width: LETTER.width, height: LETTER.height },
+      margin: { top: MARGEN, right: MARGEN, bottom: MARGEN, left: MARGEN },
+    },
+  },
+  children: [
+    new Paragraph({
+      alignment: AlignmentType.CENTER,
+      spacing: { after: 60 },
+      children: [new TextRun({ text: CASA, size: 20, color: "595959", font: "Arial" })],
+    }),
+    new Paragraph({
+      alignment: AlignmentType.CENTER,
+      spacing: { after: 400 },
+      children: [new TextRun({ text: "Escuela Profesional de Economía", size: 20, color: "595959", font: "Arial" })],
+    }),
+    new Paragraph({
+      alignment: AlignmentType.CENTER,
+      spacing: { after: 360 },
+      border: { bottom: { style: BorderStyle.SINGLE, size: 8, color: AZUL, space: 8 } },
+      children: [new TextRun({
+        text: "MATRIZ DE OPERACIONALIZACIÓN DE VARIABLES",
+        size: 30, bold: true, color: AZUL, font: "Arial",
+      })],
+    }),
+
+    new Paragraph({
+      heading: HeadingLevel.HEADING_1,
+      children: [new TextRun({ text: "1. Título de la investigación", size: 26, bold: true, color: AZUL, font: "Arial" })],
+    }),
+    new Paragraph({
+      alignment: AlignmentType.CENTER,
+      spacing: { before: 120, after: 160 },
+      shading: { type: ShadingType.CLEAR, fill: GRIS, color: "auto" },
+      border: {
+        top: { style: BorderStyle.SINGLE, size: 6, color: AZUL, space: 10 },
+        bottom: { style: BorderStyle.SINGLE, size: 6, color: AZUL, space: 10 },
+        left: { style: BorderStyle.SINGLE, size: 6, color: AZUL, space: 10 },
+        right: { style: BorderStyle.SINGLE, size: 6, color: AZUL, space: 10 },
+      },
+      children: [new TextRun({ text: TITULO, size: 26, bold: true, font: "Arial" })],
+    }),
+    p(`Autor: ${AUTOR}`, { alineacion: AlignmentType.CENTER, tam: 20, despues: 300 }),
+
+    new Paragraph({
+      heading: HeadingLevel.HEADING_1,
+      children: [new TextRun({
+        text: "2. Calibración del título: técnica de Ricitos de Oro",
+        size: 26, bold: true, color: AZUL, font: "Arial",
+      })],
+    }),
+    p("La técnica de Ricitos de Oro consiste en comprobar que el tema no sea demasiado " +
+      "amplio ni demasiado estrecho, sino del alcance justo: lo bastante específico para " +
+      "abordarlo con los datos y el tiempo disponibles, y lo bastante amplio para que exista " +
+      "literatura suficiente y el trabajo constituya un aporte. El procedimiento es partir de " +
+      "un enunciado general y acotarlo por etapas —por variable, unidad de análisis, ámbito y " +
+      "periodo— hasta dar con la formulación intermedia. A continuación se muestran las tres " +
+      "versiones evaluadas.", { despues: 160 }),
+
+    tabla(A_RICITOS, [
+      encabezado(["Versión", "Título candidato", "Veredicto"], A_RICITOS),
+      ...RICITOS.map((f, i) => new TableRow({
+        children: [
+          celda(f[0], A_RICITOS[0], {
+            negrita: true, tam: 16,
+            fondo: i === 2 ? "E2EFDA" : GRIS,
+            alineacion: AlignmentType.CENTER,
+          }),
+          celda(f[1], A_RICITOS[1], { tam: 15, cursiva: true, fondo: i === 2 ? "E2EFDA" : undefined }),
+          celda(f[2], A_RICITOS[2], { tam: 15, fondo: i === 2 ? "E2EFDA" : undefined }),
+        ],
+      })),
+    ]),
+
+    p("Verificación de los criterios de la técnica", { negrita: true, antes: 300, despues: 120 }),
+
+    tabla(A_CRITERIOS, [
+      encabezado(["Criterio", "Resultado", "Sustento"], A_CRITERIOS),
+      ...CRITERIOS.map((f, i) => new TableRow({
+        children: [
+          celda(f[0], A_CRITERIOS[0], { negrita: true, tam: 16, fondo: i % 2 ? GRIS : undefined }),
+          celda(f[1], A_CRITERIOS[1], {
+            tam: 16, negrita: true, alineacion: AlignmentType.CENTER,
+            fondo: f[1] === "Cumple en parte" ? "FFF2CC" : (i % 2 ? GRIS : undefined),
+          }),
+          celda(f[2], A_CRITERIOS[2], { tam: 15, fondo: i % 2 ? GRIS : undefined }),
+        ],
+      })),
+    ]),
+
+    new Paragraph({
+      heading: HeadingLevel.HEADING_1,
+      spacing: { before: 360, after: 120 },
+      children: [new TextRun({
+        text: "3. Definición conceptual de las variables",
+        size: 26, bold: true, color: AZUL, font: "Arial",
+      })],
+    }),
+    p("Variable independiente (X): shock exógeno de oferta de origen ENSO.", { negrita: true, despues: 60 }),
+    p("Perturbación no anticipada por la economía peruana, originada en la variabilidad del " +
+      "Pacífico tropical, que desplaza la función de oferta agropecuaria y pesquera regional y " +
+      "eleva los costos de transacción del comercio interregional. Se define como shock de " +
+      "oferta —categoría económica— y no como fenómeno climático: el dato climático es el " +
+      "indicador de una sola de sus seis dimensiones, la magnitud.", { despues: 160 }),
+    p("Variable dependiente (Y): precios de alimentos al consumidor en el ámbito urbano.", { negrita: true, despues: 60 }),
+    p("Nivel y dinámica del precio de la canasta de alimentos que enfrenta el consumidor urbano " +
+      "de cada ciudad, medido por el índice de precios al consumidor del grupo de alimentos. Sus " +
+      "dimensiones siguen la estructura establecida en la economía agrícola, que distingue " +
+      "tendencias, volatilidad y picos como tipos de cambio de precio diferentes (von Braun y " +
+      "Tadesse, 2012; Díaz-Bonilla, 2016), más el traspaso y la integración espacial.", { despues: 0 }),
+  ],
+};
+
+const seccionHorizontal = {
+  properties: {
+    page: {
+      size: { width: LETTER.width, height: LETTER.height, orientation: PageOrientation.LANDSCAPE },
+      margin: { top: MARGEN, right: MARGEN, bottom: MARGEN, left: MARGEN },
+    },
+  },
+  children: [
+    new Paragraph({
+      heading: HeadingLevel.HEADING_1,
+      spacing: { after: 60 },
+      children: [new TextRun({
+        text: "4. Matriz de operacionalización · Variable independiente (X)",
+        size: 26, bold: true, color: AZUL, font: "Arial",
+      })],
+    }),
+    p("Shock exógeno de oferta de origen ENSO · 6 dimensiones · 16 indicadores", { cursiva: true, tam: 18, despues: 120 }),
+    tabla(A_MATRIZ, [encabezado(CAB_MATRIZ, A_MATRIZ), ...FILAS_X.map(filaMatriz)]),
+
+    salto(),
+    new Paragraph({
+      heading: HeadingLevel.HEADING_1,
+      spacing: { before: 0, after: 60 },
+      children: [new TextRun({
+        text: "5. Matriz de operacionalización · Variable dependiente (Y)",
+        size: 26, bold: true, color: AZUL, font: "Arial",
+      })],
+    }),
+    p("Precios de alimentos al consumidor urbano · 5 dimensiones · 11 indicadores", { cursiva: true, tam: 18, despues: 120 }),
+    tabla(A_MATRIZ, [encabezado(CAB_MATRIZ, A_MATRIZ), ...FILAS_Y.map(filaMatriz)]),
+
+    salto(),
+    new Paragraph({
+      heading: HeadingLevel.HEADING_1,
+      spacing: { before: 0, after: 60 },
+      children: [new TextRun({
+        text: "6. Estado de verificación de las fuentes",
+        size: 26, bold: true, color: AZUL, font: "Arial",
+      })],
+    }),
+    p("Regla de trabajo: una dimensión cuya fuente no se confirme se elimina de la matriz antes " +
+      "de estimar; no se estima con un sustituto silencioso.", { cursiva: true, tam: 18, despues: 120 }),
+    tabla(A_ESTADO, [
+      encabezado(["Indicadores", "Estado", "Qué falta"], A_ESTADO),
+      ...ESTADO.map((f, i) => new TableRow({
+        children: [
+          celda(f[0], A_ESTADO[0], { negrita: true, tam: 15, fondo: i % 2 ? GRIS : undefined }),
+          celda(f[1], A_ESTADO[1], {
+            tam: 15, negrita: true, alineacion: AlignmentType.CENTER,
+            fondo: f[1] === "Bloqueado" ? "FBE5E5"
+              : (f[1].startsWith("En riesgo") ? "FFF2CC"
+              : (f[1] === "Derivado" ? "E2EFDA" : (i % 2 ? GRIS : undefined))),
+          }),
+          celda(f[2], A_ESTADO[2], { tam: 15, fondo: i % 2 ? GRIS : undefined }),
+        ],
+      })),
+    ]),
+    p("Lectura del cuadro: de los 27 indicadores, ninguno es calculable al día de hoy. Los de la " +
+      "variable X porque falta persistir el panel climático mensual; los de la variable Y porque " +
+      "falta confirmar que el IPC exista desagregado por ciudad y división de gasto. Ambas son " +
+      "tareas previas a la estimación, no capítulos de la tesis.",
+      { antes: 180, tam: 18 }),
+  ],
+};
+
+// ------------------------------------------------------------------- documento
+
+const doc = new Document({
+  creator: AUTOR,
+  title: "Matriz de operacionalización de variables",
+  description: TITULO,
+  styles: {
+    default: {
+      document: { run: { font: "Arial", size: 22 } },
+      heading1: {
+        run: { font: "Arial", size: 26, bold: true, color: AZUL },
+        paragraph: { spacing: { before: 280, after: 120 }, keepNext: true },
+      },
+      heading2: {
+        run: { font: "Arial", size: 24, bold: true, color: AZUL },
+        paragraph: { spacing: { before: 200, after: 100 }, keepNext: true },
+      },
+    },
+  },
+  sections: [seccionVertical, seccionHorizontal],
+});
+
+const salida = path.join(__dirname, "..", "..", "docs", "tesis",
+                         "Matriz_operacionalizacion.docx");
+
+Packer.toBuffer(doc).then((buffer) => {
+  fs.mkdirSync(path.dirname(salida), { recursive: true });
+  fs.writeFileSync(salida, buffer);
+  const kb = (buffer.length / 1024).toFixed(1);
+  console.log(`${FILAS_X.length + FILAS_Y.length} indicadores -> ${salida} (${kb} KB)`);
+});
