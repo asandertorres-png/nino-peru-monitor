@@ -306,6 +306,9 @@ Qué dice cada párrafo y con qué regla:
    tuvieron en el último mes un IPC de alimentos por encima o por debajo de lo
    usual (±0,5 p.p.), cuáles, el dato de Lima y el de las ciudades de la
    costa norte.
+9. **Vías** (solo si existe `vias_bloqueadas.json`). Tramos interrumpidos y
+   restringidos, departamentos más afectados, cuántos están en alerta
+   moderada o alta y causas más frecuentes.
 
 Las analogías históricas (1982-83, 1997-98, 2017) son las configuraciones
 clásicas, nombradas solo para orientar; no se afirma que el evento en curso
@@ -382,6 +385,26 @@ responde a combustibles, tipo de cambio y oferta, no solo al clima. Es
 descriptivo, sin atribución causal. En el mapa se colorea la anomalía de
 alimentos con una escala divergente (verde azulado por debajo de lo usual,
 magenta por encima); la ciudad se asigna al departamento del monitor.
+
+## Vías: red vial principal y tramos con tránsito interrumpido
+
+`scripts/vias.py` publica dos productos opcionales que el mapa muestra con
+los botones "Vías" y "Vías bloqueadas":
+
+- `docs/vias_principales.geojson`: la Red Vial Nacional del MTC, tomada del
+  servicio público de la Infraestructura de Datos Espaciales del Perú (IDEP,
+  IGN), generalizada por el servidor para que el archivo pese pocos MB. Es
+  una capa de contexto: no cambia con el tiempo salvo que el MTC la
+  actualice.
+- `data/vias_bloqueadas.json`: tramos con tránsito interrumpido o
+  restringido, con su estado, causa, fecha y ubicación, tal como los
+  reporta la fuente oficial que el JSON declara en `fuente`. Se descarga en
+  cada corrida del workflow; el estado puede cambiar en horas y no todas las
+  interrupciones son climáticas (hay obras, accidentes y protestas).
+
+La lectura automática suma un párrafo con el conteo por estado, los
+departamentos más afectados, cuántos tramos caen en departamentos en alerta
+moderada o alta y las causas más frecuentes.
 
 ## Nivel de alerta
 

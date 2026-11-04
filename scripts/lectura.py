@@ -493,6 +493,44 @@ def parrafo_ipc(ipc, registros, nivel):
     return s, {"mes": mes, "ciudades_arriba": [c for _, c, _, _ in arriba], "ciudades_abajo": [c for _, c, _, _ in abajo]}
 
 
+def parrafo_vias(vias, registros, nivel):
+    """Vias con transito interrumpido o restringido, leidas junto con la alerta del mapa."""
+    if not vias or not isinstance(vias.get("eventos"), list):
+        return None, None
+    ev = [e for e in vias["eventos"] if e.get("estado") in ("interrumpido", "restringido")]
+    if not vias["eventos"]:
+        return None, None
+    n_int = sum(1 for e in ev if e["estado"] == "interrumpido")
+    n_res = len(ev) - n_int
+    fuente = vias.get("fuente") or "la fuente oficial"
+    if not ev:
+        return (f"Vías: {fuente} no reporta tramos con tránsito interrumpido ni restringido en su último corte."), {"interrumpido": 0, "restringido": 0}
+    s = f"Vías: {fuente} reporta {n_int} tramo{'s' if n_int != 1 else ''} con tránsito interrumpido y {n_res} con tránsito restringido"
+    por_dep = {}
+    for e in ev:
+        if e.get("departamento"):
+            por_dep[e["departamento"]] = por_dep.get(e["departamento"], 0) + 1
+    if por_dep:
+        top = sorted(por_dep.items(), key=lambda x: -x[1])[:4]
+        s += "; los más afectados: " + ", ".join(f"{d} ({n})" for d, n in top)
+    s += "."
+    if nivel == "departamento":
+        en_alerta = {r["nombre"] for r in registros if (r.get("nivel_alerta") or 0) >= ALERTA_MINIMA}
+        n_al = sum(1 for e in ev if e.get("departamento") in en_alerta)
+        if en_alerta:
+            s += f" {n_al} de esos tramos están en departamentos que hoy figuran en alerta moderada o alta."
+    causas = {}
+    for e in ev:
+        c = (e.get("causa") or "").strip().lower()
+        if c:
+            causas[c] = causas.get(c, 0) + 1
+    if causas:
+        top = sorted(causas.items(), key=lambda x: -x[1])[:3]
+        s += " Causas más frecuentes: " + ", ".join(f"{c} ({n})" for c, n in top) + "."
+    s += " El estado lo reporta la fuente y puede cambiar en horas; no todas las interrupciones son climáticas."
+    return s, {"interrumpido": n_int, "restringido": n_res, "por_departamento": por_dep}
+
+
 def titulo(claves):
     partes = []
     if claves.get("oni_fase") == "neutro":
@@ -515,7 +553,7 @@ def titulo(claves):
 
 
 # ---- entrada principal -------------------------------------------------------
-def lectura_automatica(oni_doc, registros=(), nivel="departamento", hoy=None, sensibilidad=None, gasto=None, ipc=None):
+def lectura_automatica(oni_doc, registros=(), nivel="departamento", hoy=None, sensibilidad=None, gasto=None, ipc=None, vias=None):
     """Devuelve {"titulo", "parrafos", "nota", "claves", "generada", "metodo"} o lanza si falta el ONI."""
     hoy = hoy or datetime.now()
     claves = {}
@@ -542,6 +580,9 @@ def lectura_automatica(oni_doc, registros=(), nivel="departamento", hoy=None, se
     s, k = parrafo_ipc(ipc, registros, nivel)
     if s:
         parrafos.append(s); claves["ipc"] = k
+    s, k = parrafo_vias(vias, registros, nivel)
+    if s:
+        parrafos.append(s); claves["vias"] = k
 
     return {
         "titulo": titulo(claves),
@@ -557,6 +598,16 @@ def lectura_automatica(oni_doc, registros=(), nivel="departamento", hoy=None, se
 
 def cargar_gasto():
     ruta = RAIZ / "data" / "gasto_pp0068.json"
+    if ruta.exists():
+        try:
+            return json.loads(ruta.read_text())
+        except ValueError:
+            return None
+    return None
+
+
+def cargar_vias():
+    ruta = RAIZ / "data" / "vias_bloqueadas.json"
     if ruta.exists():
         try:
             return json.loads(ruta.read_text())
@@ -594,7 +645,7 @@ def main():
     estado = json.loads(ruta_estado.read_text()) if ruta_estado.exists() else {}
     registros = estado.get("departamentos") or estado.get("provincias") or []
     hoy = datetime.fromisoformat(estado["actualizado"]) if estado.get("actualizado") else datetime.now()
-    lec = lectura_automatica(oni_doc, registros, nivel, hoy, cargar_sensibilidad(nivel), cargar_gasto(), cargar_ipc())
+    lec = lectura_automatica(oni_doc, registros, nivel, hoy, cargar_sensibilidad(nivel), cargar_gasto(), cargar_ipc(), cargar_vias())
     print(lec["titulo"].upper())
     for p in lec["parrafos"]:
         print("\n" + p)
