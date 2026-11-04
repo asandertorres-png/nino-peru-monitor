@@ -17,6 +17,12 @@ conjetura en predicción con mecanismo. Está marcado donde ocurre.
 > sustenta— en `docs/tesis/Matrices_antecedentes_marco_teorico.docx`, que
 > genera `scripts/tesis/matrices_teoricas_docx.js`.
 
+> **Del marco al modelo.** Los pilares de este documento son el sustento
+> conceptual; la formalización —oferta, demanda, equilibrio y las derivadas
+> de las que salen las hipótesis— está en
+> [MODELO_ECONOMICO.md](MODELO_ECONOMICO.md). Un marco teórico que no
+> termina en una ecuación deja la especificación empírica sin origen.
+
 ## 1. La arquitectura: una cadena, no un modelo
 
 No existe un modelo único que vaya del océano al IPC. Lo que hay es una cadena

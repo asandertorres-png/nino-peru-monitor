@@ -16,6 +16,10 @@ H4b, H5 y H6**, que están abajo marcadas.
 [OPERACIONALIZACION.md](OPERACIONALIZACION.md) tiene la matriz de dimensiones e
 indicadores de las dos variables, con dimensiones de categoría **económica** y
 no física, y su correspondencia con cada hipótesis.
+[MODELO_ECONOMICO.md](MODELO_ECONOMICO.md) tiene el modelo de equilibrio
+parcial del que se derivan las hipótesis y la ecuación a estimar, más la
+interpretación económica de los coeficientes en puntos porcentuales y en
+soles.
 [ANTECEDENTES.md](ANTECEDENTES.md) tiene los antecedentes internacionales,
 nacionales y locales, y **corrige el reclamo de originalidad de §3**: el canal
 inflacionario de ENSO en el Perú ya está cuantificado a nivel nacional, así que
@@ -479,13 +483,25 @@ variación identifica cada coeficiente.
    de 1982-83, 1997-98, 2015-16 y los costeros 2017 y 2023.
 5. Datos y construcción del panel: fuentes, normales 1991–2020, empalme del IPC,
    estadística descriptiva.
-6. Estrategia empírica: §6, con el supuesto de identificación explícito.
-7. Resultados: línea de base, impulso-respuesta, heterogeneidad regional,
-   ONI vs ICEN, asimetría.
-8. Robustez.
-9. Conclusiones e implicancias de política (prudentes: el trabajo no sustenta
-   un sistema de alerta).
-10. Limitaciones y agenda.
+6. **Modelo económico** (ver [MODELO_ECONOMICO.md](MODELO_ECONOMICO.md)):
+   equilibrio parcial del mercado de alimentos de una ciudad, con oferta local
+   sensible al clima, demanda inelástica y comercio con el resto del país
+   sujeto a costos de transacción. Del modelo salen las cuatro derivadas que
+   son las hipótesis, y la ecuación que se estima.
+7. Estrategia empírica: §6 de este protocolo, con el supuesto de
+   identificación explícito.
+8. Resultados: línea de base, impulso-respuesta, heterogeneidad regional,
+   ONI vs ICEN. **Cada resultado se reporta en tres lecturas: puntos
+   porcentuales, efecto sobre el índice general y costo mensual en soles para
+   el hogar promedio de la ciudad** (MODELO_ECONOMICO.md §4). Un coeficiente
+   sin traducción económica es un resultado a medio terminar.
+9. Robustez.
+10. Conclusiones e implicancias de política. Las tres que el modelo sostiene
+    están en MODELO_ECONOMICO.md §5; la del canal vial —mantener la vía
+    abierta es política de estabilización de precios— es la menos obvia y la
+    más propia de este trabajo. Prudencia: el trabajo no sustenta un sistema
+    de alerta.
+11. Limitaciones y agenda.
 
 Anexos: tablas completas, código, diccionario de variables.
 
