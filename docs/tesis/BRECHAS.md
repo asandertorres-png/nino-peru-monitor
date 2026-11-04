@@ -7,6 +7,15 @@ brecha útil, es una excusa para no decidir.
 
 Fecha del diagnóstico: 3 de noviembre de 2026.
 
+**Actualización del 4 de noviembre de 2026.** Una búsqueda dedicada de
+antecedentes encontró tres trabajos peruanos más que no figuraban aquí, entre
+ellos uno que cuantifica el efecto de ENSO sobre la inflación nacional y otro
+que al parecer ya usa el ICEN como regresor económico. Están en
+[ANTECEDENTES.md](ANTECEDENTES.md), y su §6 corrige el reclamo de originalidad.
+Las brechas 1 a 6 de este documento siguen en pie, pero la brecha 1 debe
+enunciarse como **comparación ONI/ICEN subnacional**, no como primer uso
+económico del ICEN.
+
 ---
 
 ## 1. Inventario honesto: qué hay, qué no hay

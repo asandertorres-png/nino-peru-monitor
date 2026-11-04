@@ -16,6 +16,10 @@ H4b, H5 y H6**, que están abajo marcadas.
 [OPERACIONALIZACION.md](OPERACIONALIZACION.md) tiene la matriz de dimensiones e
 indicadores de las dos variables, con dimensiones de categoría **económica** y
 no física, y su correspondencia con cada hipótesis.
+[ANTECEDENTES.md](ANTECEDENTES.md) tiene los antecedentes internacionales,
+nacionales y locales, y **corrige el reclamo de originalidad de §3**: el canal
+inflacionario de ENSO en el Perú ya está cuantificado a nivel nacional, así que
+la tesis mide la *distribución geográfica* del efecto, no su existencia.
 
 ---
 
@@ -383,7 +387,10 @@ variación identifica cada coeficiente.
    (de dónde sale la no linealidad y la asimetría), expectativas de los
    comerciantes, equilibrio espacial de precios con costos de transacción, y
    traspaso al IPC con efectos de segunda vuelta.
-3. Antecedentes: la literatura de §3 y la brecha.
+3. Antecedentes (ver [ANTECEDENTES.md](ANTECEDENTES.md)): internacionales,
+   nacionales y locales —esta última capa, sierra sur y altiplano, es en su
+   mayoría agronómica y climatológica, y hay que presentarla como tal— y la
+   brecha que queda en pie tras la corrección de §6 de ese documento.
 4. El fenómeno en el Perú: ONI, ICEN y por qué no son lo mismo. Caracterización
    de 1982-83, 1997-98, 2015-16 y los costeros 2017 y 2023.
 5. Datos y construcción del panel: fuentes, normales 1991–2020, empalme del IPC,
