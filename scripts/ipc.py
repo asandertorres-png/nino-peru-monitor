@@ -322,10 +322,6 @@ def inspeccionar_pdf():
     print(f"    PDF candidatos: {len(pdfs)}", flush=True)
     for href, txt in pdfs[:12]:
         print(f"    {href} :: {txt[:100]}", flush=True)
-    # titulos en el html cerca de cada pdf (la lista suele llevar el mes)
-    for m in re.finditer(r"informe[^<]{0,80}precios[^<]{0,120}", t, re.I):
-        print("    titulo: " + re.sub(r"\s+", " ", m.group(0))[:160], flush=True)
-        break
     if not pdfs:
         return
     url = pdfs[0][0]
