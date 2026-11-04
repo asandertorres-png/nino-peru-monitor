@@ -1,0 +1,30 @@
+name: Vias principales y vias bloqueadas
+
+on:
+  workflow_dispatch:
+    inputs:
+      modo:
+        description: "inspeccionar (prueba fuentes) o calcular"
+        type: choice
+        options: [inspeccionar, calcular]
+        default: inspeccionar
+
+permissions:
+  contents: write
+
+jobs:
+  vias:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Fuentes de la red vial
+        run: |
+          ARGS=""
+          if [ "${{ github.event.inputs.modo }}" = "inspeccionar" ]; then ARGS="--inspeccionar"; fi
+          python scripts/vias.py $ARGS
+        env:
+          PYTHONPATH: scripts
