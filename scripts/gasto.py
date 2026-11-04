@@ -283,7 +283,7 @@ def acumular(pos, lector, max_filas=None, muestra=None):
             anios[anio] = anios.get(anio, 0) + 1
         dep = departamento_desde(g(fila, "departamento_nombre"), g(fila, "departamento"))
         destino = por_dep if dep else otros
-        clave = dep or (g(fila, "departamento_nombre") or g(fila, "departamento") or "sin dato").strip()
+        clave = dep or (g(fila, "departamento_nombre") or g(fila, "departamento") or "").strip() or "sin departamento"
         d = destino.setdefault(clave, {m: 0.0 for m in MONTOS} | {"filas": 0, "devengado_por_mes": {}})
         d["filas"] += 1
         for m in MONTOS:
@@ -335,7 +335,9 @@ def armar_salida(por_dep, otros, por_nivel, est, recurso, columnas, anio, url):
         controles.append("menos de 20 departamentos con filas del PP 0068: archivo incompleto o filtro mal aplicado")
     advertencias = [
         "cada fila del archivo del MEF es el movimiento del mes (PIA, modificaciones del PIM, certificado, "
-        "comprometido, devengado y girado); el acumulado anual es la suma de todos los meses hasta el corte",
+        "comprometido, devengado y girado); el acumulado anual es la suma de todos los meses hasta el corte; "
+        "las filas de presupuesto (PIA y PIM) vienen con mes 0",
+        "el mes de corte suele estar en curso: su devengado es parcial",
         "capa de insumo, no de resultado: mide presupuesto asignado y devengado, no obras terminadas ni danio evitado",
         "el PP 0068 cubre todos los peligros (sismos, heladas, incendios, lluvias), no solo El Nino",
         "el avance porcentual favorece a quien tiene poco PIM; leerlo junto con el monto per capita",

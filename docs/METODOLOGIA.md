@@ -350,6 +350,15 @@ Controles de coherencia antes de publicar: avance nacional entre 5 y 110 %,
 devengado no mayor que el PIM, al menos 20 departamentos con filas. Si uno
 falla, no se sobrescribe el JSON anterior y el registro del workflow lo dice.
 
+Detalles del archivo confirmados en la primera corrida (3 de noviembre de
+2026): 63 columnas separadas por coma; las filas de presupuesto (PIA y
+modificaciones del PIM) llevan mes 0 y las de ejecución el mes del
+movimiento, de modo que el mes de corte está en curso y su devengado es
+parcial. Validación externa: el devengado acumulado a junio de 2026 que
+resulta de sumar los meses (S/ 1 255 millones) coincide con el que reporta
+el informe del Congreso sobre el PP 0068 con datos del MEF al 13 de julio
+de 2026 (S/ 1 254,5 millones).
+
 ## Nivel de alerta
 
 Escala cualitativa de 0 a 3, diferenciada por zona porque el riesgo asociado a

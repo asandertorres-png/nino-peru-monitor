@@ -72,10 +72,10 @@ function mostrarOpcionGasto() {
 function notaGasto() {
   if (!gasto) return "Datos del MEF todavía no publicados en este monitor.";
   const t = gasto.total || {};
-  const corte = gasto.mes_corte ? ` al mes ${String(gasto.mes_corte).padStart(2, "0")}` : "";
+  const corte = gasto.descargado ? ` (SIAF al ${fmtDia(String(gasto.descargado).slice(0, 10))})` : "";
   return `Devengado / PIM del Programa Presupuestal 0068 (desastres, todos los peligros) en ${gasto.anio}${corte}, tres niveles de gobierno, por departamento de la meta. ` +
     `Nacional: S/ ${fmtMillones(t.devengado)} de S/ ${fmtMillones(t.pim)} (${t.avance_pct ?? "s/d"} %). ` +
-    `Capa de insumo, no de resultado; el porcentaje favorece a quien tiene poco PIM: ver per cápita en el detalle. MEF, descargado ${fmtDia(String(gasto.descargado).slice(0, 10))}.`;
+    `Capa de insumo, no de resultado; el porcentaje favorece a quien tiene poco PIM: ver per cápita en el detalle.`;
 }
 function barrasMes(porMes) {
   const meses = Array.from({ length: 12 }, (_, i) => porMes?.[String(i + 1).padStart(2, "0")] ?? null);

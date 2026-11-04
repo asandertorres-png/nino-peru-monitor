@@ -403,14 +403,21 @@ def parrafo_gasto(gasto, registros, nivel, hoy):
         return None, None
     deps = gasto["departamentos"]
     corte = gasto.get("mes_corte")
+    descargado = str(gasto.get("descargado") or "")[:10]
     s = (f"Gasto público: el Programa Presupuestal 0068 (reducción de vulnerabilidad y atención de emergencias por "
          f"desastres, todos los peligros) tiene en {gasto.get('anio')} un PIM de S/ {millones(t['pim'])}, con "
          f"S/ {millones(t['devengado'])} devengados ({num(t['avance_pct'], 1, signo=False)} %)")
-    if corte:
-        s += f" al cierre de {MESES[int(corte) - 1]}"
+    if descargado:
+        s += f" según el SIAF al {fecha_larga(descargado)}"
+    # el mes del corte suele estar en curso: se cita el ultimo mes completo
     por_mes = gasto.get("por_mes") or {}
-    if corte and f"{int(corte):02d}" in por_mes:
-        s += f"; en {MESES[int(corte) - 1]} se devengaron S/ {millones(por_mes[f'{int(corte):02d}'].get('devengado'))}"
+    try:
+        mes_descarga = int(descargado[5:7])
+    except ValueError:
+        mes_descarga = None
+    completo = int(corte) - 1 if corte and mes_descarga and int(corte) >= mes_descarga else (int(corte) if corte else None)
+    if completo and completo >= 1 and f"{completo:02d}" in por_mes:
+        s += f"; en {MESES[completo - 1]}, último mes completo, se devengaron S/ {millones(por_mes[f'{completo:02d}'].get('devengado'))}"
     s += "."
     claves = {"avance_nacional_pct": t.get("avance_pct"), "devengado_per_capita_nacional": t.get("devengado_per_capita")}
 

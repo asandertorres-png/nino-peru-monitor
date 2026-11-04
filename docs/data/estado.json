@@ -233,7 +233,9 @@
       "Costa peruana: el ICEN con mes central agosto de 2026 es +3,98 °C, condición cálida extraordinaria según las categorías del ENFEN, en ascenso (+2,00 en tres meses). El ICEN llega con 3 meses de rezago; la señal más reciente de la costa es la anomalía semanal en Niño 1+2, +5,4 °C, muy por encima del ICEN: el calentamiento costero seguía creciendo.",
       "Las dos cuencas están en fase cálida a la vez: El Niño del Pacífico central con expresión costera, como en 1982-83 y 1997-98. Entre las cuatro regiones la anomalía es mayor junto a la costa sudamericana (Niño 1+2, +5,4 °C) y disminuye hacia el oeste (Niño 4, +1,4 °C): el patrón de un evento de tipo oriental, el que históricamente ha tenido mayor impacto en la costa norte del Perú.",
       "En noviembre los episodios del Pacífico central suelen acercarse a su máximo, que ocurre entre noviembre y enero, y el efecto sobre la lluvia de la costa norte se concentra entre enero y abril: el periodo de mayor riesgo está por delante.",
-      "En el mapa, 14 de 25 departamentos están en alerta moderada o alta. La lluvia de los últimos 30 días supera en más de 50 % su normal en 2 (Tumbes +1738 %, Piura +627 %) y queda más de 30 % por debajo en 11 (Ayacucho −82 %, Apurimac −78 %, Cusco −72 %, entre otros). La temperatura máxima de 30 días está por encima de su normal en los 25 departamentos (mediana +3,5 °C)."
+      "En el mapa, 14 de 25 departamentos están en alerta moderada o alta. La lluvia de los últimos 30 días supera en más de 50 % su normal en 2 (Tumbes +1738 %, Piura +627 %) y queda más de 30 % por debajo en 11 (Ayacucho −82 %, Apurimac −78 %, Cusco −72 %, entre otros). La temperatura máxima de 30 días está por encima de su normal en los 25 departamentos (mediana +3,5 °C).",
+      "Según la sensibilidad estimada en este monitor (1991–2020), en noviembre la lluvia de 8 departamentos se asocia de forma significativa con el ONI (p < 0,05): más lluvia en Tumbes, Ancash, Cajamarca y Cusco, entre otras. Es asociación histórica, no causalidad, y con pocos eventos detrás.",
+      "Gasto público: el Programa Presupuestal 0068 (reducción de vulnerabilidad y atención de emergencias por desastres, todos los peligros) tiene en 2026 un PIM de S/ 4,85 mil millones, con S/ 2,43 mil millones devengados (50,2 %) según el SIAF al 3 de noviembre de 2026; en octubre, último mes completo, se devengaron S/ 379 millones. En la costa norte, la zona más expuesta a lluvias con Niño costero, el avance es La Libertad 26 %, Lambayeque 36 %, Piura 41 %, Tumbes 57 %, frente a 50 % nacional; el devengado por habitante va de S/ 17 a S/ 414, frente a S/ 83 nacional. De los 14 departamentos en alerta moderada o alta, 9 ejecutan por debajo del promedio nacional: Madre de Dios (12 %), Puno (35 %) y Ancash (38 %), entre otros. Es una capa de insumo (presupuesto y devengado), no de resultado, y el programa no distingue el gasto por El Niño."
     ],
     "nota": "Lectura generada automáticamente con reglas fijas a partir de los índices publicados; describe lo observado y la climatología conocida del ENSO. No es un pronóstico ni reemplaza los comunicados oficiales del ENFEN.",
     "claves": {
@@ -273,6 +275,27 @@
           "Puno"
         ],
         "mediana_anomalia_tmax_c": 3.51
+      },
+      "gasto": {
+        "avance_nacional_pct": 50.2,
+        "devengado_per_capita_nacional": 82.83,
+        "costa_norte": {
+          "La Libertad": 26.5,
+          "Lambayeque": 36.4,
+          "Piura": 41.3,
+          "Tumbes": 57.0
+        },
+        "en_alerta_rezagados": [
+          "Madre de Dios",
+          "Puno",
+          "Ancash",
+          "Junin",
+          "Piura",
+          "Apurimac",
+          "Arequipa",
+          "Huancavelica",
+          "Cusco"
+        ]
       }
     },
     "generada": "2026-11-03T20:23-05:00",
