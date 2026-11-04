@@ -134,6 +134,29 @@ def descargar_lote(puntos, nivel):
     return salida
 
 
+def serie_mensual(datos):
+    """Serie mensual completa del periodo: por 'AAAA-MM', el acumulado de lluvia
+    (escalado al mes completo si cubre >= 90 % de los dias; None si no) y la
+    media de tmax. Es el insumo del analisis de sensibilidad al ENSO: la normal
+    sola no permite cruzar cada mes con el ONI de ese mes."""
+    lluvia = defaultdict(float); dias = defaultdict(int); tmax = defaultdict(list)
+    d = datos["daily"]
+    for fecha, pp, tx in zip(d["time"], d["precipitation_sum"], d["temperature_2m_max"]):
+        k = fecha[:7]
+        if pp is not None:
+            lluvia[k] += pp; dias[k] += 1
+        if tx is not None:
+            tmax[k].append(tx)
+    serie = {}
+    for k in sorted(set(lluvia) | set(tmax)):
+        anio, mes = int(k[:4]), int(k[5:7])
+        largo = calendar.monthrange(anio, mes)[1]
+        pp = round(lluvia[k] * largo / dias[k], 1) if dias[k] >= COBERTURA_MINIMA_MES * largo else None
+        tx = round(sum(tmax[k]) / len(tmax[k]), 2) if tmax[k] else None
+        serie[k] = [pp, tx]
+    return serie
+
+
 def normales_mensuales(datos):
     """Por mes del anio: precipitacion mensual media (media de acumulados
     mensuales, solo meses con cobertura >= 90 %, escalados al mes completo) y
@@ -181,7 +204,7 @@ def normales_mensuales(datos):
 
 
 def _cargar_parcial(ruta, reiniciar):
-    vacio = {"normales": {}, "unidades": {}, "sin_datos": {}}
+    vacio = {"normales": {}, "unidades": {}, "sin_datos": {}, "series": {}}
     if reiniciar or not ruta.exists():
         return vacio
     try:
@@ -191,6 +214,7 @@ def _cargar_parcial(ruta, reiniciar):
         return vacio
     if "normales" not in previo:  # formato anterior: solo el dict de normales
         previo = {"normales": previo, "unidades": {}, "sin_datos": {}}
+    previo.setdefault("series", {})
     hechos = len(previo["normales"]) + len(previo["sin_datos"])
     if hechos:
         print(f"retomo avance previo: {hechos} unidades ya procesadas")
@@ -242,6 +266,7 @@ def main():
                 continue
             try:
                 estado["normales"][k] = normales_mensuales(datos)
+                estado["series"][k] = serie_mensual(datos)
             except RuntimeError as e:
                 estado["sin_datos"][k] = str(e)
                 print(f"    {u['nombre']}: SIN DATOS ({e})", flush=True)
@@ -255,6 +280,12 @@ def main():
             time.sleep(pausa)
 
     _escribir(ruta["normales"], nivel, estado)
+    ruta["series"].write_text(json.dumps({
+        "periodo": f"{NORMAL_INICIO[:4]}-{NORMAL_FIN[:4]}", "nivel": nivel,
+        "modelo": MODELO_ARCHIVO.get(nivel) or "era5",
+        "formato": "por unidad, por 'AAAA-MM': [lluvia_mensual_mm o null, tmax_media_c o null]",
+        "series": estado["series"],
+    }, ensure_ascii=False, separators=(",", ":")))
     ruta["parcial"].unlink(missing_ok=True)
     print(f"Guardado en {ruta['normales']} ({len(estado['normales'])} con normales, "
           f"{len(estado['sin_datos'])} sin datos, "

@@ -57,13 +57,20 @@ jobs:
           PYTHONPATH: scripts
         run: python scripts/verificar_normales.py --nivel ${{ inputs.nivel }}
 
+      # Inferencial: cruza la serie mensual guardada con el ONI historico de la NOAA
+      - name: Sensibilidad al ENSO
+        if: success()
+        env:
+          PYTHONPATH: scripts
+        run: python scripts/sensibilidad.py --nivel ${{ inputs.nivel }}
+
       - name: Publicar resultado
         if: always()   # tambien cuando la corrida se corta: el parcial sirve para retomar
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           mkdir -p docs/data
-          for f in data/normales.json data/normales_provincias.json; do
+          for f in data/normales.json data/normales_provincias.json data/sensibilidad.json data/sensibilidad_provincias.json; do
             if [ -f "$f" ]; then cp "$f" docs/data/; fi
           done
           git add -A data/ docs/data/

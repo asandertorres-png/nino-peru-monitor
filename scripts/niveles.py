@@ -40,4 +40,6 @@ def rutas(nivel):
         "normales": RAIZ / "data" / f"normales{sufijo}.json",
         "parcial": RAIZ / "data" / f".normales{sufijo}_parcial.json",
         "estado": RAIZ / "data" / f"estado{sufijo}.json",
+        "series": RAIZ / "data" / f"series_mensuales{sufijo}.json",
+        "sensibilidad": RAIZ / "data" / f"sensibilidad{sufijo}.json",
     }

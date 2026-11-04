@@ -44,6 +44,7 @@ def fila_desde_estado(e):
         "oni_trimestre": f"{oni.get('trimestre', '?')} {oni.get('anio', '')}".strip(),
         "tsm34": s.get("anomalia"),
         "tsm12": (reg.get("nino12") or {}).get("anomalia"),
+        "icen": (e.get("icen") or {}).get("icen"),
         "unidades": unidades,
     }
 

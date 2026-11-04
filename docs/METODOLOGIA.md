@@ -14,13 +14,22 @@ Se muestran dos indicadores de la NOAA/CPC, y la interfaz los distingue:
   ONI, pero no es el ONI: una semana no equivale a un trimestre móvil, y un valor
   semanal alto puede no sostenerse en el ONI.
 
-**Advertencia para el caso peruano.** Ambos miden el Pacífico central. El
-fenómeno que afecta directamente a la costa peruana se monitorea con el
-**ICEN** del ENFEN, construido sobre la región Niño 1+2, frente a la costa
-norte. Ambos pueden divergir: el Niño costero de 2017 fue intenso en el Niño
-1+2 con un Pacífico central casi neutro. Incorporar el ICEN es la tarea 1 del
-proyecto; mientras tanto, el estado mostrado debe leerse como contexto global,
-no como declaración sobre el Niño costero.
+- **ICEN** (Índice Costero El Niño) del ENFEN, **mensual**: media móvil de tres
+  meses de la anomalía mensual de TSM en la región **Niño 1+2** (ERSSTv5, base
+  1991–2020), publicada por el IGP. Es el índice oficial del **Niño costero**, el
+  que afecta directamente a la costa peruana. Categorías ENFEN: cálida débil
+  (≥ 0,4), moderada (≥ 1,0), fuerte (≥ 1,7), extraordinaria (≥ 3,0); fría débil
+  (≤ −1,0), moderada (≤ −1,2), fuerte (≤ −1,4); neutro entre medio. Los valores
+  de los últimos meses son **preliminares** (ICENtmp) hasta que el ENFEN los
+  confirma. El archivo del IGP se interpreta de forma tolerante (filas con año,
+  mes y valor); si no está accesible, la tarjeta dice "no disponible" y nada más
+  cambia.
+
+**Advertencia para el caso peruano.** El ONI y la TSM semanal miden el Pacífico
+central; el ICEN mide la costa. Pueden divergir: el Niño costero de 2017 fue
+intenso en el Niño 1+2 con un Pacífico central casi neutro. Con los tres
+índices a la vista, el estado del Pacífico central debe leerse como contexto
+global y el ICEN como la declaración sobre el Niño costero.
 
 **Formato del archivo semanal.** Se verificó contra una muestra real del archivo
 de la NOAA: columnas Niño 1+2, 3, 3.4 y 4, cada una con SST y anomalía; cada fila
@@ -42,6 +51,7 @@ dato más reciente de cada fuente, porque no son lo mismo.
 | Pronóstico a 7 días | API de pronóstico de Open-Meteo | Hoy en adelante |
 | TSM semanal Niño 3.4 | NOAA/CPC, archivo semanal | Semana centrada en la fecha que indica; sale los lunes |
 | ONI | NOAA/CPC | Trimestre móvil; se actualiza una vez al mes |
+| ICEN | ENFEN/IGP | Mensual; los últimos meses son preliminares |
 | Normal 1991–2020 | ERA5 vía Open-Meteo (archivo) | Climatología fija; no cambia |
 
 Lo único cuasi-instantáneo son las condiciones actuales y el pronóstico. La
@@ -217,6 +227,30 @@ noviembre de 2026 quedan marcadas Callao, Ica, La Libertad, Lambayeque, Lima,
 Moquegua y Tacna. Piura queda por encima del umbral en ese mes. El conjunto
 cambia a lo largo del año.
 
+## Sensibilidad al ENSO (inferencial)
+
+`scripts/sensibilidad.py` cruza, para cada unidad y cada mes del calendario, la
+anomalía de lluvia de cada año del periodo 1991–2020 (en % de la normal del
+mes) con el ONI del trimestre centrado en ese mes, probando rezagos de 0 a 3
+meses. Reporta la correlación de Pearson, la pendiente (% de lluvia por °C de
+ONI), el número de años y un p aproximado por la transformación z de Fisher.
+El rezago elegido es el de mayor |r| con p < 0,05; si ninguno lo alcanza, 0.
+Con ese rezago calcula, entre los años con ONI ≥ +1,0, qué fracción tuvo
+déficit (≤ −20 %) o exceso (≥ +50 %), frente a la fracción base de los 30 años.
+
+La serie mensual que lo alimenta la guarda `calcular_normales.py` junto con las
+normales (`data/series_mensuales*.json`), así que el análisis se rehace cada
+vez que se recalculan las normales. El nivel provincial se analiza cuando su
+corrida de normales incluya la serie.
+
+**Qué no es.** Treinta años son treinta observaciones por mes y apenas cuatro o
+cinco eventos El Niño: las estimaciones tienen mucha incertidumbre. Es
+asociación, no causalidad. No se corrige por comparaciones múltiples (12 meses
+× 4 rezagos por unidad), de modo que algunas correlaciones "significativas" lo
+son por azar; el p es orientativo. La lluvia proviene de reanálisis en un
+punto, no de estaciones. Los meses con normal muy baja no se analizan en
+porcentaje. Es un insumo para plantear hipótesis, no una conclusión.
+
 ## Nivel de alerta
 
 Escala cualitativa de 0 a 3, diferenciada por zona porque el riesgo asociado a
@@ -251,8 +285,10 @@ herramienta de exploración, no un instrumento de alerta operativa.
 ## Fuentes
 
 - NOAA Climate Prediction Center, Oceanic Niño Index (trimestral).
-- NOAA Climate Prediction Center, TSM semanal de la región Niño 3.4 (archivo
-  semanal, base 1991–2020).
+- NOAA Climate Prediction Center, TSM semanal de las regiones Niño 1+2, 3, 3.4 y
+  4 (archivo semanal, base 1991–2020).
+- ENFEN/IGP, Índice Costero El Niño (ICEN), publicado como texto plano por el
+  IGP.
 - ERA5 (ECMWF), servido a través de la API de archivo de Open-Meteo.
 - Open-Meteo, API de pronóstico: observación de los últimos 30 días, condiciones
   actuales y pronóstico a 7 días.

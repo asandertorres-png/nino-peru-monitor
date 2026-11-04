@@ -68,6 +68,36 @@
       </svg></div>`;
   }
 
+  /* ---------- sensibilidad al ENSO (inferencial, 1991-2020) ---------- */
+  function sensibilidad(doc, clave, mesActual) {
+    const u = doc?.unidades?.[clave];
+    if (!u) return "";
+    const mm = String(mesActual).padStart(2, "0"), m = u[mm];
+    const barras = MESES.map((n, i) => {
+      const k = String(i + 1).padStart(2, "0"), x = u[k];
+      if (!x || x.r == null) return `<i style="height:2px" title="${n}: sin análisis"></i>`;
+      const h = Math.max(2, Math.round(Math.abs(x.r) * 40));
+      const cls = (x.r >= 0 ? "pos" : "neg") + (x.p < 0.05 ? "" : " ns") + (i + 1 === mesActual ? " actual" : "");
+      return `<i class="${cls}" style="height:${h}px" title="${n}: r = ${fmt(x.r, 2)}, p = ${x.p}, rezago ${x.rezago}"></i>`;
+    }).join("");
+    const meses = MESES.map((n, i) => i + 1 === mesActual ? `<b>${n}</b>` : `<span>${n}</span>`).join("");
+    let texto;
+    if (!m || m.normal_baja) texto = "En este mes la normal es muy baja y la anomalía en porcentaje no se analiza.";
+    else if (m.sin_datos) texto = "Sin datos suficientes para este mes.";
+    else {
+      const sig = m.p < 0.05;
+      const dir = m.r < 0 ? "menos lluvia" : "más lluvia";
+      texto = `Mes actual: r = ${fmt(m.r, 2)} (p = ${m.p}), rezago ${m.rezago} ${m.rezago === 1 ? "mes" : "meses"}, pendiente ${fmt(m.pendiente_pct_por_c, 0)} % por °C de ONI; `
+        + (sig ? `con El Niño (ONI ≥ +1) este mes tiende a ${dir}. ` : "asociación no significativa al 5 %. ")
+        + `Con ONI ≥ +1 (${m.n_nino} de ${m.n} años): déficit ≥ 20 % en ${m.deficit_con_nino[0]} de ${m.deficit_con_nino[1]} (base ${m.deficit_base[0]} de ${m.deficit_base[1]}); `
+        + `exceso ≥ 50 % en ${m.exceso_con_nino[0]} de ${m.exceso_con_nino[1]} (base ${m.exceso_base[0]} de ${m.exceso_base[1]}).`;
+    }
+    return `<div class="analitica"><h4>Sensibilidad al ENSO, 1991–2020</h4>
+      <div class="sens-barras">${barras}</div><div class="sens-meses">${meses}</div>
+      <p class="nota">Barras: correlación de la anomalía de lluvia de cada mes con el ONI (azul: más lluvia con El Niño; naranja: menos); atenuadas si p ≥ 0,05. ${esc(texto)}</p>
+      <p class="nota">30 años son 30 observaciones por mes y 4–5 eventos: asociación, no causalidad, y sin corrección por comparaciones múltiples.</p></div>`;
+  }
+
   /* ---------- resumen nacional ---------- */
   function resumen(estado, lista, historial) {
     const regs = estado[lista];
@@ -137,8 +167,10 @@
     detalle(d, nivel, clave, mesActual) {
       const cont = document.getElementById("detalle-analitica"); if (!cont || !d || d.sin_datos || d.sin_normal) return;
       const ruta = nivel === "provincia" ? "data/normales_provincias.json" : "data/normales.json";
-      Promise.all([traer(ruta, true), nivel === "departamento" ? traer("data/historial.json", true) : null]).then(([n, h]) => {
+      const rutaSens = nivel === "provincia" ? "data/sensibilidad_provincias.json" : "data/sensibilidad.json";
+      Promise.all([traer(ruta, true), nivel === "departamento" ? traer("data/historial.json", true) : null, traer(rutaSens, true)]).then(([n, h, sdoc]) => {
         let html = perfilNormal(n?.normales, clave, d, mesActual);
+        html += sensibilidad(sdoc, clave, mesActual);
         if (h) {
           // con normal muy baja el porcentaje es nulo a proposito: se sigue la anomalia en mm
           const enMm = !!d.normal_baja;

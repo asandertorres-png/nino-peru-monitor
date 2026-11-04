@@ -291,6 +291,12 @@ function pintarCabecera(estado) {
   const s = estado.tsm_semanal;
   document.getElementById("semanal-valor").textContent = s ? (s.anomalia > 0 ? "+" : "") + s.anomalia.toFixed(2) + " °C" : "s/d";
   document.getElementById("semanal-nota").textContent = s ? `semana centrada en ${fmtDia(s.semana_centrada)}` : "no publicada en la última corrida";
+  const ic = estado.icen;
+  document.getElementById("icen-valor").textContent = ic ? (ic.icen > 0 ? "+" : "") + ic.icen.toFixed(2) + " °C" : "s/d";
+  document.getElementById("icen-estado").textContent = ic ? ic.categoria.replace("calida", "cálida").replace("fria", "fría") : "no disponible";
+  document.getElementById("icen-nota").textContent = ic
+    ? `mes central ${String(ic.mes).padStart(2, "0")}/${ic.anio} · categoría ENFEN · los últimos meses pueden ser preliminares`
+    : "El ENFEN/IGP no respondió en la última corrida; el índice oficial del Niño costero se mostrará cuando esté accesible.";
   document.getElementById("actualizado").textContent = fmtFecha(estado.actualizado);
   actualizadoISO = estado.actualizado || "";
   const hace = (Date.now() - Date.parse(conZona(estado.actualizado))) / 36e5;
@@ -320,6 +326,7 @@ function pintarFrescura(estado) {
     { n: "Lluvia 30 días", h: horas(f.lluvia_30_dias?.hasta), det: "hasta ayer" },
     { n: "TSM semanal", h: f.tsm_semanal ? horas(f.tsm_semanal.semana_centrada) : null, det: "los lunes" },
     { n: "ONI", h: hOni, det: "centro del trimestre" },
+    { n: "ICEN", h: f.icen?.mes_central ? horas(`${f.icen.mes_central}-15`) : null, det: "mes central, preliminar" },
   ];
   // eje logaritmico de edad (ahora ... 3 meses) y la climatologia fija al extremo derecho
   const X0 = 36, X1 = 280, HMAX = 2200;

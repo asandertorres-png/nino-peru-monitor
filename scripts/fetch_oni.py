@@ -21,7 +21,7 @@ from datetime import datetime
 from pathlib import Path
 
 from clima_api import descargar
-from config import URL_ONI, URL_WKSST, clasificar_oni
+from config import URLS_ICEN, URL_ONI, URL_WKSST, clasificar_icen, clasificar_oni
 
 RAIZ = Path(__file__).resolve().parent.parent
 
@@ -85,6 +85,45 @@ def parsear_semanal(texto):
             "fuente": "NOAA CPC - wksst, TSM semanal por region Nino (base 1991-2020)"}
 
 
+def parsear_icen(texto):
+    """Interpreta el archivo del ICEN de forma tolerante: toma las filas cuyos
+    tres primeros campos son anio (1950-2100), mes (1-12) y un valor plausible
+    (-5..7 °C); ignora encabezados y comentarios. Devuelve la ultima fila y
+    las ultimas 36 como serie."""
+    filas = []
+    for linea in texto.splitlines():
+        partes = linea.replace(",", " ").replace(";", " ").split()
+        if len(partes) < 3:
+            continue
+        try:
+            anio, mes, valor = int(partes[0]), int(partes[1]), float(partes[2])
+        except ValueError:
+            continue
+        if 1950 <= anio <= 2100 and 1 <= mes <= 12 and -5.0 <= valor <= 7.0:
+            filas.append({"anio": anio, "mes": mes, "icen": valor})
+    if not filas:
+        raise ValueError("no encontre filas con anio, mes y valor del ICEN")
+    filas.sort(key=lambda r: (r["anio"], r["mes"]))
+    ultimo = filas[-1]
+    return {**ultimo, "categoria": clasificar_icen(ultimo["icen"]),
+            "serie": filas[-36:],
+            "fuente": "ENFEN/IGP - ICEN (Nino 1+2, ERSSTv5, base 1991-2020)",
+            "nota": "los ultimos meses pueden ser preliminares (ICENtmp)"}
+
+
+def obtener_icen():
+    """Devuelve (dato, error). Prueba las URL en orden; nunca lanza."""
+    errores = []
+    for url in URLS_ICEN:
+        try:
+            dato = parsear_icen(descargar(url, intentos=2, timeout=30, sangria="  "))
+            dato["url"] = url
+            return dato, None
+        except Exception as e:
+            errores.append(f"{url}: {type(e).__name__}: {e}")
+    return None, " | ".join(errores)
+
+
 def obtener_semanal():
     """Devuelve (dato, error). Nunca lanza: el ONI no debe caerse por esto."""
     try:
@@ -100,6 +139,9 @@ def main():
     semanal, semanal_error = obtener_semanal()
     if semanal_error:
         print(f"aviso: TSM semanal no publicada ({semanal_error})")
+    icen, icen_error = obtener_icen()
+    if icen_error:
+        print(f"aviso: ICEN no disponible ({icen_error})")
     salida = {
         "fuente": "NOAA CPC - Oceanic Nino Index (region Nino 3.4)",
         "url": URL_ONI,
@@ -110,12 +152,16 @@ def main():
         },
         "semanal": semanal,
         "semanal_error": semanal_error,
+        "icen": icen,
+        "icen_error": icen_error,
         "serie": serie[-60:],  # ultimos 5 anios de trimestres moviles
     }
     destino = RAIZ / "data" / "oni.json"
     destino.write_text(json.dumps(salida, ensure_ascii=False, indent=2))
     print(f"ONI {ultimo['trimestre']} {ultimo['anio']}: {ultimo['oni']:+.2f} "
           f"({salida['ultimo']['estado']})")
+    if icen:
+        print(f"ICEN {icen['mes']:02d}/{icen['anio']}: {icen['icen']:+.2f} °C ({icen['categoria']})")
     if semanal:
         r = semanal["regiones"]
         print(f"TSM semanal, semana centrada en {semanal['semana_centrada']}: "

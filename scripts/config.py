@@ -65,6 +65,35 @@ URL_ONI = "https://www.cpc.ncep.noaa.gov/data/indices/oni.ascii.txt"
 # los lunes. Formato del archivo pendiente de verificar: ver fetch_oni.py.
 URL_WKSST = "https://www.cpc.ncep.noaa.gov/data/indices/wksst9120.for"
 
+# ICEN (ENFEN/IGP): media movil de 3 meses de la anomalia mensual de TSM en la
+# region Nino 1+2 (ERSSTv5, base 1991-2020). Es el indice oficial del Nino
+# costero. El IGP lo publica como texto plano; la URL cambio de mayusculas
+# entre documentos, asi que se prueban en orden. Formato interpretado de forma
+# tolerante: filas con anio, mes y valor (ver fetch_oni.parsear_icen).
+URLS_ICEN = [
+    "http://met.igp.gob.pe/datos/ICEN.txt",
+    "http://www.met.igp.gob.pe/datos/icen.txt",
+]
+
+# Categorias del ICEN segun la nota tecnica del ENFEN (2012). Los valores de
+# los ultimos meses son preliminares (ICENtmp) hasta que el ENFEN los confirma.
+def clasificar_icen(v: float) -> str:
+    if v >= 3.0:
+        return "calida extraordinaria"
+    if v >= 1.7:
+        return "calida fuerte"
+    if v >= 1.0:
+        return "calida moderada"
+    if v >= 0.4:
+        return "calida debil"
+    if v > -1.0:
+        return "neutro"
+    if v > -1.2:
+        return "fria debil"
+    if v > -1.4:
+        return "fria moderada"
+    return "fria fuerte"
+
 # Umbral PROVISIONAL de normal mensual de lluvia (mm). Por debajo, la anomalia
 # porcentual no es informativa (la normal es casi nula y cualquier lluvia da
 # un porcentaje enorme). En ese caso el mapa muestra el acumulado en mm y el

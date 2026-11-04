@@ -213,6 +213,7 @@ def main():
     oni = json.loads((RAIZ / "data" / "oni.json").read_text())
     ultimo_oni = oni["ultimo"]
     semanal = oni.get("semanal")
+    icen = oni.get("icen")
 
     fuentes = {
         "normales": {
@@ -245,6 +246,11 @@ def main():
             "origen": "NOAA CPC, Nino 3.4 semanal (semana centrada)",
             "frecuencia": "semanal, los lunes",
         } if semanal else None),
+        "icen": ({
+            "mes_central": f"{icen['anio']}-{icen['mes']:02d}",
+            "origen": "ENFEN/IGP, ICEN (Nino 1+2)",
+            "frecuencia": "mensual; los ultimos meses son preliminares",
+        } if icen else None),
     }
 
     sin = sum(1 for r in registros if r.get("sin_datos") or r.get("sin_normal"))
@@ -255,6 +261,8 @@ def main():
         "umbral_normal_baja_mm": UMBRAL_NORMAL_BAJA_MM,
         "oni": ultimo_oni,
         "tsm_semanal": semanal,
+        "icen": icen,
+        "icen_error": oni.get("icen_error"),
         "fuentes": fuentes,
         "unidades_sin_datos": sin,
         "departamentos" if nivel == "departamento" else "provincias": registros,
