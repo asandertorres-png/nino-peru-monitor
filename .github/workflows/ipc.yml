@@ -1,0 +1,46 @@
+name: IPC por ciudad (INEI via BCRP)
+
+on:
+  schedule:
+    - cron: "23 12 * * *"   # diario, 07:23 Lima; el INEI publica al inicio de cada mes
+  workflow_dispatch:
+    inputs:
+      modo:
+        description: "calcular (escribe data/ipc_ciudades.json) o inspeccionar (lista series del catalogo y prueba el API)"
+        type: choice
+        options: [calcular, inspeccionar]
+        default: calcular
+
+permissions:
+  contents: write
+
+jobs:
+  ipc:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Leer el IPC por ciudad
+        run: |
+          ARGS=""
+          if [ "${{ github.event.inputs.modo }}" = "inspeccionar" ]; then ARGS="--inspeccionar"; fi
+          python scripts/ipc.py $ARGS
+        env:
+          PYTHONPATH: scripts
+      - name: Publicar
+        if: github.event.inputs.modo != 'inspeccionar'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          cp data/ipc_ciudades.json docs/data/
+          git add data/ipc_ciudades.json docs/data/ipc_ciudades.json
+          if git diff --staged --quiet; then
+            echo "Sin cambios que publicar."
+          else
+            git commit -m "datos: IPC por ciudad (INEI/BCRP) $(date -u +%Y-%m-%d)"
+            git pull --rebase -X theirs origin "${GITHUB_REF_NAME}"
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+          fi
