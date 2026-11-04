@@ -223,20 +223,33 @@ ciudad, identificando su heterogeneidad regional, 2010–2026.
 
 **Objetivos específicos.**
 
-1. Construir un panel ciudad-mes de inflación de alimentos y anomalías
-   climáticas locales con normales 1991–2020 verificables, y calcular y validar
-   la réplica del ICEN. *Es el objetivo del que dependen todos los demás.*
-2. **Estimar y comparar** la función impulso-respuesta de la inflación de
-   alimentos ante el Niño del Pacífico central (ONI) y ante el Niño costero
-   (ICEN-réplica). *Es el objetivo que da el título.*
-3. Contrastar la heterogeneidad del efecto de cada índice entre costa norte,
-   costa centro-sur, sierra y selva, y establecer si el orden de importancia
-   entre los dos índices cambia según la región.
-4. Separar el componente de **anticipación** —ligado al índice oceánico y a los
-   avisos del ENFEN— del de **realización**, ligado a la anomalía climática
-   local.
-5. Evaluar si el efecto es asimétrico entre fase cálida y fase fría de magnitud
-   comparable.
+1. Estimar el efecto de las anomalías locales de precipitación y temperatura
+   sobre la inflación de alimentos por ciudad.
+2. **Comparar el poder explicativo** del Niño del Pacífico central (ONI) y del
+   Niño costero (ICEN-réplica) sobre la inflación de alimentos por ciudad.
+   *Es el objetivo que da el título.*
+3. Determinar la heterogeneidad regional del efecto según la exposición
+   económica de cada ciudad, y establecer si el orden de importancia entre los
+   dos índices cambia según la región.
+4. Evaluar si la integración de los mercados de alimentos entre ciudades se
+   reduce durante los episodios.
+
+> **Nota sobre un cambio.** Estos objetivos eran cinco y el primero era
+> "construir el panel y validar la réplica del ICEN". Al armar la matriz de
+> consistencia quedó claro que **eso no es un objetivo de investigación sino
+> una tarea metodológica**: no tiene problema que lo origine ni hipótesis que
+> lo responda, y dejaba una fila incompleta en la matriz. Pasó a la columna de
+> metodología, donde corresponde. La separación entre anticipación y
+> realización, y la asimetría de fase, pasan a **análisis de robustez**: siguen
+> en el diseño (H1 y H4 del listado de abajo), pero no como objetivos
+> específicos, porque la matriz simplificada de pregrado no los sostiene como
+> dimensiones. Ver [MATRIZ_CONSISTENCIA.md](MATRIZ_CONSISTENCIA.md) §1.
+
+**Dos niveles de hipótesis, y conviene no confundirlos.** El listado que sigue
+es el **técnico**, derivado pilar por pilar del marco teórico, y es el que guía
+la estimación. Para el documento de grado, la matriz de consistencia las
+consolida en **cuatro hipótesis específicas**, una por objetivo. El mapeo está
+en [MATRIZ_CONSISTENCIA.md](MATRIZ_CONSISTENCIA.md) §2.
 
 **Hipótesis.** Cada una deriva de un pilar de
 [MARCO_TEORICO.md](MARCO_TEORICO.md); la tabla de §8 de ese documento dice qué

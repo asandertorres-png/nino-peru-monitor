@@ -514,6 +514,107 @@ const seccionMatrizSimple = {
   ],
 };
 
+// -------------------------------------- matriz de consistencia metodologica
+
+// [etiqueta, problema, objetivo, hipotesis, indicadores]
+const CONSISTENCIA = [
+  ["General",
+   "¿En qué medida el Niño del Pacífico central (ONI) y el Niño costero (ICEN) tienen efectos distintos sobre la inflación de alimentos de las ciudades del Perú, y cómo varía esa diferencia entre regiones, 2010–2026?",
+   "Estimar y comparar el efecto del Niño del Pacífico central y del Niño costero sobre la inflación de alimentos a nivel de ciudad, identificando su heterogeneidad regional, 2010–2026.",
+   "Ambos fenómenos elevan la inflación de alimentos, pero su efecto no es el mismo: el Niño costero tiene mayor efecto que el del Pacífico central en las ciudades de la costa norte, y la magnitud difiere entre regiones según la exposición económica de cada ciudad y su régimen de impacto climático.",
+   "1 – 10"],
+  ["Esp. 1",
+   "¿Cuál es el efecto de las anomalías climáticas locales sobre la inflación de alimentos de las ciudades del Perú?",
+   "Estimar el efecto de las anomalías locales de precipitación y temperatura sobre la inflación de alimentos por ciudad.",
+   "Las anomalías climáticas locales elevan la inflación de alimentos, con el efecto máximo dentro de los doce meses posteriores al shock.",
+   "1, 2, 7, 8"],
+  ["Esp. 2",
+   "¿Cuál de los dos índices oceánicos —ONI o ICEN— explica mejor la inflación de alimentos de las ciudades del Perú?",
+   "Comparar el poder explicativo del ONI y del ICEN-réplica sobre la inflación de alimentos por ciudad.",
+   "El ICEN tiene mayor poder explicativo que el ONI en las ciudades de la costa norte, y el ONI no lo supera en ninguna región costera.",
+   "3, 4, 7, 8"],
+  ["Esp. 3",
+   "¿Cómo difiere el efecto entre regiones según la exposición económica de cada ciudad?",
+   "Determinar la heterogeneidad regional del efecto según la exposición económica de cada ciudad.",
+   "El efecto es mayor donde la participación del sector agropecuario y pesquero y el peso del alimento en la canasta son mayores, y puede diferir en signo entre la costa norte y la sierra sur.",
+   "5, 6, 1, 2"],
+  ["Esp. 4",
+   "¿La integración de los mercados de alimentos entre ciudades disminuye durante los episodios?",
+   "Evaluar si la integración de los mercados de alimentos entre ciudades se reduce durante los episodios.",
+   "La integración disminuye durante los episodios, porque el fenómeno eleva los costos de transacción al dañar la infraestructura de transporte.",
+   "10, 3, 4"],
+];
+
+const METODOLOGIA = [
+  "Enfoque: cuantitativo",
+  "Tipo: aplicada",
+  "Nivel: explicativo",
+  "Diseño: no experimental, longitudinal de panel (ex post facto)",
+  "Método: hipotético-deductivo",
+  "",
+  "Población: las 26 ciudades del ámbito urbano que componen el IPC del INEI, enero 2010 – septiembre 2026",
+  "Muestra: censal, las 26 ciudades; aproximadamente 5 200 observaciones ciudad-mes",
+  "Unidad de análisis: la ciudad-mes",
+  "",
+  "Técnica: análisis documental de fuentes secundarias de acceso abierto",
+  "Instrumento: ficha de registro de datos secundarios",
+  "",
+  "Técnicas de análisis: modelos de panel con efectos fijos de ciudad y de tiempo; proyecciones locales (Jordà, 2005) para la función impulso-respuesta; errores estándar de Driscoll–Kraay y bootstrap wild cluster",
+  "",
+  "Procesamiento: Python, con código y datos derivados versionados en repositorio público",
+];
+
+// Suman UTIL_H = 13680
+const A_CONS = [760, 2900, 2900, 3200, 920, 3000];
+
+const seccionConsistencia = {
+  properties: {
+    page: {
+      size: { width: LETTER.width, height: LETTER.height, orientation: PageOrientation.LANDSCAPE },
+      margin: { top: MARGEN, right: MARGEN, bottom: MARGEN, left: MARGEN },
+    },
+  },
+  children: [
+    new Paragraph({
+      heading: HeadingLevel.HEADING_1,
+      spacing: { after: 60 },
+      children: [new TextRun({
+        text: "4. Matriz de consistencia metodológica",
+        size: 26, bold: true, color: AZUL, font: "Arial",
+      })],
+    }),
+    p("1 problema general y 4 específicos · cada fila cierra con su objetivo, su hipótesis y sus indicadores",
+      { cursiva: true, tam: 18, despues: 140 }),
+    tabla(A_CONS, [
+      encabezado(["", "Problema", "Objetivo", "Hipótesis", "Ind.", "Metodología"], A_CONS),
+      ...CONSISTENCIA.map((f, i) => {
+        const celdas = [
+          celda(f[0], A_CONS[0], {
+            tam: 15, negrita: true, alineacion: AlignmentType.CENTER,
+            fondo: i === 0 ? GRIS_OSCURO : GRIS,
+          }),
+          celda(f[1], A_CONS[1], { tam: 15, fondo: i === 0 ? "EDEDED" : undefined }),
+          celda(f[2], A_CONS[2], { tam: 15, fondo: i === 0 ? "EDEDED" : undefined }),
+          celda(f[3], A_CONS[3], { tam: 15, fondo: i === 0 ? "EDEDED" : undefined }),
+          celda(f[4], A_CONS[4], {
+            tam: 15, alineacion: AlignmentType.CENTER,
+            fondo: i === 0 ? "EDEDED" : undefined,
+          }),
+        ];
+        if (i === 0) {
+          celdas.push(celda(METODOLOGIA, A_CONS[5], { filas: CONSISTENCIA.length, tam: 14 }));
+        }
+        return new TableRow({ children: celdas });
+      }),
+    ]),
+    p("Nota. La construcción del panel de datos y la validación de la réplica del ICEN no figuran " +
+      "como objetivos: son tareas previas a la estimación y se consignan en la columna de " +
+      "metodología. Las pruebas de asimetría del shock y de dependencia del nivel de existencias " +
+      "se tratan como análisis de robustez, no como hipótesis específicas.",
+      { antes: 200, tam: 17 }),
+  ],
+};
+
 const seccionHorizontal = {
   properties: {
     page: {
@@ -598,7 +699,7 @@ const doc = new Document({
       },
     },
   },
-  sections: [seccionVertical, seccionMatrizSimple, seccionHorizontal],
+  sections: [seccionVertical, seccionMatrizSimple, seccionConsistencia, seccionHorizontal],
 });
 
 const salida = path.join(__dirname, "..", "..", "docs", "tesis",
