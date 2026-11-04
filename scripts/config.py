@@ -59,7 +59,11 @@ API_ARCHIVO = "https://archive-api.open-meteo.com/v1/archive"
 # que una celda de ERA5. ERA5-Land no cubre el mar: un punto costero puede
 # quedar sin datos y se registra como tal. Nombre del parametro pendiente de
 # verificar contra la API en la primera corrida.
-MODELO_ARCHIVO = {"departamento": None, "provincia": "era5_land"}
+# Modelo del archivo de Open-Meteo por nivel. None = el modelo por defecto
+# (ERA5). Se probo ERA5-Land para provincias (corrida del 3-4 nov 2026): la
+# temperatura llegaba completa pero la precipitacion venia vacia en todos los
+# dias, asi que ambos niveles usan el mismo modelo por defecto.
+MODELO_ARCHIVO = {"departamento": None, "provincia": None}
 URL_ONI = "https://www.cpc.ncep.noaa.gov/data/indices/oni.ascii.txt"
 # TSM semanal de la region Nino 3.4 (NOAA/CPC, serie 1991-2020). Se actualiza
 # los lunes. Formato del archivo pendiente de verificar: ver fetch_oni.py.

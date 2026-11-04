@@ -14,6 +14,9 @@
 name: Calcular normales 1991-2020
 
 on:
+  schedule:
+    - cron: "27 9 * * *"   # diario, 04:27 Lima: retoma el nivel provincial hasta
+                           # terminarlo (la cuota de Open-Meteo no alcanza en un dia)
   workflow_dispatch:
     inputs:
       nivel:
@@ -47,8 +50,12 @@ jobs:
         env:
           PYTHONPATH: scripts
           PYTHONUNBUFFERED: "1"
+          NIVEL: ${{ inputs.nivel || 'provincia' }}   # por cron (sin inputs): provincia
         run: |
-          ARGS="--nivel ${{ inputs.nivel }}"
+          if [ "${{ github.event_name }}" = "schedule" ] && [ -f "data/normales_provincias.json" ]; then
+            echo "Las normales provinciales ya existen: nada pendiente."; exit 0
+          fi
+          ARGS="--nivel $NIVEL"
           if [ "${{ inputs.reiniciar }}" = "true" ]; then ARGS="$ARGS --reiniciar"; fi
           python scripts/calcular_normales.py $ARGS
 
@@ -56,14 +63,14 @@ jobs:
         if: success()
         env:
           PYTHONPATH: scripts
-        run: python scripts/verificar_normales.py --nivel ${{ inputs.nivel }}
+        run: python scripts/verificar_normales.py --nivel ${{ inputs.nivel || 'provincia' }}
 
       # Inferencial: cruza la serie mensual guardada con el ONI historico de la NOAA
       - name: Sensibilidad al ENSO
         if: success()
         env:
           PYTHONPATH: scripts
-        run: python scripts/sensibilidad.py --nivel ${{ inputs.nivel }}
+        run: python scripts/sensibilidad.py --nivel ${{ inputs.nivel || 'provincia' }}
 
       - name: Publicar resultado
         if: always()   # tambien cuando la corrida se corta: el parcial sirve para retomar
@@ -82,7 +89,7 @@ jobs:
           if git diff --staged --quiet; then
             echo "Sin cambios que publicar."
           else
-            git commit -m "datos: normales climaticas 1991-2020, nivel ${{ inputs.nivel }} (corrida automatica)"
+            git commit -m "datos: normales climaticas 1991-2020, nivel ${{ inputs.nivel || 'provincia' }} (corrida automatica)"
             git pull --rebase origin "${GITHUB_REF_NAME}"
             git push origin "HEAD:${GITHUB_REF_NAME}"
           fi

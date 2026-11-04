@@ -136,14 +136,20 @@ de cada provincia (si cae fuera, por una forma cóncava, el vértice más
 cercano). Las coordenadas se calculan en `scripts/provincias.py` a partir del
 GeoJSON; no hay una lista tipeada a mano.
 
-**Modelo.** Para provincias las normales se piden a **ERA5-Land** (~9 km), no
-a ERA5 (~25 km) como en departamentos: muchas provincias de costa y sierra son
-más chicas que una celda de ERA5, y a esa resolución provincias vecinas
-compartirían el mismo valor. ERA5-Land no cubre el mar, así que un punto
-costero puede quedar sin serie: esa provincia queda registrada en `sin_datos`
-con el motivo, y nunca se le inventa un valor. Por la diferencia de modelo,
-**los valores provinciales y departamentales no son directamente comparables**
-entre sí; cada nivel se compara con su propia normal.
+**Modelo.** Se intentó pedir las normales provinciales a **ERA5-Land**
+(~9 km) en vez de ERA5 (~25 km), porque muchas provincias de costa y sierra
+son más chicas que una celda de ERA5 y a esa resolución provincias vecinas
+comparten valor. La corrida del 3 y 4 de noviembre de 2026 mostró que, con
+ese modelo, Open-Meteo devolvía la temperatura completa pero la
+precipitación vacía en todos los días, así que las 60 provincias procesadas
+quedaron sin normal. Por eso ambos niveles usan el modelo por defecto del
+archivo (ERA5), y la resolución provincial queda como limitación declarada:
+provincias vecinas pequeñas pueden compartir celda. Una provincia sin serie
+queda registrada en `sin_datos` con el motivo, y nunca se le inventa un valor.
+Además, la cuota diaria de la API no alcanza para las 195 provincias en una
+corrida: el cálculo se retoma cada día desde su avance guardado hasta
+completarse, y si la API cierra la cuota, la corrida se detiene sin marcar
+como "sin datos" a las provincias que faltan.
 
 **Zona de impacto.** Cada provincia hereda la zona de su departamento. Es una
 asignación **provisional**: una provincia de sierra dentro de un departamento
@@ -449,8 +455,8 @@ herramienta de exploración, no un instrumento de alerta operativa.
   actuales y pronóstico a 7 días.
 - Límites departamentales y provinciales: juaneladio/peru-geojson (MPL-2.0),
   derivados de los límites oficiales.
-- ERA5-Land (ECMWF), vía la API de archivo de Open-Meteo, para las normales
-  provinciales.
+- Las normales provinciales usan el mismo ERA5 vía Open-Meteo (ERA5-Land se
+  descartó: ver "Nivel provincial").
 - Altitudes de referencia de las capitales: aproximadas, de referencia
   cartográfica; pendiente de verificar contra IGN.
 - MEF, Portal de Datos Abiertos: "Presupuesto y Ejecución de Gasto" (SIAF),

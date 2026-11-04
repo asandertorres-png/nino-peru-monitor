@@ -223,13 +223,39 @@ PAGINAS_PDF = [
 ]
 
 
+def listar_informes(paginas=1):
+    """Filas de la biblioteca de informes de precios: fecha, titulo y URL del PDF."""
+    salida = []
+    for n in range(1, paginas + 1):
+        url = f"https://www.inei.gob.pe/biblioteca-virtual/boletines/informe-de-precios/{n}/"
+        try:
+            t = decodificar(descargar(url, intentos=2, timeout=60))
+        except Exception as exc:
+            print(f"    {url}: error {exc}", flush=True)
+            continue
+        for m in re.finditer(r'<tr[^>]*class="[^"]*fila_selected[^"]*"[^>]*rel="([^"]+)"[^>]*>(.*?)</tr>', t, re.I | re.S):
+            celdas = [re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", c)).strip() for c in re.findall(r"<td[^>]*>(.*?)</td>", m.group(2), re.I | re.S)]
+            href = m.group(1)
+            salida.append({"url": href if href.startswith("http") else "https://www.inei.gob.pe" + href,
+                           "fecha": celdas[0] if celdas else "", "titulo": celdas[1] if len(celdas) > 1 else ""})
+        time.sleep(0.5)
+    return salida
+
+
 def inspeccionar_pdf():
     """El IPC por ciudad sale en el informe tecnico mensual (PDF). Se mira si el texto es parseable."""
     import shutil, subprocess, tempfile
     print("== informes tecnicos de precios del INEI (PDF) ==", flush=True)
     limpiar = lambda x: re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", x)).strip()
     pdfs, fichas = [], []
-    for pagina in PAGINAS_PDF:
+    # la lista de informes es una tabla: <tr class="... fila_selected" rel="/media/.../x.pdf"><td>fecha</td><td>titulo</td>
+    filas = listar_informes(paginas=2)
+    print(f"informes en la tabla (2 paginas): {len(filas)}", flush=True)
+    for f in filas[:30]:
+        print(f"    {f['fecha']} | {f['titulo'][:80]} | {f['url']}", flush=True)
+    for f in filas:
+        pdfs.append((f["url"], f["titulo"]))
+    for pagina in ([] if filas else PAGINAS_PDF):
         try:
             t = decodificar(descargar(pagina, intentos=1, timeout=60))
         except Exception as exc:

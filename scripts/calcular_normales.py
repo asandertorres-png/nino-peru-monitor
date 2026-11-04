@@ -253,8 +253,15 @@ def main():
         nombres = ", ".join(u["nombre"] for u in grupo)
         print(f"[{hechos}/{total}] {nombres}", flush=True)
 
+        cuota_agotada = False
         for u, (datos, motivo, elev) in zip(grupo, descargar_lote(grupo, nivel)):
             k = clave(nivel, u)
+            if datos is None and motivo and ("429" in motivo or "limite de uso" in motivo):
+                # no es que la unidad no tenga datos: es que la API cerro la cuota.
+                # Se deja pendiente para la siguiente corrida y se corta aqui.
+                cuota_agotada = True
+                print(f"    {u['nombre']}: pendiente (cuota de la API agotada)", flush=True)
+                continue
             estado["unidades"][k] = {
                 "nombre": u["nombre"], "lat": u["lat"], "lon": u["lon"],
                 "zona": u["zona"], "elevacion_modelo_m": elev,
@@ -273,6 +280,10 @@ def main():
 
         # checkpoint: una corrida de horas no deberia perderse por un corte
         ruta["parcial"].write_text(json.dumps(estado, ensure_ascii=False))
+        if cuota_agotada:
+            hechas = len(estado["normales"]) + len(estado["sin_datos"])
+            raise SystemExit(f"cuota de la API agotada: {hechas}/{total} unidades resueltas; "
+                             "el avance queda en el checkpoint y la siguiente corrida retoma")
 
         if i + lote < len(pendientes):
             pausa = _pausa_entre_lotes()
