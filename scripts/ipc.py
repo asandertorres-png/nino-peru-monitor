@@ -51,7 +51,7 @@ LOTE_CODIGOS = 12             # codigos por peticion al API
 CIUDADES = {
     # "Lima": {"departamento": "Lima", "general": "PN01273PM", "alimentos": None},
 }
-PATRONES_CATALOGO = [r"precios al consumidor", r"\bIPC\b", r"indice de precios"]
+PATRONES_CATALOGO = [r"precios al consumidor", r"\bIPC\b", r"indice de precios", r"inflaci"]
 MESES_ABR = {"ene": 1, "feb": 2, "mar": 3, "abr": 4, "may": 5, "jun": 6, "jul": 7, "ago": 8, "sep": 9, "set": 9,
              "oct": 10, "nov": 11, "dic": 12}
 
@@ -125,26 +125,43 @@ def inspeccionar_catalogo():
     i_frec = next((i for k, i in idx.items() if "frecuencia" in k), None)
     i_ini = next((i for k, i in idx.items() if "inicio" in k), None)
     i_fin = next((i for k, i in idx.items() if "fin" in k and "inicio" not in k), None)
+    i_geo = next((i for k, i in idx.items() if "geograf" in k), None)
+    i_cat = next((i for k, i in idx.items() if "categoria" in k), None)
     ciudades = [sin_tildes(c).lower() for c in ("Lima", "Arequipa", "Trujillo", "Chiclayo", "Piura", "Cusco", "Huancayo", "Iquitos",
                 "Tacna", "Puno", "Tumbes", "Ica", "Chimbote", "Huaraz", "Cajamarca", "Pucallpa", "Moquegua", "Ayacucho",
                 "Huanuco", "Abancay", "Chachapoyas", "Moyobamba", "Cerro de Pasco", "Puerto Maldonado", "Huancavelica", "Callao")]
-    encontradas = []
+    col = lambda f, i: f[i] if i is not None and i < len(f) else ""
+    encontradas, muestra_region = [], []
     for f in filas[1:]:
         if len(f) <= max(i_cod, i_nom, i_grp):
             continue
-        texto_fila = sin_tildes(f"{f[i_grp]} {f[i_nom]}").lower()
+        # se busca en toda la fila: el nombre de la ciudad puede venir en la columna de geografia o en la categoria
+        texto_fila = sin_tildes(" ".join(f)).lower()
+        geo = col(f, i_geo)
+        es_ciudad = any(c in texto_fila for c in ciudades)
+        frec = col(f, i_frec)
         if any(re.search(p.lower(), texto_fila) for p in PATRONES_CATALOGO):
-            frec = f[i_frec] if i_frec is not None and i_frec < len(f) else ""
             if frec and "mensual" not in sin_tildes(frec).lower():
                 continue
-            es_ciudad = any(c in texto_fila for c in ciudades)
-            encontradas.append((es_ciudad, f[i_cod], f[i_grp][:70], f[i_nom][:110], frec,
-                                f[i_ini] if i_ini is not None and i_ini < len(f) else "",
-                                f[i_fin] if i_fin is not None and i_fin < len(f) else ""))
-    encontradas.sort(key=lambda x: (not x[0], x[2], x[3]))
-    print(f"series mensuales de precios al consumidor: {len(encontradas)} (primero las que nombran una ciudad)", flush=True)
+            # Lima Metropolitana ya se conoce: lo que interesa son las demas ciudades
+            es_regional = es_ciudad and "lima metropolitana" not in texto_fila
+            encontradas.append((es_regional, f[i_cod], col(f, i_cat)[:40], f[i_grp][:70], f[i_nom][:110], geo[:30], frec,
+                                col(f, i_ini), col(f, i_fin)))
+        elif es_ciudad and geo and "peru" not in sin_tildes(geo).lower() and len(muestra_region) < 25:
+            muestra_region.append((f[i_cod], col(f, i_cat)[:40], f[i_grp][:60], f[i_nom][:80], geo[:30], frec))
+    encontradas.sort(key=lambda x: (not x[0], x[3], x[4]))
+    print(f"series mensuales de precios/inflacion: {len(encontradas)} (primero las regionales, fuera de Lima Metropolitana)", flush=True)
     for e in encontradas[:400]:
-        print(f"  {'C' if e[0] else ' '} {e[1]} | {e[2]} | {e[3]} | {e[4]} | {e[5]} - {e[6]}", flush=True)
+        print(f"  {'R' if e[0] else ' '} {e[1]} | {e[2]} | {e[3]} | {e[4]} | geo={e[5]} | {e[6]} | {e[7]} - {e[8]}", flush=True)
+    print(f"muestra de series regionales de cualquier tema (para ver como nombra el BCRP a las regiones): {len(muestra_region)}", flush=True)
+    for m in muestra_region:
+        print(f"    {m[0]} | {m[1]} | {m[2]} | {m[3]} | geo={m[4]} | {m[5]}", flush=True)
+    geos = {}
+    for f in filas[1:]:
+        g = col(f, i_geo)
+        if g:
+            geos[g] = geos.get(g, 0) + 1
+    print("valores de la columna de geografia:", ", ".join(f"{g}={n}" for g, n in sorted(geos.items(), key=lambda x: -x[1])[:40]), flush=True)
     return encontradas
 
 
