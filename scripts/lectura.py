@@ -453,6 +453,46 @@ def parrafo_gasto(gasto, registros, nivel, hoy):
     return s, claves
 
 
+def parrafo_ipc(ipc, registros, nivel):
+    """IPC de alimentos por ciudad (INEI): que ciudades se apartan de lo usual en el mes."""
+    if not ipc or not ipc.get("ciudades"):
+        return None, None
+    filas = []
+    for ciudad, c in ipc["ciudades"].items():
+        serie = c.get("alimentos") or c.get("general")
+        if serie and serie.get("anomalia_pct") is not None:
+            filas.append((serie["anomalia_pct"], ciudad, c.get("departamento"), serie))
+    if not filas:
+        return None, None
+    filas.sort(reverse=True)
+    mes = ipc.get("ultimo_mes") or filas[0][3].get("mes")
+    try:
+        mes_txt = f"{MESES[int(mes[5:7]) - 1]} de {mes[:4]}"
+    except (TypeError, ValueError, IndexError):
+        mes_txt = str(mes)
+    arriba = [f for f in filas if f[0] >= 0.5]
+    abajo = [f for f in filas if f[0] <= -0.5]
+    s = (f"Precios: en {mes_txt} el IPC de alimentos subió más que lo usual para ese mes en "
+         f"{len(arriba)} de {len(filas)} ciudades principales")
+    if arriba:
+        s += " (" + ", ".join(f"{c} {num(a, 1)} p.p." for a, c, _, _ in arriba[:3]) + (", entre otras" if len(arriba) > 3 else "") + ")"
+    s += f" y menos que lo usual en {len(abajo)}"
+    if abajo:
+        s += " (" + ", ".join(f"{c} {num(a, 1)} p.p." for a, c, _, _ in sorted(abajo)[:3]) + (", entre otras" if len(abajo) > 3 else "") + ")"
+    s += "."
+    lima = ipc["ciudades"].get("Lima") or {}
+    sl = lima.get("alimentos") or lima.get("general")
+    if sl and sl.get("variacion_mensual_pct") is not None:
+        s += (f" En Lima los alimentos variaron {num(sl['variacion_mensual_pct'], 2)} % en el mes"
+              + (f" y {num(lima['general']['variacion_12m_pct'], 1)} % el IPC general en doce meses" if lima.get("general", {}).get("variacion_12m_pct") is not None else "") + ".")
+    zona_de = {r["nombre"]: r.get("zona") for r in registros} if nivel == "departamento" else {}
+    costa = [f for f in filas if zona_de.get(f[2]) == "costa_norte"]
+    if costa:
+        s += " En las ciudades de la costa norte: " + ", ".join(f"{c} {num(a, 1)} p.p." for a, c, _, _ in costa) + " frente a lo usual."
+    s += " Comparación con el promedio del mismo mes (2012–2024); el IPC responde a muchos factores y la ciudad no representa al departamento."
+    return s, {"mes": mes, "ciudades_arriba": [c for _, c, _, _ in arriba], "ciudades_abajo": [c for _, c, _, _ in abajo]}
+
+
 def titulo(claves):
     partes = []
     if claves.get("oni_fase") == "neutro":
@@ -475,7 +515,7 @@ def titulo(claves):
 
 
 # ---- entrada principal -------------------------------------------------------
-def lectura_automatica(oni_doc, registros=(), nivel="departamento", hoy=None, sensibilidad=None, gasto=None):
+def lectura_automatica(oni_doc, registros=(), nivel="departamento", hoy=None, sensibilidad=None, gasto=None, ipc=None):
     """Devuelve {"titulo", "parrafos", "nota", "claves", "generada", "metodo"} o lanza si falta el ONI."""
     hoy = hoy or datetime.now()
     claves = {}
@@ -499,6 +539,9 @@ def lectura_automatica(oni_doc, registros=(), nivel="departamento", hoy=None, se
     s, k = parrafo_gasto(gasto, registros, nivel, hoy)
     if s:
         parrafos.append(s); claves["gasto"] = k
+    s, k = parrafo_ipc(ipc, registros, nivel)
+    if s:
+        parrafos.append(s); claves["ipc"] = k
 
     return {
         "titulo": titulo(claves),
@@ -514,6 +557,16 @@ def lectura_automatica(oni_doc, registros=(), nivel="departamento", hoy=None, se
 
 def cargar_gasto():
     ruta = RAIZ / "data" / "gasto_pp0068.json"
+    if ruta.exists():
+        try:
+            return json.loads(ruta.read_text())
+        except ValueError:
+            return None
+    return None
+
+
+def cargar_ipc():
+    ruta = RAIZ / "data" / "ipc_ciudades.json"
     if ruta.exists():
         try:
             return json.loads(ruta.read_text())
@@ -541,7 +594,7 @@ def main():
     estado = json.loads(ruta_estado.read_text()) if ruta_estado.exists() else {}
     registros = estado.get("departamentos") or estado.get("provincias") or []
     hoy = datetime.fromisoformat(estado["actualizado"]) if estado.get("actualizado") else datetime.now()
-    lec = lectura_automatica(oni_doc, registros, nivel, hoy, cargar_sensibilidad(nivel), cargar_gasto())
+    lec = lectura_automatica(oni_doc, registros, nivel, hoy, cargar_sensibilidad(nivel), cargar_gasto(), cargar_ipc())
     print(lec["titulo"].upper())
     for p in lec["parrafos"]:
         print("\n" + p)

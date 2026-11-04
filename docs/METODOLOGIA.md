@@ -302,6 +302,10 @@ Qué dice cada párrafo y con qué regla:
    moderada o alta ejecutan por debajo del promedio nacional. Cierra
    recordando que es insumo, no resultado, y que el programa no separa el
    gasto por El Niño (ver la sección del PP 0068).
+8. **Precios** (solo si existe `ipc_ciudades.json`). Cuántas ciudades
+   tuvieron en el último mes un IPC de alimentos por encima o por debajo de lo
+   usual (±0,5 p.p.), cuáles, el dato de Lima y el de las ciudades de la
+   costa norte.
 
 Las analogías históricas (1982-83, 1997-98, 2017) son las configuraciones
 clásicas, nombradas solo para orientar; no se afirma que el evento en curso
@@ -358,6 +362,26 @@ parcial. Validación externa: el devengado acumulado a junio de 2026 que
 resulta de sumar los meses (S/ 1 255 millones) coincide con el que reporta
 el informe del Congreso sobre el PP 0068 con datos del MEF al 13 de julio
 de 2026 (S/ 1 254,5 millones).
+
+## Precios: IPC de alimentos por ciudad
+
+`scripts/ipc.py` construye `data/ipc_ciudades.json` con la variación mensual
+del IPC general y del grupo alimentos y bebidas de las ciudades principales
+que publica el INEI (la fuente exacta y su vía de descarga se documentan en
+el propio JSON, campo `fuente`). Para cada ciudad guarda el último mes, la
+variación de doce meses, la serie de 36 meses y una **anomalía**: la variación
+del mes menos el promedio de ese mismo mes del calendario en 2012–2024, en
+puntos porcentuales. Esa resta separa la estacionalidad normal de los precios
+(por ejemplo, el alza de alimentos de cada verano) de lo que se aparta de lo
+usual, que es lo que un evento El Niño podría estar añadiendo.
+
+Es la primera capa de **efecto** del monitor, complementaria a la de gasto,
+que es de insumo. Límites: la ciudad capital no representa al departamento;
+el dato llega con alrededor de un mes de rezago y puede revisarse; el IPC
+responde a combustibles, tipo de cambio y oferta, no solo al clima. Es
+descriptivo, sin atribución causal. En el mapa se colorea la anomalía de
+alimentos con una escala divergente (verde azulado por debajo de lo usual,
+magenta por encima); la ciudad se asigna al departamento del monitor.
 
 ## Nivel de alerta
 

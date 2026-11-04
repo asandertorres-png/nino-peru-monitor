@@ -255,8 +255,8 @@ def main():
 
     sin = sum(1 for r in registros if r.get("sin_datos") or r.get("sin_normal"))
     try:
-        from lectura import cargar_gasto, cargar_sensibilidad, lectura_automatica
-        lectura = lectura_automatica(oni, registros, nivel, hoy, cargar_sensibilidad(nivel), cargar_gasto())
+        from lectura import cargar_gasto, cargar_ipc, cargar_sensibilidad, lectura_automatica
+        lectura = lectura_automatica(oni, registros, nivel, hoy, cargar_sensibilidad(nivel), cargar_gasto(), cargar_ipc())
     except Exception as exc:  # la lectura nunca debe tumbar la corrida de datos
         print(f"aviso: la lectura automatica fallo ({exc}); se publica sin ella", flush=True)
         lectura = None

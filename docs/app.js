@@ -41,6 +41,15 @@ const ESCALAS = {
     colores: ["#cde2fb", "#86b6ef", "#3987e5", NEUTRO, "#e66767", "#f29a9a", "#f9cccc"],
     formato: v => v == null ? "s/d" : `${v > 0 ? "+" : ""}${v} °C`
   },
+  // IPC de alimentos de la ciudad capital (INEI): variacion mensual menos el promedio del mismo
+  // mes (2012-2024); divergente de dos tonos (verde azulado = por debajo, magenta = por encima)
+  ipc_alimentos: {
+    titulo: "IPC alimentos · anomalía del mes", unidad: "p.p.", tipo: "divergente",
+    polos: ["menos que lo usual", "más que lo usual"],
+    cortes: [-1, -0.5, -0.2, 0.2, 0.5, 1],
+    colores: ["#c9efe4", "#7fd0ba", "#2fa388", NEUTRO, "#c0399b", "#e07ec6", "#f5c6ea"],
+    formato: v => v == null ? "s/d" : `${v > 0 ? "+" : ""}${v.toFixed(2)} p.p.`
+  },
   // gasto publico en el PP 0068 (MEF): avance de ejecucion del anio; secuencial de un tono,
   // como la lluvia acumulada (mas claro = mas avance). Solo nivel departamental.
   gasto_pp0068: {
@@ -68,6 +77,30 @@ gastoP.then(doc => {
 function mostrarOpcionGasto() {
   const lab = document.getElementById("opcion-gasto"); if (!lab) return;
   lab.hidden = !(gasto && nivelActual === "departamento");
+  const li = document.getElementById("opcion-ipc"); if (li) li.hidden = !(ipc && nivelActual === "departamento");
+}
+
+/* ---------- IPC por ciudad (INEI; opcional, solo nivel departamental) ---------- */
+let ipc = null, ipcPor = {};
+const ipcDe = d => (ipc && nivelActual === "departamento" && d) ? (ipcPor[d.nombre] || null) : null;
+// valor de la capa: anomalia de alimentos; si la ciudad no tiene serie de alimentos, la del IPC general
+const ipcValor = c => c ? (c.alimentos?.anomalia_pct ?? c.general?.anomalia_pct ?? null) : null;
+const fmtPct = (v, dec = 2) => v == null ? "s/d" : `${v > 0 ? "+" : ""}${v.toFixed(dec)} %`;
+fetch("data/ipc_ciudades.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null).catch(() => null).then(doc => {
+  if (!doc || !doc.ciudades) return;
+  ipc = doc; ipcPor = {};
+  for (const [ciudad, c] of Object.entries(doc.ciudades)) if (!ipcPor[c.departamento]) ipcPor[c.departamento] = { ciudad, ...c };
+  mostrarOpcionGasto();
+  if (capaGeo && capaActual === "ipc_alimentos") { capaGeo.setStyle(estilo); dibujarLeyenda(); }
+  if (ultimoEstado) pintarFrescura(ultimoEstado);
+  if (registros.length) pintarTabla();
+});
+function notaIpc() {
+  if (!ipc) return "Datos del INEI todavía no publicados en este monitor.";
+  const lima = ipcPor.Lima;
+  const nac = lima?.alimentos ? ` Lima: alimentos ${fmtPct(lima.alimentos.variacion_mensual_pct)} en el mes (${fmtPct(lima.alimentos.anomalia_pct)} p.p. frente a lo usual).` : "";
+  return `Variación mensual del IPC de alimentos y bebidas de la ciudad capital menos el promedio del mismo mes en ${ipc.base_anomalia?.split(",")[0] || "la base"}, en puntos porcentuales. Último mes: ${ipc.ultimo_mes || "s/d"}.${nac} ` +
+    `La ciudad no representa al departamento; descriptivo, sin atribución causal. ${ipc.fuente || "INEI"}.`;
 }
 function notaGasto() {
   if (!gasto) return "Datos del MEF todavía no publicados en este monitor.";
@@ -309,6 +342,12 @@ document.querySelectorAll(".btn-ver-regiones").forEach(b => b.addEventListener("
 /* ---------- color ---------- */
 const sinInfo = d => !d || d.sin_datos || d.sin_normal;
 function claseDe(d) {
+  if (capaActual === "ipc_alimentos") {
+    const v = ipcValor(ipcDe(d)), e = ESCALAS.ipc_alimentos;
+    if (v == null) return { color: SIN_DATOS, op: 0.55 };
+    const i = claseEscalonada(v, e);
+    return { color: e.colores[i], op: e.colores[i] === NEUTRO ? 0.25 : 0.62 };
+  }
   if (capaActual === "gasto_pp0068") {
     const g = gastoDe(d), e = ESCALAS.gasto_pp0068;
     if (!g || g.avance_pct == null) return { color: SIN_DATOS, op: 0.55 };
@@ -332,13 +371,17 @@ function claseDe(d) {
 function estilo(feature) {
   const d = porUnidad[NIVELES[nivelActual].claveGeo(feature)];
   const c = claseDe(d);
-  const sinDato = capaActual === "gasto_pp0068" ? !gastoDe(d) : sinInfo(d);
+  const sinDato = capaActual === "gasto_pp0068" ? !gastoDe(d) : capaActual === "ipc_alimentos" ? ipcValor(ipcDe(d)) == null : sinInfo(d);
   if (sinDato) return { fillColor: "#5a5f66", fillOpacity: 0.5, color: "#898781", weight: 1, dashArray: "4 3" };
   // el trazo lleva el color del plano: separa los rellenos vecinos ahora que son translucidos
   return { fillColor: c.color, fillOpacity: c.op, color: "#0d0f12", weight: nivelActual === "provincia" ? 1 : 1.5 };
 }
 
 function valorCapa(d) {
+  if (capaActual === "ipc_alimentos") {
+    const c = ipcDe(d), v = ipcValor(c);
+    return v == null ? "sin dato de IPC" : `${c.ciudad}: ${ESCALAS.ipc_alimentos.formato(v)} · alimentos ${fmtPct((c.alimentos || c.general)?.variacion_mensual_pct)} en ${(c.alimentos || c.general)?.mes}`;
+  }
   if (capaActual === "gasto_pp0068") {
     const g = gastoDe(d);
     return g ? `${ESCALAS.gasto_pp0068.formato(g.avance_pct)} · S/ ${fmtSoles(g.devengado)} devengado` : "sin datos de gasto";
@@ -370,9 +413,9 @@ function dibujarLeyenda() {
       ? `<p class="nota">Las regiones Niño del Pacífico usan esta misma escala (anomalía semanal de TSM).</p>`
       : `<div class="sub-ley"><h4>Regiones Niño · anomalía semanal de TSM (°C)</h4>${franja(t)}</div>`;
   }
-  const esGasto = capaActual === "gasto_pp0068";
-  if (registros.some(d => esGasto ? !gastoDe(d) : sinInfo(d))) cuerpo += `<div class="chip" style="margin-top:.45rem"><i class="sin-info"></i>Sin información</div>`;
-  const nota = esGasto ? notaGasto() : e.nota;
+  const esGasto = capaActual === "gasto_pp0068", esIpc = capaActual === "ipc_alimentos";
+  if (registros.some(d => esGasto ? !gastoDe(d) : esIpc ? ipcValor(ipcDe(d)) == null : sinInfo(d))) cuerpo += `<div class="chip" style="margin-top:.45rem"><i class="sin-info"></i>Sin información</div>`;
+  const nota = esGasto ? notaGasto() : esIpc ? notaIpc() : e.nota;
   const html = `<div class="ley-cuerpo"><h4>${e.titulo}${e.unidad ? ` (${e.unidad})` : ""}</h4>${cuerpo}${nota ? `<p class="nota">${nota}</p>` : ""}</div>`;
   caja.innerHTML = html;
   document.getElementById("leyenda-movil").innerHTML = html;
@@ -395,12 +438,17 @@ function mostrarDetalle(d) {
   const f = (v, u, dec = 1) => v == null ? "s/d" : `${v.toFixed(dec)} ${u}`;
   const signo = (v, u, dec = 1) => v == null ? "s/d" : `${v > 0 ? "+" : ""}${v.toFixed(dec)} ${u}`;
   const sub = d.departamento ? `${d.departamento} · ${d.zona.replace(/_/g, " ")}` : `${d.capital} · ${d.zona.replace(/_/g, " ")}`;
+  const c = ipcDe(d), sIpc = c && (c.alimentos || c.general);
+  const filasIpc = sIpc ? `<div class="sep"></div>
+      <dt>IPC ${c.ciudad} · ${sIpc.mes}${c.alimentos ? " · alimentos" : " · general"}</dt><dd class="destacado">${fmtPct(sIpc.variacion_mensual_pct)} en el mes (${ESCALAS.ipc_alimentos.formato(sIpc.anomalia_pct)} frente a lo usual)</dd>
+      ${c.general ? `<dt>IPC general del mes · 12 meses</dt><dd>${fmtPct(c.general.variacion_mensual_pct)} · ${fmtPct(c.general.variacion_12m_pct)}</dd>` : ""}
+      ${sIpc.serie?.length > 1 ? `<dt>Variación mensual, ${sIpc.serie.length} meses</dt><dd>${barrasSerie(sIpc.serie.map(p => p[1]), sIpc.serie[0][0], sIpc.serie[sIpc.serie.length - 1][0], sIpc.media_mismo_mes_pct != null ? [sIpc.media_mismo_mes_pct] : [])}</dd>` : ""}` : "";
   const g = gastoDe(d);
-  const filasGasto = g ? `<div class="sep"></div>
+  const filasGasto = (g ? `<div class="sep"></div>
       <dt>PP 0068 ${gasto.anio} · PIM</dt><dd>S/ ${fmtSoles(g.pim)}</dd>
       <dt>Devengado (avance)</dt><dd class="destacado">S/ ${fmtSoles(g.devengado)} (${g.avance_pct == null ? "s/d" : g.avance_pct + " %"})</dd>
       <dt>PIM · devengado por habitante</dt><dd>S/ ${g.pim_per_capita ?? "s/d"} · ${g.devengado_per_capita ?? "s/d"}</dd>
-      <dt>Devengado por mes</dt><dd>${barrasMes(g.devengado_por_mes)}</dd>` : "";
+      <dt>Devengado por mes</dt><dd>${barrasMes(g.devengado_por_mes)}</dd>` : "") + filasIpc;
   if (d.sin_datos || d.sin_normal) {
     caja.innerHTML = `<h2>${d.nombre}</h2><p class="sub">${sub}</p>
       <p class="nota"><strong>Sin información para esta unidad.</strong> ${d.motivo_sin_normal || d.motivo_sin_datos || ""}</p>
@@ -546,6 +594,7 @@ function pintarFrescura(estado) {
     { n: "ICEN", h: f.icen?.mes_central ? horas(`${f.icen.mes_central}-15`) : null, det: "mes central, preliminar" },
   ];
   if (gasto?.descargado) fuentes.push({ n: "Gasto PP 0068", h: horas(gasto.descargado), det: "MEF, diario" });
+  if (ipc?.ultimo_mes) fuentes.push({ n: "IPC ciudades", h: horas(`${ipc.ultimo_mes}-15`), det: "INEI, mensual" });
   // eje logaritmico de edad (ahora ... 3 meses) y la climatologia fija al extremo derecho
   const X0 = 36, X1 = 280, HMAX = 2200;
   const x = h => X0 + (Math.log10(1 + h) / Math.log10(1 + HMAX)) * (X1 - X0);
@@ -575,7 +624,7 @@ function pintarFrescura(estado) {
 /* ---------- tabla ---------- */
 function pintarTabla() {
   const prov = nivelActual === "provincia";
-  const conGasto = !prov && !!gasto;
+  const conGasto = !prov && !!gasto, conIpc = !prov && !!ipc;
   const orden = [...registros].sort((a, b) => (b.nivel_alerta ?? -1) - (a.nivel_alerta ?? -1)
     || (b.anomalia_precipitacion_pct ?? -999) - (a.anomalia_precipitacion_pct ?? -999));
   const n = v => v == null ? "s/d" : v;
@@ -584,9 +633,10 @@ function pintarTabla() {
     <td class="num">${d.normal_baja ? `${n(d.anomalia_precipitacion_mm)} mm` : ESCALAS.anomalia_precipitacion_pct.formato(d.anomalia_precipitacion_pct)}</td>
     <td class="num">${ESCALAS.anomalia_tmax_c.formato(d.anomalia_tmax_c)}</td>
     <td>${d.sin_datos || d.sin_normal ? "sin información" : ESCALAS.nivel_alerta.formato(d.nivel_alerta)}</td>
-    ${conGasto ? `<td class="num">${gastoDe(d) ? ESCALAS.gasto_pp0068.formato(gastoDe(d).avance_pct) : "s/d"}</td>` : ""}</tr>`);
+    ${conGasto ? `<td class="num">${gastoDe(d) ? ESCALAS.gasto_pp0068.formato(gastoDe(d).avance_pct) : "s/d"}</td>` : ""}
+    ${conIpc ? `<td class="num">${ESCALAS.ipc_alimentos.formato(ipcValor(ipcDe(d)))}</td>` : ""}</tr>`);
   document.getElementById("tabla").innerHTML = `<thead><tr><th>Unidad</th>${prov ? "<th>Departamento</th>" : ""}
-    <th>Lluvia 30 d (mm)</th><th>Normal (mm)</th><th>Anom. lluvia</th><th>Anom. T máx</th><th>Alerta</th>${conGasto ? "<th>Avance PP 0068</th>" : ""}</tr></thead>
+    <th>Lluvia 30 d (mm)</th><th>Normal (mm)</th><th>Anom. lluvia</th><th>Anom. T máx</th><th>Alerta</th>${conGasto ? "<th>Avance PP 0068</th>" : ""}${conIpc ? "<th>IPC alim. anom.</th>" : ""}</tr></thead>
     <tbody>${filas.join("")}</tbody>`;
 }
 
@@ -603,7 +653,7 @@ function cargarNivel(nivel) {
     geoP
   ]).then(([estado, geo]) => {
     nivelActual = nivel;
-    if (nivel === "provincia" && capaActual === "gasto_pp0068") {
+    if (nivel === "provincia" && (capaActual === "gasto_pp0068" || capaActual === "ipc_alimentos")) {
       capaActual = "nivel_alerta";
       const r = document.querySelector('input[name="capa"][value="nivel_alerta"]'); if (r) r.checked = true;
     }
@@ -702,7 +752,10 @@ document.getElementById("descargar-csv").addEventListener("click", () => {
     ["lluvia_hoy_mm", d => d.lluvia_hoy_mm], ["temperatura_actual_c", d => d.temperatura_actual_c], ["pronostico_7d_mm", d => d.pronostico_7d_mm],
     ["nivel_alerta", d => d.nivel_alerta], ["sin_informacion", d => sinInfo(d) ? 1 : 0], ["lat", d => d.lat], ["lon", d => d.lon],
     ...(!prov && gasto ? [["pp0068_anio", () => gasto.anio], ["pp0068_pim_soles", d => gastoDe(d)?.pim], ["pp0068_devengado_soles", d => gastoDe(d)?.devengado],
-      ["pp0068_avance_pct", d => gastoDe(d)?.avance_pct], ["pp0068_devengado_por_habitante", d => gastoDe(d)?.devengado_per_capita]] : [])];
+      ["pp0068_avance_pct", d => gastoDe(d)?.avance_pct], ["pp0068_devengado_por_habitante", d => gastoDe(d)?.devengado_per_capita]] : []),
+    ...(!prov && ipc ? [["ipc_ciudad", d => ipcDe(d)?.ciudad], ["ipc_mes", d => (ipcDe(d)?.alimentos || ipcDe(d)?.general)?.mes],
+      ["ipc_alimentos_var_mensual_pct", d => ipcDe(d)?.alimentos?.variacion_mensual_pct], ["ipc_alimentos_anomalia_pp", d => ipcDe(d)?.alimentos?.anomalia_pct],
+      ["ipc_general_var_mensual_pct", d => ipcDe(d)?.general?.variacion_mensual_pct], ["ipc_general_var_12m_pct", d => ipcDe(d)?.general?.variacion_12m_pct]] : [])];
   const celda = v => v == null ? "" : /[",\n]/.test(String(v)) ? `"${String(v).replace(/"/g, '""')}"` : String(v);
   const lineas = [cols.map(c => c[0]).join(","), ...registros.map(d => cols.map(c => celda(c[1](d))).join(","))];
   const blob = new Blob(["\ufeff" + lineas.join("\n")], { type: "text/csv;charset=utf-8" });
