@@ -16,7 +16,7 @@ on:
     branches: [main]
     paths: ["docs/**"]
   workflow_run:
-    workflows: ["Actualizar datos del monitor", "Gasto publico PP 0068 (MEF)", "IPC por ciudad (INEI via BCRP)"]
+    workflows: ["Actualizar datos del monitor", "Gasto publico PP 0068 (MEF)", "IPC por ciudad (INEI via BCRP)", "Vias principales y vias bloqueadas"]
     types: [completed]
   workflow_dispatch:
 

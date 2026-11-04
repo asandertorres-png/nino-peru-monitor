@@ -1,6 +1,8 @@
 name: Vias principales y vias bloqueadas
 
 on:
+  schedule:
+    - cron: "41 */6 * * *"   # cada 6 horas: las vias bloqueadas cambian en horas
   workflow_dispatch:
     inputs:
       modo:
@@ -28,3 +30,17 @@ jobs:
           python scripts/vias.py $ARGS
         env:
           PYTHONPATH: scripts
+      - name: Publicar
+        if: github.event.inputs.modo != 'inspeccionar'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if [ -f data/vias_bloqueadas.json ]; then cp data/vias_bloqueadas.json docs/data/; fi
+          git add docs/vias_principales.geojson data/vias_bloqueadas.json docs/data/vias_bloqueadas.json 2>/dev/null || git add docs/vias_principales.geojson
+          if git diff --staged --quiet; then
+            echo "Sin cambios que publicar."
+          else
+            git commit -m "datos: red vial y vias bloqueadas $(date -u +%Y-%m-%d)"
+            git pull --rebase -X theirs origin "${GITHUB_REF_NAME}"
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+          fi

@@ -252,11 +252,20 @@ def inspeccionar_pdf():
             tx = limpiar(x)
             if re.search(r"precio|ipc|inflaci", (h + " " + tx).lower()):
                 fichas.append((h if h.startswith("http") else "https://www.inei.gob.pe" + h, tx))
-        # pistas de carga dinamica (la lista puede llegar por JS)
-        for pista in ("ajax", "fetch(", "api/", "boletines?", "json"):
-            i = t.lower().find(pista)
-            if i >= 0:
-                print(f"    pista '{pista}': ..." + re.sub(r"\s+", " ", t[max(0, i - 100):i + 140]) + "...", flush=True)
+        # como esta armada la lista de informes: contexto de cada mencion a "informe tecnico"/"precios"
+        n = 0
+        for m in re.finditer(r"informe\s+t[eé]cnico|variaci[oó]n de los indicadores|precios al consumidor", t, re.I):
+            i = m.start()
+            print(f"    ctx: ..." + re.sub(r"\s+", " ", t[max(0, i - 350):i + 250]) + "...", flush=True)
+            n += 1
+            if n >= 6:
+                break
+        scripts = re.findall(r'<script[^>]+src=["\']([^"\']+)["\']', t, re.I)
+        print(f"    scripts: {scripts[:15]}", flush=True)
+        for m in re.finditer(r"<script(?![^>]*src)[^>]*>(.*?)</script>", t, re.I | re.S):
+            cuerpo = m.group(1)
+            if re.search(r"boletin|media/|ajax|json", cuerpo, re.I):
+                print("    script inline: " + re.sub(r"\s+", " ", cuerpo)[:500], flush=True)
     # quitar repetidos conservando el orden
     vistos = set(); pdfs = [x for x in pdfs if not (x[0] in vistos or vistos.add(x[0]))]
     vistos = set(); fichas = [x for x in fichas if not (x[0] in vistos or vistos.add(x[0]))]
