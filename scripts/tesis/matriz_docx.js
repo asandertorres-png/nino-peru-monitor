@@ -559,7 +559,12 @@ const METODOLOGIA = [
   "Técnica: análisis documental de fuentes secundarias de acceso abierto",
   "Instrumento: ficha de registro de datos secundarios",
   "",
-  "Técnicas de análisis: modelos de panel con efectos fijos de ciudad y de tiempo; proyecciones locales (Jordà, 2005) para la función impulso-respuesta; errores estándar de Driscoll–Kraay y bootstrap wild cluster",
+  "Técnica principal de análisis: proyecciones locales en panel con AUMENTO DE REZAGOS, con efectos fijos de ciudad y de tiempo (Jordà, 2005; Montiel Olea y Plagborg-Møller, 2021)",
+  "Corrección de sesgo: jackknife de medio panel, para el sesgo de Nickell implícito en el panel con efectos fijos (Mei, Sheng y Shi, 2023)",
+  "Inferencia: rezagos como controles y agrupamiento en la dimensión transversal (Almuzara y Sarto, 2024); Driscoll–Kraay y bootstrap wild cluster como contraste",
+  "Objetivo específico 4: modelo de corrección de error con umbral (Goodwin y Piggott, 2001)",
+  "",
+  "Robustez: prueba de dependencia espacial sobre los residuos y panel espacial si resulta significativa (Baltagi y Pirotte, 2010); pruebas de quiebre estructural y estimación por submuestras (Duran y Dindaroğlu, 2021); proyecciones locales suavizadas (Barnichon y Brownlees, 2019)",
   "",
   "Procesamiento: Python, con código y datos derivados versionados en repositorio público",
 ];

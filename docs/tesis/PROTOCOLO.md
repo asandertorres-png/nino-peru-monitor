@@ -395,6 +395,22 @@ tesis.
 Esto no es decoración: con un regresor común en el tiempo, errores estándar mal
 especificados son el modo típico de fallo de este diseño.
 
+**Corrección tras revisar la literatura metodológica (4 nov 2026).** El orden
+de arriba se invierte. Almuzara y Sarto (2024) estudian la inferencia en
+paneles **cuando el regresor de interés es un shock macroeconómico**, que es
+exactamente el caso de un índice oceánico nacional en un panel de ciudades, y
+concluyen que **incluir rezagos como controles y agrupar en la dimensión
+transversal** da inferencia simple y robusta. Montiel Olea y Plagborg-Møller
+(2021) prueban además que el **aumento de rezagos** en proyecciones locales
+vuelve innecesaria la corrección por autocorrelación, y Herbst y Johannsen
+(2024) advierten que los errores robustos a autocorrelación pueden
+**subestimar** la incertidumbre en proyecciones locales de muestra corta. Por
+eso Driscoll–Kraay pasa de procedimiento principal a contraste. Y se incorpora
+el **jackknife de medio panel**: Mei, Sheng y Shi (2023) muestran que el panel
+con proyecciones locales y efectos fijos arrastra un sesgo de Nickell implícito
+que **subestima** los efectos. Ver [MATRIZ_CONSISTENCIA.md](MATRIZ_CONSISTENCIA.md)
+§3.1.
+
 **Advertencia sobre los efectos fijos en dos vías.** Kropko y Kubinec (2020)
 muestran que el modelo de dos vías mezcla variación intra-unidad y transversal
 de un modo que vuelve los coeficientes difíciles de interpretar, y que bajo la
