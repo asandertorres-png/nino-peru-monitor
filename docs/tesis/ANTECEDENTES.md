@@ -19,6 +19,13 @@ resume no sirve para construir la brecha.
 
 ---
 
+> **Versión en matriz.** Los 21 antecedentes de este documento están también
+> como tabla —autor y año, título, metodología, resultados principales y
+> aporte o vacío que deja— en
+> `docs/tesis/Matrices_antecedentes_marco_teorico.docx`, que genera
+> `scripts/tesis/matrices_teoricas_docx.js`. Si se agrega un antecedente
+> aquí, hay que agregarlo también en ese script.
+
 ## 1. Antecedentes internacionales
 
 ### 1.1 ENSO e inflación, evidencia global

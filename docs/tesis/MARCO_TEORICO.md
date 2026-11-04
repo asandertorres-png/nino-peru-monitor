@@ -12,6 +12,11 @@ conjetura en predicción con mecanismo. Está marcado donde ocurre.
 
 ---
 
+> **Versión en matriz.** Los seis pilares están también como tabla —teoría,
+> autores, postulado central, predicción contrastable e hipótesis que
+> sustenta— en `docs/tesis/Matrices_antecedentes_marco_teorico.docx`, que
+> genera `scripts/tesis/matrices_teoricas_docx.js`.
+
 ## 1. La arquitectura: una cadena, no un modelo
 
 No existe un modelo único que vaya del océano al IPC. Lo que hay es una cadena
