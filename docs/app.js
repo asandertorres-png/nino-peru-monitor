@@ -144,13 +144,15 @@ const geoCache = {};
 // citar o compartir. replaceState evita que el navegador salte al cambiar el hash.
 function leerHash() {
   const p = new URLSearchParams(location.hash.slice(1));
-  return { nivel: p.get("nivel"), capa: p.get("capa"), u: p.get("u"), enso: p.get("enso") === "1" };
+  return { nivel: p.get("nivel"), capa: p.get("capa"), u: p.get("u"), enso: p.get("enso") === "1", vias: p.get("vias") === "1", bloqueos: p.get("bloqueos") === "1" };
 }
 function escribirHash(u) {
   const p = new URLSearchParams();
   p.set("nivel", nivelActual); p.set("capa", capaActual);
   if (u) p.set("u", u);
   if (typeof regionesActivas !== "undefined" && regionesActivas) p.set("enso", "1");
+  if (typeof viasActivas !== "undefined" && viasActivas) p.set("vias", "1");
+  if (typeof bloqueosActivos !== "undefined" && bloqueosActivos) p.set("bloqueos", "1");
   history.replaceState(null, "", "#" + p.toString());
 }
 let seleccionPendiente = leerHash().u;
@@ -328,12 +330,80 @@ function mostrarDetalleRegion(k) {
 const controlRegiones = L.control({ position: "topright" });
 controlRegiones.onAdd = () => {
   const d = L.DomUtil.create("div", "leaflet-bar control-regiones");
-  d.innerHTML = `<button id="btn-regiones" type="button" aria-pressed="false" title="Mostrar las regiones Niño del Pacífico ecuatorial en este mapa">Regiones Niño</button>`;
+  d.innerHTML = `<button id="btn-regiones" type="button" aria-pressed="false" title="Mostrar las regiones Niño del Pacífico ecuatorial en este mapa">Regiones Niño</button>
+    <button id="btn-vias" type="button" aria-pressed="false" hidden title="Red vial nacional (MTC)">Vías</button>
+    <button id="btn-bloqueos" type="button" aria-pressed="false" hidden title="Tramos con tránsito interrumpido o restringido">Vías bloqueadas</button>`;
   L.DomEvent.disableClickPropagation(d); L.DomEvent.disableScrollPropagation(d);
-  d.querySelector("button").addEventListener("click", () => alternarRegiones());
+  d.querySelector("#btn-regiones").addEventListener("click", () => alternarRegiones());
+  d.querySelector("#btn-vias").addEventListener("click", () => alternarVias());
+  d.querySelector("#btn-bloqueos").addEventListener("click", () => alternarBloqueos());
   return d;
 };
 controlRegiones.addTo(mapa);
+
+/* ---------- red vial principal y vias bloqueadas (opcionales: existen si sus workflows publicaron) ---------- */
+let viasActivas = false, bloqueosActivos = false, capaVias = null, capaBloqueos = null, bloqueos = null;
+const ESTADOS_VIA = {
+  interrumpido: { color: "#d03b3b", etq: "Tránsito interrumpido" },
+  restringido:  { color: "#fab219", etq: "Tránsito restringido" },
+  normalizado:  { color: "#5fbf7a", etq: "Tránsito normalizado" }
+};
+const viasP = fetch("vias_principales.geojson", { method: "HEAD", cache: "no-cache" }).then(r => r.ok).catch(() => false);
+// el enlace inicial se lee una sola vez (inicial): al activar una capa se reescribe el hash
+viasP.then(ok => { const b = document.getElementById("btn-vias"); if (b && ok) b.hidden = false; if (ok && inicial.vias) alternarVias(true); });
+fetch("data/vias_bloqueadas.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null).catch(() => null).then(doc => {
+  if (!doc || !Array.isArray(doc.eventos)) return;
+  bloqueos = doc;
+  const b = document.getElementById("btn-bloqueos");
+  if (b) { b.hidden = false; b.textContent = `Vías bloqueadas · ${doc.eventos.filter(e => e.estado !== "normalizado").length}`; }
+  if (inicial.bloqueos) alternarBloqueos(true);
+});
+function alternarVias(activar) {
+  viasActivas = activar == null ? !viasActivas : !!activar;
+  const b = document.getElementById("btn-vias"); if (b) b.setAttribute("aria-pressed", String(viasActivas));
+  if (viasActivas) {
+    if (capaVias) capaVias.addTo(mapa);
+    else fetch("vias_principales.geojson", { cache: "no-cache" }).then(r => r.json()).then(geo => {
+      capaVias = L.geoJSON(geo, {
+        style: f => ({ color: f.properties?.clase === "departamental" ? "#c3c2b7" : "#f0efec", weight: f.properties?.clase === "departamental" ? 0.9 : 1.6,
+                       opacity: f.properties?.clase === "departamental" ? 0.45 : 0.7, dashArray: f.properties?.clase === "departamental" ? "3 4" : null, interactive: CON_TOOLTIPS }),
+        onEachFeature: (f, l) => { if (CON_TOOLTIPS) l.bindTooltip(() => `${f.properties?.ruta || "vía"}${f.properties?.nombre ? " · " + f.properties.nombre : ""}`, { sticky: true, direction: "top", opacity: 1 }); }
+      });
+      if (viasActivas) capaVias.addTo(mapa);
+      if (capaBloqueos && bloqueosActivos) capaBloqueos.bringToFront();
+    }).catch(() => { viasActivas = false; if (b) b.setAttribute("aria-pressed", "false"); });
+  } else if (capaVias) mapa.removeLayer(capaVias);
+  dibujarLeyenda(); escribirHash(claveSeleccion);
+}
+function alternarBloqueos(activar) {
+  bloqueosActivos = activar == null ? !bloqueosActivos : !!activar;
+  const b = document.getElementById("btn-bloqueos"); if (b) b.setAttribute("aria-pressed", String(bloqueosActivos));
+  if (bloqueosActivos && bloqueos) {
+    if (!capaBloqueos) {
+      capaBloqueos = L.layerGroup();
+      for (const e of bloqueos.eventos) {
+        if (e.lat == null || e.lon == null) continue;
+        const est = ESTADOS_VIA[e.estado] || { color: "#898781", etq: e.estado || "s/d" };
+        const m = L.circleMarker([e.lat, e.lon], { radius: 6, color: "#0d0f12", weight: 1.5, fillColor: est.color, fillOpacity: 0.95, className: "bloqueo" });
+        if (CON_TOOLTIPS) m.bindTooltip(() => `${e.ruta || "vía"} · <b>${est.etq}</b>${e.descripcion ? " · " + e.descripcion : ""}`, { sticky: true, direction: "top", opacity: 1 });
+        m.on({ mouseover: () => mostrarDetalleBloqueo(e), click: ev => { mostrarDetalleBloqueo(e); L.DomEvent.stopPropagation(ev); } });
+        m.addTo(capaBloqueos);
+      }
+    }
+    capaBloqueos.addTo(mapa);
+  } else if (capaBloqueos) mapa.removeLayer(capaBloqueos);
+  dibujarLeyenda(); escribirHash(claveSeleccion);
+}
+function mostrarDetalleBloqueo(e) {
+  const caja = document.getElementById("detalle"), est = ESTADOS_VIA[e.estado] || { color: "#898781", etq: e.estado || "s/d" };
+  detalleRegionActivo = true;
+  const fila = (k, v) => v == null || v === "" ? "" : `<dt>${k}</dt><dd>${esc(String(v))}</dd>`;
+  caja.innerHTML = `<h2>${esc(e.ruta || "Vía")}</h2><p class="sub">${esc([e.departamento, e.provincia].filter(Boolean).join(" · ") || "ubicación sin detalle")}</p>
+    <dl><dt>Estado</dt><dd><span class="alerta"><i style="background:${est.color}"></i>${est.etq}</span></dd>
+    ${fila("Tramo", e.descripcion)}${fila("Causa", e.causa)}${fila("Desde", e.desde ? fmtFecha(e.desde) : null)}${fila("Reportado", e.actualizado ? fmtFecha(e.actualizado) : null)}${fila("Detalle", e.detalle)}</dl>
+    <p class="nota" style="margin:.5rem 0 0">${esc(bloqueos?.fuente || "")}${bloqueos?.descargado ? ` · descargado ${fmtFecha(bloqueos.descargado)}` : ""}. Estado reportado por la fuente; puede cambiar en horas.</p>`;
+}
+const esc = t => String(t).replace(/[&<>]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
 document.querySelectorAll(".btn-ver-regiones").forEach(b => b.addEventListener("click", () => {
   alternarRegiones();
   if (regionesActivas) document.getElementById("mapa").scrollIntoView({ behavior: reducida ? "auto" : "smooth", block: "start" });
@@ -407,6 +477,13 @@ function dibujarLeyenda() {
     cuerpo += `<div class="sub-ley"><h4>${m.titulo} (mm)</h4>${franja(m)}
       <p class="nota">Zonas con normal mensual menor a ${umbralNormalBaja ?? "—"} mm: ahí el porcentaje no informa y se pinta el acumulado.</p></div>`;
   }
+  if (bloqueosActivos && bloqueos) {
+    const n = k => bloqueos.eventos.filter(e => e.estado === k).length;
+    cuerpo += `<div class="sub-ley"><h4>Vías bloqueadas · ${bloqueos.eventos.length}</h4><div class="chips">` +
+      Object.entries(ESTADOS_VIA).map(([k, v]) => `<div class="chip"><i style="background:${v.color};border-radius:50%"></i>${v.etq} · ${n(k)}</div>`).join("") +
+      `</div><p class="nota">${esc(bloqueos.fuente || "")}${bloqueos.descargado ? `, al ${fmtFecha(bloqueos.descargado)}` : ""}.</p></div>`;
+  }
+  if (viasActivas) cuerpo += `<div class="sub-ley"><p class="nota">Líneas claras: Red Vial Nacional (MTC vía IDEP/IGN).</p></div>`;
   if (regionesActivas) {
     const t = ESCALAS.anomalia_tmax_c;
     cuerpo += capaActual === "anomalia_tmax_c"

@@ -29,26 +29,21 @@ CABECERAS = {"User-Agent": "nino-peru-monitor (datos abiertos, uso no comercial)
 # geoportal del MTC no (timeout / 403). SIGRID tiene carpetas FEN, INDECI y
 # sigrid que conviene listar. El mapa de alertas de Sutran vive en
 # gis.sutran.gob.pe y hay que ver a que servicio le pide los datos.
-RAICES_ARCGIS = [
-    "https://sigrid.cenepred.gob.pe/arcgis/rest/services/FEN",
-    "https://sigrid.cenepred.gob.pe/arcgis/rest/services/INDECI",
-    "https://sigrid.cenepred.gob.pe/arcgis/rest/services/sigrid",
-    "https://sigrid.cenepred.gob.pe/arcgis/rest/services/sectores",
-    "https://www.idep.gob.pe/geoportal/rest/services/INSTITUCIONALES/MTC/FeatureServer/10",
-    "https://www.idep.gob.pe/geoportal/rest/services/INSTITUCIONALES/MTC/MapServer/10",
-    "https://www.idep.gob.pe/geoportal/rest/services/INSTITUCIONALES/MTC/MapServer/9",
-]
-# Consultas de conteo sobre capas conocidas de la red vial nacional
-CAPAS_RED = [
-    "https://www.idep.gob.pe/geoportal/rest/services/INSTITUCIONALES/MTC/MapServer/10",
-    "https://www.idep.gob.pe/geoportal/rest/services/INSTITUCIONALES/MTC/FeatureServer/10",
-    "https://www.idep.gob.pe/geoportal/rest/services/INSTITUCIONALES/MTC/MapServer/9",
-    "https://www.idep.gob.pe/geoportal/rest/services/INSTITUCIONALES/MTC/MapServer/8",
-]
+# Tercera ronda: la Red Vial Nacional de la IDEP son 11 multilineas enormes
+# (61 MB una sola): se prueba la generalizacion del servidor (maxAllowableOffset)
+# para ver a que tamano queda el pais entero. SIGRID expone el mapa operativo
+# del COEN para el FEN 2026-27 (sectores/COEN_FEN_2027) con capas MTC, puntos
+# criticos e intervenciones: se describen con conteo y muestra. El mapa de
+# Sutran sirve HTTPS con certificado autofirmado, que no se acepta; se prueba
+# si responde por HTTP plano.
+COEN = "https://sigrid.cenepred.gob.pe/arcgis/rest/services/sectores/COEN_FEN_2027/MapServer"
+RAICES_ARCGIS = [f"{COEN}/{i}" for i in (3, 24, 25, 55, 56, 52, 27, 30, 16, 21)]
+CAPAS_RED = [f"{COEN}/{i}" for i in (3, 24, 25, 55, 52)]
+RED_NACIONAL = "https://www.idep.gob.pe/geoportal/rest/services/INSTITUCIONALES/MTC/MapServer/10"
 OVERPASS = "https://overpass-api.de/api/interpreter"
 PAGINAS = [
-    "https://gis.sutran.gob.pe/alerta_sutran/",
-    "https://gis.sutran.gob.pe/",
+    "http://gis.sutran.gob.pe/alerta_sutran/",
+    "http://gis.sutran.gob.pe/",
 ]
 
 
@@ -142,16 +137,37 @@ def listar_servicios(raiz):
         time.sleep(0.3)
 
 
+def tamano_generalizado(url_capa, offset):
+    """Descarga toda la capa generalizada por el servidor y reporta tamano y rasgos."""
+    q = url_capa + "/query?" + urllib.parse.urlencode({"where": "1=1", "outFields": "cCodRuta,Departamen,Tramo,Tipo_Super,CAT_VIAL",
+                                                       "returnGeometry": "true", "outSR": "4326", "f": "geojson",
+                                                       "maxAllowableOffset": str(offset), "geometryPrecision": "4"})
+    t0 = time.time()
+    try:
+        st, ct, b = pedir(q, timeout=600)
+    except Exception as e:
+        return f"offset {offset}: error {e}"
+    try:
+        doc = json.loads(b.decode("utf-8", "replace"))
+        feats = doc.get("features", [])
+        partes = sum(len(f["geometry"]["coordinates"]) if f.get("geometry", {}).get("type") == "MultiLineString" else 1 for f in feats)
+        vertices = sum(sum(len(l) for l in f["geometry"]["coordinates"]) if f["geometry"]["type"] == "MultiLineString" else len(f["geometry"]["coordinates"]) for f in feats if f.get("geometry"))
+        props = [f.get("properties") for f in feats[:3]]
+        return f"offset {offset}: {len(b):,} bytes, {len(feats)} rasgos, {partes:,} partes, {vertices:,} vertices, {time.time() - t0:.0f} s, props: {json.dumps(props, ensure_ascii=False)[:300]}"
+    except Exception as e:
+        return f"offset {offset}: {len(b):,} bytes pero no es GeoJSON ({e}): {b[:200]!r}"
+
+
 def inspeccionar():
-    print("== raices ArcGIS REST ==", flush=True)
+    print("== capas del mapa operativo del COEN (FEN 2027) ==", flush=True)
     for u in RAICES_ARCGIS:
         print(f"- {u}\n    {describir_json(u)}", flush=True)
-        if u.rstrip("/").split("/")[-1] in ("FEN", "INDECI", "sigrid", "sectores"):
-            listar_servicios(u)
-        time.sleep(0.5)
-    print("== capas conocidas de la red vial ==", flush=True)
+        time.sleep(0.3)
     for u in CAPAS_RED:
-        print(f"- {u}\n    conteo: {contar(u)}\n    muestra: {muestra(u)}\n    geometria: {geometria_muestra(u)}", flush=True)
+        print(f"- {u}\n    conteo: {contar(u)}\n    muestra: {muestra(u)[:900]}", flush=True)
+    print("== Red Vial Nacional generalizada por el servidor ==", flush=True)
+    for off in (0.02, 0.005):
+        print("    " + tamano_generalizado(RED_NACIONAL, off), flush=True)
     print("== Overpass (OSM): conteo de vias principales en Peru ==", flush=True)
     consulta = '[out:json][timeout:120];area["ISO3166-1"="PE"][admin_level=2]->.pe;way["highway"~"^(motorway|trunk|primary)$"](area.pe);out count;'
     try:

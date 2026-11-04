@@ -224,12 +224,32 @@ def inspeccionar_pdf():
     except Exception as exc:
         print(f"- {PAGINA_BOLETINES}: error {exc}", flush=True)
         return
-    enlaces = re.findall(r'<a[^>]+href=["\']([^"\']+\.pdf)["\'][^>]*>(.*?)</a>', t, re.I | re.S)
-    pdfs = []
-    for href, texto in enlaces:
-        txt = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", texto)).strip()
-        pdfs.append((href, txt))
-    print(f"- {PAGINA_BOLETINES}: {len(pdfs)} PDF", flush=True)
+    todos = re.findall(r'<a[^>]+href=["\']([^"\']+)["\'][^>]*>(.*?)</a>', t, re.I | re.S)
+    limpiar = lambda x: re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", x)).strip()
+    # los informes mensuales enlazan a una ficha o directo al PDF; se listan ambos tipos
+    fichas = [(h, limpiar(x)) for h, x in todos if re.search(r"informe|boletin|precios", (h + " " + limpiar(x)).lower()) and not h.lower().endswith((".jpg", ".png"))]
+    print(f"- {PAGINA_BOLETINES}: {len(todos)} enlaces, {len(fichas)} con pista de informe/boletin/precios", flush=True)
+    for h, x in fichas[:25]:
+        print(f"    {h} :: {x[:90]}", flush=True)
+    pdfs = [(h, x) for h, x in fichas if h.lower().endswith(".pdf")]
+    if not pdfs:
+        # seguir la primera ficha que no sea la misma pagina y buscar el PDF adentro
+        for h, x in fichas:
+            if h.startswith("/"):
+                h = "https://www.inei.gob.pe" + h
+            if "informe-de-precios" in h or not h.startswith("http"):
+                continue
+            try:
+                t2 = decodificar(descargar(h, intentos=1, timeout=60))
+            except Exception as exc:
+                print(f"    ficha {h}: error {exc}", flush=True)
+                continue
+            dentro = re.findall(r'href=["\']([^"\']+\.pdf)["\']', t2, re.I)
+            print(f"    ficha {h}: {len(dentro)} PDF: {dentro[:5]}", flush=True)
+            if dentro:
+                pdfs = [(dentro[0], x)]
+                break
+    print(f"    PDF candidatos: {len(pdfs)}", flush=True)
     for href, txt in pdfs[:12]:
         print(f"    {href} :: {txt[:100]}", flush=True)
     # titulos en el html cerca de cada pdf (la lista suele llevar el mes)

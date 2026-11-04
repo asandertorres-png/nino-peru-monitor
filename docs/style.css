@@ -301,3 +301,6 @@ footer p{margin:.35rem 0}
 .btn-ver-regiones:active{transform:scale(.96)}
 @media (hover:hover) and (pointer:fine){.btn-ver-regiones:hover{background:rgba(255,255,255,.08)}}
 @media (prefers-reduced-motion:reduce){.region-nino{transition:none}}
+.control-regiones button + button{margin-top:.35rem}
+.control-regiones button[hidden]{display:none}
+.bloqueo{transition:r 120ms ease}
