@@ -68,6 +68,7 @@ const celda = (texto, ancho, opciones = {}) =>
       ? { type: ShadingType.CLEAR, fill: opciones.fondo, color: "auto" }
       : undefined,
     verticalAlign: VerticalAlign.CENTER,
+    rowSpan: opciones.filas,
     margins: { top: 60, bottom: 60, left: 80, right: 80 },
     children: (Array.isArray(texto) ? texto : [texto]).map((linea) =>
       new Paragraph({
@@ -210,6 +211,63 @@ const FILAS_Y = [
    "% · Razón", "Derivado de Y1 y del nivel del índice", "H5"],
 ];
 
+
+// ------------------------------------------- matriz simplificada (pregrado)
+
+// La matriz del cuerpo de la tesis: 2 variables, 6 dimensiones, 10
+// indicadores. La version de 27 indicadores pasa a anexo tecnico.
+//
+// Que se deja fuera y por que: las dimensiones de signo, persistencia y
+// calendario productivo salen de la matriz y pasan a ser analisis de robustez
+// en el capitulo de resultados. Eso significa que H4 (asimetria) y H4b
+// (dependencia del estado) ya no tienen respaldo directo en la matriz, y hay
+// que decirlo en la tesis en lugar de dejar la inconsistencia.
+
+const DEF_X_CONCEPTUAL =
+  "Perturbación exógena originada en la variabilidad del Pacífico tropical, " +
+  "que desplaza la función de oferta agropecuaria y pesquera regional y eleva " +
+  "los costos de transacción del comercio interregional.";
+const DEF_X_OPERACIONAL =
+  "Se mide mediante la anomalía climática local respecto de la normal " +
+  "1991–2020, el estado del océano a través de dos índices (ONI e ICEN) y la " +
+  "exposición económica de cada ciudad al fenómeno.";
+const DEF_Y_CONCEPTUAL =
+  "Nivel y dinámica del precio de la canasta de alimentos que enfrenta el " +
+  "consumidor urbano de cada ciudad.";
+const DEF_Y_OPERACIONAL =
+  "Se mide con el índice de precios al consumidor del grupo de alimentos de " +
+  "cada ciudad, en su nivel, su volatilidad y su grado de integración con las " +
+  "demás ciudades.";
+
+// [dimension, [indicadores], escala]
+const SIMPLE_X = [
+  ["D1. Magnitud del shock climático local",
+   ["1. Anomalía estandarizada de precipitación mensual",
+    "2. Anomalía estandarizada de temperatura máxima mensual"],
+   "Razón (desviaciones estándar)"],
+  ["D2. Estado del océano",
+   ["3. Índice ONI, región Niño 3.4 (Pacífico central)",
+    "4. Índice ICEN-réplica, región Niño 1+2 (Niño costero)"],
+   "Razón (grados Celsius)"],
+  ["D3. Exposición económica",
+   ["5. Participación del sector agropecuario y pesquero en el VAB departamental",
+    "6. Participación de los alimentos en la canasta del IPC de la ciudad"],
+   "Razón (porcentaje)"],
+];
+
+const SIMPLE_Y = [
+  ["D1. Nivel de precios",
+   ["7. Variación mensual del IPC de alimentos",
+    "8. Variación a doce meses del IPC de alimentos"],
+   "Razón (porcentaje)"],
+  ["D2. Volatilidad",
+   ["9. Desviación estándar móvil de doce meses de la inflación de alimentos"],
+   "Razón"],
+  ["D3. Integración de mercados",
+   ["10. Correlación de la inflación de alimentos de la ciudad con la de las demás ciudades"],
+   "Razón (coeficiente)"],
+];
+
 // ------------------------------------------------------------ Ricitos de Oro
 
 const RICITOS = [
@@ -230,11 +288,11 @@ const CRITERIOS = [
   ["Aporte identificable", "Cumple",
    "La separación ONI / ICEN a nivel subnacional no se encuentra en la literatura revisada. El efecto agregado, en cambio, ya está cuantificado (Calero y Rodríguez, 2026; Crofils et al., 2024)."],
   ["Variables delimitadas", "Cumple",
-   "Una variable independiente y una dependiente, con 27 indicadores en total."],
+   "Una variable independiente y una dependiente, con 6 dimensiones y 10 indicadores en la matriz; el anexo técnico detalla 27."],
   ["Unidad de análisis y periodo", "Cumple",
    "26 ciudades, frecuencia mensual, 2010–2026."],
   ["Factibilidad de los datos", "Cumple en parte",
-   "Es el criterio no satisfecho del todo, y se declara: 8 de los 27 indicadores dependen de persistir el panel climático mensual, y la existencia del IPC por ciudad y división de gasto no está verificada. Ver el cuadro de estado."],
+   "Es el criterio no satisfecho del todo, y se declara: los indicadores 1 y 2 dependen de persistir el panel climático mensual 1991–2026, y la existencia del IPC por ciudad y división de gasto (indicadores 7 y 8) no está verificada. Ver el Anexo 2."],
 ];
 
 const ESTADO = [
@@ -377,26 +435,82 @@ const seccionVertical = {
       })),
     ]),
 
+  ],
+};
+
+// Anchos de la matriz simplificada, pagina horizontal: suman UTIL_H = 13680
+const A_SIMPLE = [1350, 2550, 2550, 2050, 3980, 1200];
+
+/** Filas de una variable, con celdas combinadas verticalmente. */
+function filasSimple(variable, defConceptual, defOperacional, grupos) {
+  const total = grupos.reduce((n, g) => n + g[1].length, 0);
+  const filas = [];
+  let primera = true;
+
+  grupos.forEach(([dimension, indicadores, escala]) => {
+    indicadores.forEach((indicador, j) => {
+      const celdas = [];
+      if (primera) {
+        celdas.push(
+          celda(variable, A_SIMPLE[0], {
+            filas: total, tam: 17, negrita: true, fondo: GRIS_OSCURO,
+            alineacion: AlignmentType.CENTER,
+          }),
+          celda(defConceptual, A_SIMPLE[1], { filas: total, tam: 15 }),
+          celda(defOperacional, A_SIMPLE[2], { filas: total, tam: 15 }),
+        );
+        primera = false;
+      }
+      if (j === 0) {
+        celdas.push(celda(dimension, A_SIMPLE[3], {
+          filas: indicadores.length, tam: 16, negrita: true,
+          alineacion: AlignmentType.CENTER,
+        }));
+      }
+      celdas.push(celda(indicador, A_SIMPLE[4], { tam: 16 }));
+      if (j === 0) {
+        celdas.push(celda(escala, A_SIMPLE[5], {
+          filas: indicadores.length, tam: 15, alineacion: AlignmentType.CENTER,
+        }));
+      }
+      filas.push(new TableRow({ children: celdas }));
+    });
+  });
+  return filas;
+}
+
+const CAB_SIMPLE = ["Variable", "Definición conceptual", "Definición operacional",
+  "Dimensiones", "Indicadores", "Escala de medición"];
+
+const seccionMatrizSimple = {
+  properties: {
+    page: {
+      size: { width: LETTER.width, height: LETTER.height, orientation: PageOrientation.LANDSCAPE },
+      margin: { top: MARGEN, right: MARGEN, bottom: MARGEN, left: MARGEN },
+    },
+  },
+  children: [
     new Paragraph({
       heading: HeadingLevel.HEADING_1,
-      spacing: { before: 360, after: 120 },
+      spacing: { after: 60 },
       children: [new TextRun({
-        text: "3. Definición conceptual de las variables",
+        text: "3. Matriz de operacionalización de variables",
         size: 26, bold: true, color: AZUL, font: "Arial",
       })],
     }),
-    p("Variable independiente (X): shock exógeno de oferta de origen ENSO.", { negrita: true, despues: 60 }),
-    p("Perturbación no anticipada por la economía peruana, originada en la variabilidad del " +
-      "Pacífico tropical, que desplaza la función de oferta agropecuaria y pesquera regional y " +
-      "eleva los costos de transacción del comercio interregional. Se define como shock de " +
-      "oferta —categoría económica— y no como fenómeno climático: el dato climático es el " +
-      "indicador de una sola de sus seis dimensiones, la magnitud.", { despues: 160 }),
-    p("Variable dependiente (Y): precios de alimentos al consumidor en el ámbito urbano.", { negrita: true, despues: 60 }),
-    p("Nivel y dinámica del precio de la canasta de alimentos que enfrenta el consumidor urbano " +
-      "de cada ciudad, medido por el índice de precios al consumidor del grupo de alimentos. Sus " +
-      "dimensiones siguen la estructura establecida en la economía agrícola, que distingue " +
-      "tendencias, volatilidad y picos como tipos de cambio de precio diferentes (von Braun y " +
-      "Tadesse, 2012; Díaz-Bonilla, 2016), más el traspaso y la integración espacial.", { despues: 0 }),
+    p("2 variables · 6 dimensiones · 10 indicadores", { cursiva: true, tam: 18, despues: 140 }),
+    tabla(A_SIMPLE, [
+      encabezado(CAB_SIMPLE, A_SIMPLE),
+      ...filasSimple(["Variable independiente (X)", "Shock de oferta de origen ENSO"],
+                     DEF_X_CONCEPTUAL, DEF_X_OPERACIONAL, SIMPLE_X),
+      ...filasSimple(["Variable dependiente (Y)", "Precios de alimentos al consumidor urbano"],
+                     DEF_Y_CONCEPTUAL, DEF_Y_OPERACIONAL, SIMPLE_Y),
+    ]),
+    p("Nota. El detalle de cada indicador —fórmula de cálculo, fuente, periodicidad y estado de " +
+      "verificación de los datos— se presenta en el Anexo 1. Las pruebas de asimetría del shock y " +
+      "de dependencia del nivel de existencias no constituyen dimensiones de la matriz: se tratan " +
+      "como análisis de robustez en el capítulo de resultados.",
+      { antes: 200, tam: 17 }),
   ],
 };
 
@@ -412,7 +526,7 @@ const seccionHorizontal = {
       heading: HeadingLevel.HEADING_1,
       spacing: { after: 60 },
       children: [new TextRun({
-        text: "4. Matriz de operacionalización · Variable independiente (X)",
+        text: "Anexo 1. Matriz detallada de indicadores · Variable independiente (X)",
         size: 26, bold: true, color: AZUL, font: "Arial",
       })],
     }),
@@ -424,7 +538,7 @@ const seccionHorizontal = {
       heading: HeadingLevel.HEADING_1,
       spacing: { before: 0, after: 60 },
       children: [new TextRun({
-        text: "5. Matriz de operacionalización · Variable dependiente (Y)",
+        text: "Anexo 1. Matriz detallada de indicadores · Variable dependiente (Y)",
         size: 26, bold: true, color: AZUL, font: "Arial",
       })],
     }),
@@ -436,7 +550,7 @@ const seccionHorizontal = {
       heading: HeadingLevel.HEADING_1,
       spacing: { before: 0, after: 60 },
       children: [new TextRun({
-        text: "6. Estado de verificación de las fuentes",
+        text: "Anexo 2. Estado de verificación de las fuentes",
         size: 26, bold: true, color: AZUL, font: "Arial",
       })],
     }),
@@ -484,7 +598,7 @@ const doc = new Document({
       },
     },
   },
-  sections: [seccionVertical, seccionHorizontal],
+  sections: [seccionVertical, seccionMatrizSimple, seccionHorizontal],
 });
 
 const salida = path.join(__dirname, "..", "..", "docs", "tesis",

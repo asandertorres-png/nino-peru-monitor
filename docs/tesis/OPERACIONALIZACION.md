@@ -178,7 +178,58 @@ probable en la redacción final.
 
 ---
 
-## 3. Matriz de operacionalización
+## 3. Matriz simplificada (la que va en el cuerpo de la tesis)
+
+**2 variables · 6 dimensiones · 10 indicadores.** Es la versión para el
+documento de grado. La matriz de 27 indicadores de §4 pasa a anexo técnico: no
+se descarta, se subordina — documenta cómo se calcula cada indicador, que es lo
+que el asesor va a querer ver, pero no es lo que va en el cuerpo.
+
+| Variable | Definición conceptual | Definición operacional | Dimensión | Indicador | Escala |
+|---|---|---|---|---|---|
+| **X.** Shock de oferta de origen ENSO | Perturbación exógena originada en la variabilidad del Pacífico tropical, que desplaza la función de oferta agropecuaria y pesquera regional y eleva los costos de transacción del comercio interregional | Se mide mediante la anomalía climática local respecto de la normal 1991–2020, el estado del océano a través de dos índices (ONI e ICEN) y la exposición económica de cada ciudad | **D1.** Magnitud del shock climático local | 1. Anomalía estandarizada de precipitación mensual | Razón (σ) |
+| | | | | 2. Anomalía estandarizada de temperatura máxima mensual | Razón (σ) |
+| | | | **D2.** Estado del océano | 3. Índice ONI, región Niño 3.4 (Pacífico central) | Razón (°C) |
+| | | | | 4. Índice ICEN-réplica, región Niño 1+2 (Niño costero) | Razón (°C) |
+| | | | **D3.** Exposición económica | 5. Participación del sector agropecuario y pesquero en el VAB departamental | Razón (%) |
+| | | | | 6. Participación de los alimentos en la canasta del IPC de la ciudad | Razón (%) |
+| **Y.** Precios de alimentos al consumidor urbano | Nivel y dinámica del precio de la canasta de alimentos que enfrenta el consumidor urbano de cada ciudad | Se mide con el IPC del grupo de alimentos de cada ciudad, en su nivel, su volatilidad y su grado de integración con las demás ciudades | **D1.** Nivel de precios | 7. Variación mensual del IPC de alimentos | Razón (%) |
+| | | | | 8. Variación a doce meses del IPC de alimentos | Razón (%) |
+| | | | **D2.** Volatilidad | 9. Desviación estándar móvil de doce meses de la inflación de alimentos | Razón |
+| | | | **D3.** Integración de mercados | 10. Correlación de la inflación de alimentos de la ciudad con la de las demás | Razón |
+
+### Qué se sacó de la matriz, y la consecuencia
+
+Salieron tres dimensiones de X —signo, persistencia y calendario productivo— y
+dos de Y —picos y traspaso—. **Eso tiene un costo que hay que declarar y no
+disimular: H4 (asimetría) y H4b (dependencia del estado) se quedan sin respaldo
+directo en la matriz.**
+
+La salida correcta no es volver a meterlas, sino **reclasificarlas**: pasan a
+ser *análisis de robustez* en el capítulo de resultados, no dimensiones de la
+variable. Una tesis de pregrado puede perfectamente contrastar una asimetría en
+una sección de robustez sin haberla operacionalizado como dimensión; lo que no
+puede es tener una hipótesis que la matriz no sustenta y no decir nada al
+respecto.
+
+Lo que **sí** sostiene la matriz simplificada: H1 (indicadores 1–4), H2 (5 y 6
+interactuados con 1 y 2), H3 (3 contra 4), H5 (10) y H6 (1 y 2 calculados en
+dos niveles de agregación). Cinco de las siete hipótesis, y entre ellas la que
+da el título.
+
+### Estado de los 10 indicadores
+
+| Indicador | Estado | Qué falta |
+|---|---|---|
+| 1, 2 | 🔴 Bloqueado | σ por unidad y mes no existe en el producto actual; requiere persistir el panel climático mensual |
+| 3 | 🟡 Parcial | La serie ONI guardada arranca en 2021; extenderla a 1950 |
+| 4 | 🟡 Parcial | Calculable desde la NOAA; falta validar contra el IGP |
+| 5 | 🟡 No verificado | Ruta de descarga del VAB departamental |
+| 6 | 🟠 En riesgo | Si las ponderaciones del IPC solo existen para Lima, no varía entre ciudades |
+| 7, 8 | 🟠 En riesgo · decide el diseño | Que el IPC exista por ciudad y por división de gasto |
+| 9, 10 | 🟢 Derivado | Disponibles en cuanto existan 7 y 8 |
+
+## 4. Anexo técnico: matriz detallada de indicadores
 
 Tres vistas de lo mismo, para tres usos distintos: la tabla compacta que va en
 el documento de tesis (§3.1), la ficha por indicador con fórmula exacta que se
@@ -193,7 +244,7 @@ ciudad o provincia o departamento para X), `t` el mes calendario, `m` el mes del
 año (01–12) al que pertenece `t`, y `d` el departamento. El periodo base de toda
 climatología es **1991–2020**, estándar de la OMM.
 
-### 3.1 Vista compacta (la que va en el documento)
+### 4.1 Vista compacta de los 27 indicadores
 
 | Variable | Dimensión | Indicador | Escala | Fuente |
 |---|---|---|---|---|
@@ -209,7 +260,7 @@ climatología es **1991–2020**, estándar de la OMM.
 | | D4 Traspaso | Y8 Elasticidad del IPC general respecto del de alimentos; Y9 ídem del subyacente | Razón | INEI, BCRP |
 | | D5 Integración espacial | Y10 Correlación móvil entre pares de ciudades; Y11 ancho de la banda neutral | Razón | INEI |
 
-### 3.2 Fichas por indicador — variable X
+### 4.2 Fichas por indicador — variable X
 
 #### D1. Magnitud del shock
 
@@ -386,7 +437,7 @@ cosecha, poscosecha, para la zona abastecedora de la ciudad en el mes `t`.
   precisamente ese calendario.
 - **⚠️ No verificado:** depende de X15 (saber qué zona abastece a cada ciudad).
 
-### 3.3 Fichas por indicador — variable Y
+### 4.3 Fichas por indicador — variable Y
 
 #### D1. Nivel y tendencia
 
@@ -474,7 +525,7 @@ de error con umbral (TVECM) por par de ciudades.
 - **Uso:** es el indicador que contrasta H5. Su virtud práctica es que **no
   requiere ningún dato que el panel de precios no tenga ya**.
 
-### 3.4 Estado de verificación de cada fuente
+### 4.4 Estado de verificación de cada fuente
 
 Esta columna es la que decide qué sobrevive. La regla, ya fijada en §5: **una
 dimensión cuya fuente no se confirme se elimina de la matriz antes de estimar,
@@ -502,7 +553,7 @@ del IPC desagregado. El orden de trabajo que esto impone es el mismo que ya
 fijaron BRECHAS.md §4 y PROTOCOLO.md §9, y lo confirma desde otro ángulo: **la
 tarea 0 y la verificación del IPC son prerrequisitos, no primeros capítulos.**
 
-## 4. Correspondencia con las hipótesis
+## 5. Correspondencia con las hipótesis
 
 Si una dimensión no sirve para contrastar ninguna hipótesis, sobra. Ninguna
 sobra, y los 27 indicadores cubren las siete hipótesis:
@@ -532,7 +583,7 @@ python scripts/tesis/matriz.py
 El markdown de este documento es la fuente de verdad; si se cambia una ficha
 aquí, hay que cambiarla también en el script y volver a generar el CSV.
 
-## 5. Datos de D5 y D6: estado de verificación
+## 6. Datos de D5 y D6: estado de verificación
 
 Honestidad sobre lo que todavía no está confirmado, igual que en el resto de los
 documentos de esta carpeta:
@@ -554,7 +605,7 @@ documentos de esta carpeta:
 Las dimensiones cuya fuente no se confirme **se eliminan de la matriz antes de
 estimar**, no se estiman con un sustituto silencioso.
 
-## 6. Referencias
+## 7. Referencias
 
 - Arango-Castillo, L. et al. (2025). The effects of temperature and rainfall
   anomalies on Mexican inflation.
