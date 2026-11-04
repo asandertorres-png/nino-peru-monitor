@@ -44,6 +44,28 @@
       <div class="acciones"><button type="button" id="descargar-csv" class="boton">Descargar CSV</button>
         <span class="nota">Mismos valores que el mapa, con coordenadas del punto usado.</span></div>
     </details>
+    <details class="tabla indicadores">
+      <summary>Indicadores utilizados: qué mide cada uno, fuente, frecuencia y umbrales</summary>
+      <div class="scroll"><table>
+        <thead><tr><th>Indicador</th><th>Qué mide</th><th>Fuente</th><th>Frecuencia · rezago</th><th>Unidad</th><th>Criterio o umbral</th></tr></thead>
+        <tbody>
+          <tr><td>ONI</td><td>Anomalía de la temperatura superficial del mar en Niño 3.4 (Pacífico central), media móvil de 3 meses, base 1991–2020</td><td>NOAA/CPC</td><td>Mensual · trimestre móvil (el valor corresponde al centro del trimestre)</td><td>°C</td><td>NOAA: El Niño con ONI ≥ +0,5 durante cinco trimestres seguidos. Etiquetas del monitor: débil ≥ 0,5; moderado ≥ 1,0; fuerte ≥ 1,5; muy fuerte ≥ 2,0 (y simétricas para La Niña)</td></tr>
+          <tr><td>TSM semanal por región Niño</td><td>Anomalía semanal de TSM en Niño 4, 3.4, 3 y 1+2</td><td>NOAA/CPC, archivo semanal (base 1991–2020)</td><td>Semanal · sale los lunes; la fecha es el centro de la semana</td><td>°C</td><td>Sin umbral oficial propio; contexto fresco del ONI (3.4) y del Niño costero (1+2)</td></tr>
+          <tr><td>ICEN</td><td>Anomalía de TSM en Niño 1+2 (ERSSTv5), media móvil de 3 meses: el índice oficial del Niño costero</td><td>ENFEN / IGP</td><td>Mensual · los últimos meses son preliminares (ICENtmp)</td><td>°C</td><td>ENFEN: cálida débil ≥ 0,4; moderada ≥ 1,0; fuerte ≥ 1,7; extraordinaria ≥ 3,0; fría débil ≤ −1,0; moderada ≤ −1,2; fuerte ≤ −1,4</td></tr>
+          <tr><td>Normal 1991–2020</td><td>Media de los acumulados mensuales de lluvia y medias de temperatura máxima y mínima, por mes del año, en el punto de cada unidad</td><td>ERA5 (departamentos) y ERA5-Land (provincias), vía Open-Meteo</td><td>Fija · se calcula una vez</td><td>mm, °C</td><td>Entran los meses con ≥ 90 % de días; se registra cuántos años quedaron detrás de cada valor</td></tr>
+          <tr><td>Lluvia de 30 días</td><td>Acumulado de los últimos 30 días</td><td>Open-Meteo, API de pronóstico (días pasados)</td><td>Cada 6 h · hasta el día anterior</td><td>mm</td><td>—</td></tr>
+          <tr><td>Anomalía de lluvia</td><td>(Lluvia de 30 días − normal del mes) / normal del mes</td><td>Derivado</td><td>Cada 6 h</td><td>% (mm si la normal es muy baja)</td><td>Con normal mensual &lt; 5 mm el porcentaje no informa: se publica la diferencia en mm y no cuenta para la alerta</td></tr>
+          <tr><td>Temperatura máxima media y anomalía</td><td>Media de la máxima diaria de 30 días y su diferencia con la normal del mes</td><td>Open-Meteo (observado) y ERA5 (normal)</td><td>Cada 6 h</td><td>°C</td><td>Anomalía &gt; +2 °C sube un nivel de alerta</td></tr>
+          <tr><td>Condiciones de hoy</td><td>Lluvia acumulada hasta la hora y temperatura actual</td><td>Open-Meteo (actual y horario)</td><td>La API refresca cada hora; el monitor, cada 6 h</td><td>mm, °C</td><td>Informativo</td></tr>
+          <tr><td>Pronóstico de lluvia, 7 días</td><td>Acumulado previsto para los próximos 7 días</td><td>Open-Meteo</td><td>Cada 6 h</td><td>mm</td><td>Informativo</td></tr>
+          <tr><td>Nivel de alerta</td><td>Escala cualitativa 0–3 según la zona de impacto</td><td>Derivado · provisional</td><td>Cada 6 h</td><td>0–3</td><td>Costa norte: exceso de lluvia &gt; 50 / 100 / 200 %. Sierra, selva y costa centro-sur: déficit &lt; −20 / −40 / −60 %. +1 nivel si la anomalía térmica supera +2 °C. No calibrado ni oficial; no sustituye los avisos de SENAMHI, ENFEN ni INDECI</td></tr>
+          <tr><td>Altitud del punto de malla</td><td>Altitud que el modelo asigna al punto usado, frente a la altitud de referencia de la capital</td><td>Open-Meteo (elevación) y referencia cartográfica</td><td>Cada 6 h</td><td>m</td><td>Cuantifica el sesgo de representar un departamento por un punto</td></tr>
+          <tr><td>Sensibilidad al ENSO</td><td>Correlación y pendiente de la anomalía mensual de lluvia frente al ONI, con rezagos de 0 a 3 meses; frecuencia de déficit y exceso con ONI ≥ +1</td><td>Derivado de las series 1991–2020 y del ONI</td><td>Se rehace al recalcular las normales</td><td>r, % por °C, p</td><td>p &lt; 0,05 orientativo (sin corrección por comparaciones múltiples); 30 años y 4–5 eventos; asociación, no causalidad</td></tr>
+          <tr><td>Historial diario</td><td>ONI, TSM semanal, ICEN y anomalías por departamento, una fila por día</td><td>Derivado</td><td>Diario · la última corrida de cada día</td><td>—</td><td>Últimos 400 días; solo nivel departamental</td></tr>
+        </tbody>
+      </table></div>
+      <div class="acciones"><span class="nota">Detalle completo, limitaciones y fuentes en <a href="METODOLOGIA.md">METODOLOGIA.md</a>.</span></div>
+    </details>
   </section>
 
   <aside id="panel">
