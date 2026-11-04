@@ -278,3 +278,5 @@ footer p{margin:.35rem 0}
 }
 .segmento label.deshabilitada{opacity:.45;cursor:not-allowed}
 .segmento label.deshabilitada input{cursor:not-allowed}
+.barras-mes{display:inline-block;vertical-align:middle}
+.segmento label[hidden]{display:none}

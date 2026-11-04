@@ -155,6 +155,9 @@ def listar_recursos():
     for id_ in IDS_DATASET:
         try:
             doc = leer_json(URL_CKAN.format(id=urllib.request.quote(id_)))
+        except ValueError:
+            print(f"  CKAN {id_}: la respuesta no es JSON (el portal no expone ese API)", flush=True)
+            continue
         except Exception as exc:
             print(f"  CKAN {id_}: {exc}", flush=True)
             continue
@@ -251,7 +254,7 @@ def acumular(pos, lector, max_filas=None, muestra=None):
     """Suma los montos del PP 0068 por departamento (y nivel de gobierno).
 
     Devuelve (por_departamento, otros, meses, estadisticas)."""
-    por_dep, otros, por_nivel = {}, {}, {}
+    por_dep, otros, por_nivel, por_mes = {}, {}, {}, {}
     meses, anios = {}, {}
     leidas = filtradas = 0
     nombre_programa = None
@@ -270,24 +273,29 @@ def acumular(pos, lector, max_filas=None, muestra=None):
         if nombre_programa is None:
             nombre_programa = g(fila, "programa_nombre")
         mes = g(fila, "mes")
+        mm = str(mes).strip().zfill(2) if mes is not None and str(mes).strip().isdigit() else "s/d"
         if mes is not None:
-            meses[mes] = meses.get(mes, 0) + 1
+            meses[mm] = meses.get(mm, 0) + 1
+        pm = por_mes.setdefault(mm, {"pim": 0.0, "devengado": 0.0})
+        pm["pim"] += numero(g(fila, "pim")); pm["devengado"] += numero(g(fila, "devengado"))
         anio = g(fila, "anio")
         if anio is not None:
             anios[anio] = anios.get(anio, 0) + 1
         dep = departamento_desde(g(fila, "departamento_nombre"), g(fila, "departamento"))
         destino = por_dep if dep else otros
         clave = dep or (g(fila, "departamento_nombre") or g(fila, "departamento") or "sin dato").strip()
-        d = destino.setdefault(clave, {m: 0.0 for m in MONTOS} | {"filas": 0})
+        d = destino.setdefault(clave, {m: 0.0 for m in MONTOS} | {"filas": 0, "devengado_por_mes": {}})
         d["filas"] += 1
         for m in MONTOS:
             d[m] += numero(g(fila, m))
+        d["devengado_por_mes"][mm] = d["devengado_por_mes"].get(mm, 0.0) + numero(g(fila, "devengado"))
         nivel = (g(fila, "nivel_gobierno") or "s/d").strip()
         n = por_nivel.setdefault(nivel, {m: 0.0 for m in MONTOS})
         for m in MONTOS:
             n[m] += numero(g(fila, m))
     return por_dep, otros, por_nivel, {"filas_leidas": leidas, "filas_pp0068": filtradas,
-                                      "meses": meses, "anios": anios, "programa_nombre": nombre_programa}
+                                      "meses": meses, "anios": anios, "programa_nombre": nombre_programa,
+                                      "por_mes": por_mes}
 
 
 def armar_salida(por_dep, otros, por_nivel, est, recurso, columnas, anio, url):
@@ -301,6 +309,7 @@ def armar_salida(por_dep, otros, por_nivel, est, recurso, columnas, anio, url):
         pob = POBLACION_CENSO_2017.get(nombre)
         fila = {m: round(d[m], 2) for m in MONTOS}
         fila["filas"] = d["filas"]
+        fila["devengado_por_mes"] = {k: round(v, 2) for k, v in sorted(d["devengado_por_mes"].items())}
         fila["avance_pct"] = round(d["devengado"] / d["pim"] * 100, 1) if d["pim"] > 0 else None
         fila["pim_per_capita"] = round(d["pim"] / pob, 2) if pob else None
         fila["devengado_per_capita"] = round(d["devengado"] / pob, 2) if pob else None
@@ -314,7 +323,19 @@ def armar_salida(por_dep, otros, por_nivel, est, recurso, columnas, anio, url):
     total["avance_pct"] = round(total["devengado"] / total["pim"] * 100, 1) if total["pim"] > 0 else None
     pob_total = sum(POBLACION_CENSO_2017.values())
     total["devengado_per_capita"] = round(total["devengado"] / pob_total, 2)
+    meses_num = [int(k) for k in est["meses"] if k.isdigit()]
+    mes_corte = max(meses_num) if meses_num else None
+    controles = []
+    if total["pim"] > 0 and total["avance_pct"] is not None and not 5 <= total["avance_pct"] <= 110:
+        controles.append(f"avance nacional {total['avance_pct']} % fuera del rango esperado: revisar si los montos "
+                         "son movimientos mensuales (se suman) o acumulados (no deben sumarse)")
+    if total["devengado"] > total["pim"] * 1.02:
+        controles.append("devengado nacional mayor que el PIM: revisar la interpretacion de los montos")
+    if len(deps) - sum(1 for d in deps.values() if d.get("sin_datos")) < 20:
+        controles.append("menos de 20 departamentos con filas del PP 0068: archivo incompleto o filtro mal aplicado")
     advertencias = [
+        "cada fila del archivo del MEF es el movimiento del mes (PIA, modificaciones del PIM, certificado, "
+        "comprometido, devengado y girado); el acumulado anual es la suma de todos los meses hasta el corte",
         "capa de insumo, no de resultado: mide presupuesto asignado y devengado, no obras terminadas ni danio evitado",
         "el PP 0068 cubre todos los peligros (sismos, heladas, incendios, lluvias), no solo El Nino",
         "el avance porcentual favorece a quien tiene poco PIM; leerlo junto con el monto per capita",
@@ -332,8 +353,11 @@ def armar_salida(por_dep, otros, por_nivel, est, recurso, columnas, anio, url):
         "recurso": recurso,
         "descargado": datetime.now(LIMA).isoformat(timespec="minutes"),
         "columnas_usadas": columnas,
+        "mes_corte": mes_corte,
         "meses_en_archivo": est["meses"],
         "anios_en_archivo": est["anios"],
+        "por_mes": {k: {m: round(v[m], 2) for m in ("pim", "devengado")} for k, v in sorted(est["por_mes"].items())},
+        "controles": controles,
         "filas_leidas": est["filas_leidas"],
         "filas_pp0068": est["filas_pp0068"],
         "poblacion_fuente": "INEI, Censos Nacionales 2017 (poblacion censada por departamento)",
@@ -391,6 +415,8 @@ def main():
     print(f"filas leidas: {est['filas_leidas']:,} | PP {PROGRAMA}: {est['filas_pp0068']:,} | "
           f"{time.time() - t0:.0f} s", flush=True)
     print(f"programa: {est['programa_nombre']!r} | meses: {est['meses']} | anios: {est['anios']}", flush=True)
+    for k, v in sorted(est["por_mes"].items()):
+        print(f"  mes {k}: PIM {v['pim']:>16,.0f} | devengado {v['devengado']:>16,.0f}", flush=True)
     if inspeccionar:
         for f in muestra:
             print("  muestra: " + " | ".join(f"{encabezado[i]}={f[i]}" for i in sorted(pos.values()) if i < len(f)), flush=True)
@@ -403,6 +429,10 @@ def main():
         raise SystemExit(f"ninguna fila del PP {PROGRAMA}: no se sobrescribe la salida")
     columnas = {k: encabezado[v] for k, v in pos.items()}
     salida = armar_salida(por_dep, otros, por_nivel, est, recurso, columnas, anio, url)
+    for c in salida["controles"]:
+        print(f"CONTROL: {c}", flush=True)
+    if salida["controles"]:
+        raise SystemExit("controles de coherencia fallidos: no se sobrescribe la salida")
     SALIDA.write_text(json.dumps(salida, ensure_ascii=False, indent=1))
     t = salida["total"]
     print(f"{SALIDA.relative_to(RAIZ)}: PIM S/ {t['pim']:,.0f}, devengado S/ {t['devengado']:,.0f} "

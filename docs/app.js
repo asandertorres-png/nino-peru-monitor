@@ -40,8 +40,51 @@ const ESCALAS = {
     cortes: [-2, -1, -0.5, 0.5, 1, 2],
     colores: ["#cde2fb", "#86b6ef", "#3987e5", NEUTRO, "#e66767", "#f29a9a", "#f9cccc"],
     formato: v => v == null ? "s/d" : `${v > 0 ? "+" : ""}${v} °C`
+  },
+  // gasto publico en el PP 0068 (MEF): avance de ejecucion del anio; secuencial de un tono,
+  // como la lluvia acumulada (mas claro = mas avance). Solo nivel departamental.
+  gasto_pp0068: {
+    titulo: "Gasto PP 0068 · avance de ejecución", unidad: "%", tipo: "secuencial",
+    cortes: [40, 55, 70, 85],
+    colores: ["#3b2a7a", "#5a45b0", "#7c6bd0", "#a89ce3", "#d4ccf3"],
+    formato: v => v == null ? "s/d" : `${Math.round(v)} %`
   }
 };
+
+/* ---------- gasto publico PP 0068 (opcional: solo si el workflow del MEF lo publico) ---------- */
+let gasto = null, gastoPor = {}, ultimoEstado = null;
+const fmtSoles = v => v == null ? "s/d" : Math.round(v).toLocaleString("es-PE");
+const fmtMillones = v => v == null ? "s/d" : v >= 1e9 ? `${(v / 1e9).toFixed(2)} mil millones` : `${(v / 1e6).toFixed(1)} millones`;
+const gastoDe = d => (gasto && nivelActual === "departamento" && d) ? (gastoPor[d.nombre] && !gastoPor[d.nombre].sin_datos ? gastoPor[d.nombre] : null) : null;
+const gastoP = fetch("data/gasto_pp0068.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null).catch(() => null);
+gastoP.then(doc => {
+  if (!doc || !doc.departamentos) return;
+  gasto = doc; gastoPor = doc.departamentos;
+  mostrarOpcionGasto();
+  if (capaGeo && capaActual === "gasto_pp0068") { capaGeo.setStyle(estilo); dibujarLeyenda(); }
+  if (ultimoEstado) pintarFrescura(ultimoEstado);
+  if (registros.length) pintarTabla();
+});
+function mostrarOpcionGasto() {
+  const lab = document.getElementById("opcion-gasto"); if (!lab) return;
+  lab.hidden = !(gasto && nivelActual === "departamento");
+}
+function notaGasto() {
+  if (!gasto) return "Datos del MEF todavía no publicados en este monitor.";
+  const t = gasto.total || {};
+  const corte = gasto.mes_corte ? ` al mes ${String(gasto.mes_corte).padStart(2, "0")}` : "";
+  return `Devengado / PIM del Programa Presupuestal 0068 (desastres, todos los peligros) en ${gasto.anio}${corte}, tres niveles de gobierno, por departamento de la meta. ` +
+    `Nacional: S/ ${fmtMillones(t.devengado)} de S/ ${fmtMillones(t.pim)} (${t.avance_pct ?? "s/d"} %). ` +
+    `Capa de insumo, no de resultado; el porcentaje favorece a quien tiene poco PIM: ver per cápita en el detalle. MEF, descargado ${fmtDia(String(gasto.descargado).slice(0, 10))}.`;
+}
+function barrasMes(porMes) {
+  const meses = Array.from({ length: 12 }, (_, i) => porMes?.[String(i + 1).padStart(2, "0")] ?? null);
+  const max = Math.max(1, ...meses.map(v => v ?? 0));
+  const W = 132, H = 30, b = 9;
+  const barras = meses.map((v, i) => v == null ? "" :
+    `<rect x="${i * 11}" y="${H - 4 - Math.max(1, v / max * (H - 6))}" width="${b}" height="${Math.max(1, v / max * (H - 6))}" rx="1" fill="${v < 0 ? "#e66767" : "#a89ce3"}"><title>mes ${i + 1}: S/ ${fmtSoles(v)}</title></rect>`).join("");
+  return `<svg class="barras-mes" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" aria-label="Devengado por mes">${barras}<line x1="0" y1="${H - 3.5}" x2="${W}" y2="${H - 3.5}" stroke="#3f3f3b"/></svg>`;
+}
 
 function claseEscalonada(v, escala) {
   let i = 0;
@@ -135,6 +178,11 @@ leyenda.addTo(mapa);
 /* ---------- color ---------- */
 const sinInfo = d => !d || d.sin_datos || d.sin_normal;
 function claseDe(d) {
+  if (capaActual === "gasto_pp0068") {
+    const g = gastoDe(d), e = ESCALAS.gasto_pp0068;
+    if (!g || g.avance_pct == null) return { color: SIN_DATOS, op: 0.55 };
+    return { color: e.colores[claseEscalonada(g.avance_pct, e)], op: 0.62 };
+  }
   if (sinInfo(d)) return { color: SIN_DATOS, op: 0.55 };
   if (capaActual === "nivel_alerta") {
     const c = ESCALAS.nivel_alerta.clases[Math.max(0, Math.min(3, d.nivel_alerta ?? 0))];
@@ -153,12 +201,17 @@ function claseDe(d) {
 function estilo(feature) {
   const d = porUnidad[NIVELES[nivelActual].claveGeo(feature)];
   const c = claseDe(d);
-  if (sinInfo(d)) return { fillColor: "#5a5f66", fillOpacity: 0.5, color: "#898781", weight: 1, dashArray: "4 3" };
+  const sinDato = capaActual === "gasto_pp0068" ? !gastoDe(d) : sinInfo(d);
+  if (sinDato) return { fillColor: "#5a5f66", fillOpacity: 0.5, color: "#898781", weight: 1, dashArray: "4 3" };
   // el trazo lleva el color del plano: separa los rellenos vecinos ahora que son translucidos
   return { fillColor: c.color, fillOpacity: c.op, color: "#0d0f12", weight: nivelActual === "provincia" ? 1 : 1.5 };
 }
 
 function valorCapa(d) {
+  if (capaActual === "gasto_pp0068") {
+    const g = gastoDe(d);
+    return g ? `${ESCALAS.gasto_pp0068.formato(g.avance_pct)} · S/ ${fmtSoles(g.devengado)} devengado` : "sin datos de gasto";
+  }
   if (!d || d.sin_datos || d.sin_normal) return "sin información";
   if (capaActual === "anomalia_precipitacion_pct" && d.normal_baja) return `${d.precipitacion_obs_mm} mm (normal muy baja)`;
   return ESCALAS[capaActual].formato(d[capaActual]);
@@ -180,8 +233,10 @@ function dibujarLeyenda() {
     cuerpo += `<div class="sub-ley"><h4>${m.titulo} (mm)</h4>${franja(m)}
       <p class="nota">Zonas con normal mensual menor a ${umbralNormalBaja ?? "—"} mm: ahí el porcentaje no informa y se pinta el acumulado.</p></div>`;
   }
-  if (registros.some(sinInfo)) cuerpo += `<div class="chip" style="margin-top:.45rem"><i class="sin-info"></i>Sin información</div>`;
-  const html = `<div class="ley-cuerpo"><h4>${e.titulo}${e.unidad ? ` (${e.unidad})` : ""}</h4>${cuerpo}${e.nota ? `<p class="nota">${e.nota}</p>` : ""}</div>`;
+  const esGasto = capaActual === "gasto_pp0068";
+  if (registros.some(d => esGasto ? !gastoDe(d) : sinInfo(d))) cuerpo += `<div class="chip" style="margin-top:.45rem"><i class="sin-info"></i>Sin información</div>`;
+  const nota = esGasto ? notaGasto() : e.nota;
+  const html = `<div class="ley-cuerpo"><h4>${e.titulo}${e.unidad ? ` (${e.unidad})` : ""}</h4>${cuerpo}${nota ? `<p class="nota">${nota}</p>` : ""}</div>`;
   caja.innerHTML = html;
   document.getElementById("leyenda-movil").innerHTML = html;
 }
@@ -202,10 +257,16 @@ function mostrarDetalle(d) {
   const f = (v, u, dec = 1) => v == null ? "s/d" : `${v.toFixed(dec)} ${u}`;
   const signo = (v, u, dec = 1) => v == null ? "s/d" : `${v > 0 ? "+" : ""}${v.toFixed(dec)} ${u}`;
   const sub = d.departamento ? `${d.departamento} · ${d.zona.replace(/_/g, " ")}` : `${d.capital} · ${d.zona.replace(/_/g, " ")}`;
+  const g = gastoDe(d);
+  const filasGasto = g ? `<div class="sep"></div>
+      <dt>PP 0068 ${gasto.anio} · PIM</dt><dd>S/ ${fmtSoles(g.pim)}</dd>
+      <dt>Devengado (avance)</dt><dd class="destacado">S/ ${fmtSoles(g.devengado)} (${g.avance_pct == null ? "s/d" : g.avance_pct + " %"})</dd>
+      <dt>PIM · devengado por habitante</dt><dd>S/ ${g.pim_per_capita ?? "s/d"} · ${g.devengado_per_capita ?? "s/d"}</dd>
+      <dt>Devengado por mes</dt><dd>${barrasMes(g.devengado_por_mes)}</dd>` : "";
   if (d.sin_datos || d.sin_normal) {
     caja.innerHTML = `<h2>${d.nombre}</h2><p class="sub">${sub}</p>
       <p class="nota"><strong>Sin información para esta unidad.</strong> ${d.motivo_sin_normal || d.motivo_sin_datos || ""}</p>
-      ${d.temperatura_actual_c != null ? `<dl><dt>Temperatura actual</dt><dd>${f(d.temperatura_actual_c, "°C")}</dd></dl>` : ""}`;
+      <dl>${d.temperatura_actual_c != null ? `<dt>Temperatura actual</dt><dd>${f(d.temperatura_actual_c, "°C")}</dd>` : ""}${filasGasto}</dl>`;
     return;
   }
   const al = ESCALAS.nivel_alerta.clases[d.nivel_alerta ?? 0];
@@ -227,6 +288,7 @@ function mostrarDetalle(d) {
       <dt>Pronóstico de lluvia, 7 días</dt><dd>${f(d.pronostico_7d_mm, "mm")}</dd>
       ${d.elevacion_modelo_m == null ? "" : `<div class="sep"></div><dt>Altitud del punto de malla</dt><dd>${Math.round(d.elevacion_modelo_m)} m</dd>`}
       ${d.altitud_capital_m == null ? "" : `<dt>Altitud de la capital (ref.)</dt><dd>${d.altitud_capital_m} m</dd>`}
+      ${filasGasto}
     </dl>
     ${d.normal_baja ? `<p class="nota" style="margin:.5rem 0 0">Normal mensual menor a ${umbralNormalBaja ?? "—"} mm: el porcentaje exageraría cualquier lluvia; se muestra la diferencia en mm.</p>` : ""}
     <div id="detalle-analitica"></div>`;
@@ -302,6 +364,7 @@ function pintarCabecera(estado) {
   const hace = (Date.now() - Date.parse(conZona(estado.actualizado))) / 36e5;
   document.getElementById("hace").textContent = isNaN(hace) ? "" :
     ` · actualizado hace ${hace < 1 ? Math.max(1, Math.round(hace * 60)) + " min" : hace < 48 ? Math.round(hace) + " h" : Math.round(hace / 24) + " d"}`;
+  ultimoEstado = estado;
   pintarFrescura(estado);
   pintarEnso(estado);
   pintarLectura(estado.lectura);
@@ -343,6 +406,7 @@ function pintarFrescura(estado) {
     { n: "ONI", h: hOni, det: "centro del trimestre" },
     { n: "ICEN", h: f.icen?.mes_central ? horas(`${f.icen.mes_central}-15`) : null, det: "mes central, preliminar" },
   ];
+  if (gasto?.descargado) fuentes.push({ n: "Gasto PP 0068", h: horas(gasto.descargado), det: "MEF, diario" });
   // eje logaritmico de edad (ahora ... 3 meses) y la climatologia fija al extremo derecho
   const X0 = 36, X1 = 280, HMAX = 2200;
   const x = h => X0 + (Math.log10(1 + h) / Math.log10(1 + HMAX)) * (X1 - X0);
@@ -372,6 +436,7 @@ function pintarFrescura(estado) {
 /* ---------- tabla ---------- */
 function pintarTabla() {
   const prov = nivelActual === "provincia";
+  const conGasto = !prov && !!gasto;
   const orden = [...registros].sort((a, b) => (b.nivel_alerta ?? -1) - (a.nivel_alerta ?? -1)
     || (b.anomalia_precipitacion_pct ?? -999) - (a.anomalia_precipitacion_pct ?? -999));
   const n = v => v == null ? "s/d" : v;
@@ -379,9 +444,10 @@ function pintarTabla() {
     <td class="num">${n(d.precipitacion_obs_mm)}</td><td class="num">${n(d.precipitacion_normal_mm)}</td>
     <td class="num">${d.normal_baja ? `${n(d.anomalia_precipitacion_mm)} mm` : ESCALAS.anomalia_precipitacion_pct.formato(d.anomalia_precipitacion_pct)}</td>
     <td class="num">${ESCALAS.anomalia_tmax_c.formato(d.anomalia_tmax_c)}</td>
-    <td>${d.sin_datos || d.sin_normal ? "sin información" : ESCALAS.nivel_alerta.formato(d.nivel_alerta)}</td></tr>`);
+    <td>${d.sin_datos || d.sin_normal ? "sin información" : ESCALAS.nivel_alerta.formato(d.nivel_alerta)}</td>
+    ${conGasto ? `<td class="num">${gastoDe(d) ? ESCALAS.gasto_pp0068.formato(gastoDe(d).avance_pct) : "s/d"}</td>` : ""}</tr>`);
   document.getElementById("tabla").innerHTML = `<thead><tr><th>Unidad</th>${prov ? "<th>Departamento</th>" : ""}
-    <th>Lluvia 30 d (mm)</th><th>Normal (mm)</th><th>Anom. lluvia</th><th>Anom. T máx</th><th>Alerta</th></tr></thead>
+    <th>Lluvia 30 d (mm)</th><th>Normal (mm)</th><th>Anom. lluvia</th><th>Anom. T máx</th><th>Alerta</th>${conGasto ? "<th>Avance PP 0068</th>" : ""}</tr></thead>
     <tbody>${filas.join("")}</tbody>`;
 }
 
@@ -398,6 +464,11 @@ function cargarNivel(nivel) {
     geoP
   ]).then(([estado, geo]) => {
     nivelActual = nivel;
+    if (nivel === "provincia" && capaActual === "gasto_pp0068") {
+      capaActual = "nivel_alerta";
+      const r = document.querySelector('input[name="capa"][value="nivel_alerta"]'); if (r) r.checked = true;
+    }
+    mostrarOpcionGasto();
     umbralNormalBaja = estado.umbral_normal_baja_mm ?? null;
     mesActual = estado.actualizado ? parseInt(estado.actualizado.slice(5, 7), 10) : mesActual;
     registros = estado[cfg.lista];
@@ -489,7 +560,9 @@ document.getElementById("descargar-csv").addEventListener("click", () => {
     ["normal_baja", d => d.normal_baja ? 1 : 0], ["anomalia_lluvia_pct", d => d.anomalia_precipitacion_pct],
     ["anomalia_lluvia_mm", d => d.anomalia_precipitacion_mm], ["tmax_30d_c", d => d.tmax_obs_c], ["anomalia_tmax_c", d => d.anomalia_tmax_c],
     ["lluvia_hoy_mm", d => d.lluvia_hoy_mm], ["temperatura_actual_c", d => d.temperatura_actual_c], ["pronostico_7d_mm", d => d.pronostico_7d_mm],
-    ["nivel_alerta", d => d.nivel_alerta], ["sin_informacion", d => sinInfo(d) ? 1 : 0], ["lat", d => d.lat], ["lon", d => d.lon]];
+    ["nivel_alerta", d => d.nivel_alerta], ["sin_informacion", d => sinInfo(d) ? 1 : 0], ["lat", d => d.lat], ["lon", d => d.lon],
+    ...(!prov && gasto ? [["pp0068_anio", () => gasto.anio], ["pp0068_pim_soles", d => gastoDe(d)?.pim], ["pp0068_devengado_soles", d => gastoDe(d)?.devengado],
+      ["pp0068_avance_pct", d => gastoDe(d)?.avance_pct], ["pp0068_devengado_por_habitante", d => gastoDe(d)?.devengado_per_capita]] : [])];
   const celda = v => v == null ? "" : /[",\n]/.test(String(v)) ? `"${String(v).replace(/"/g, '""')}"` : String(v);
   const lineas = [cols.map(c => c[0]).join(","), ...registros.map(d => cols.map(c => celda(c[1](d))).join(","))];
   const blob = new Blob(["\ufeff" + lineas.join("\n")], { type: "text/csv;charset=utf-8" });

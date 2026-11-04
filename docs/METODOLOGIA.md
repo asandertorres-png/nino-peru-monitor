@@ -301,6 +301,48 @@ clásicas, nombradas solo para orientar; no se afirma que el evento en curso
 vaya a parecerse a ellas. El texto se regenera en cada corrida y queda en
 `estado*.json` para quien consuma el JSON directamente.
 
+## Gasto público: Programa Presupuestal 0068
+
+`scripts/gasto.py` lee el archivo anual de gasto del SIAF que publica el MEF
+en su portal de datos abiertos ("Presupuesto y Ejecución de Gasto", archivo
+`{año}-Gasto-Diario.csv`, varios GB) y se queda solo con las filas del
+**Programa Presupuestal 0068, Reducción de la vulnerabilidad y atención de
+emergencias por desastres**, el programa que financia prevención, preparación
+y respuesta ante desastres en los tres niveles de gobierno. Cada fila del
+archivo es el movimiento de un mes para una meta y una específica de gasto
+(PIA, modificación del PIM, certificado, comprometido, devengado, girado); el
+acumulado del año es la suma de los meses hasta el corte, que el JSON declara
+en `mes_corte`. Se agrega por **departamento de la meta** (dónde se ejecuta,
+no dónde está el pliego) y por nivel de gobierno; lo que no cae en un
+departamento (metas multidepartamentales o en el exterior) va a `otros` y
+cuenta en el total nacional. Resultado: `data/gasto_pp0068.json`, con PIM,
+devengado, avance (devengado / PIM), PIM y devengado per cápita con la
+población censada 2017 (INEI; es el último dato censal, no una proyección) y
+el devengado por mes. El workflow corre una vez al día; el archivo del MEF se
+lee en streaming y no se guarda.
+
+**Cómo leerlo, y qué no es.**
+
+- Es una capa de **insumo**, no de resultado: mide cuánto se asignó y cuánto
+  se devengó, no obras terminadas, población protegida ni daño evitado.
+- El PP 0068 cubre **todos los peligros** (sismos, heladas, incendios,
+  lluvias, deslizamientos), no solo los asociados a El Niño. No existe en el
+  SIAF una etiqueta que separe el gasto "por El Niño"; una aproximación más
+  fina exigiría filtrar productos o actividades, lo que queda pendiente.
+- El **avance porcentual** favorece a quien tiene poco presupuesto: un
+  departamento con PIM pequeño ejecuta el 90 % con poco esfuerzo. Leerlo
+  siempre junto con el monto per cápita.
+- La asignación por departamento de la meta subestima lo que los pliegos
+  nacionales gastan en un territorio cuando la meta está registrada como
+  multidepartamental.
+- Cualquier relación entre este gasto y las anomalías del mapa es solo
+  **correlación**; el gasto responde al presupuesto, a emergencias previas y
+  a la capacidad de ejecución, no a la anomalía del mes.
+
+Controles de coherencia antes de publicar: avance nacional entre 5 y 110 %,
+devengado no mayor que el PIM, al menos 20 departamentos con filas. Si uno
+falla, no se sobrescribe el JSON anterior y el registro del workflow lo dice.
+
 ## Nivel de alerta
 
 Escala cualitativa de 0 a 3, diferenciada por zona porque el riesgo asociado a
@@ -348,3 +390,7 @@ herramienta de exploración, no un instrumento de alerta operativa.
   provinciales.
 - Altitudes de referencia de las capitales: aproximadas, de referencia
   cartográfica; pendiente de verificar contra IGN.
+- MEF, Portal de Datos Abiertos: "Presupuesto y Ejecución de Gasto" (SIAF),
+  archivo diario del año fiscal, para la capa del PP 0068.
+- INEI, Censos Nacionales 2017: población censada por departamento, como
+  denominador per cápita de la capa de gasto.

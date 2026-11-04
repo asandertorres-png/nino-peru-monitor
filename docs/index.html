@@ -33,6 +33,7 @@
         <label><input type="radio" name="capa" value="nivel_alerta" checked>Nivel de alerta</label>
         <label><input type="radio" name="capa" value="anomalia_precipitacion_pct">Lluvia</label>
         <label><input type="radio" name="capa" value="anomalia_tmax_c">Temperatura</label>
+        <label id="opcion-gasto" hidden><input type="radio" name="capa" value="gasto_pp0068">Gasto PP 0068</label>
       </div>
     </div>
     <div id="mapa" role="region" aria-label="Mapa del Perú con anomalías por unidad"></div>
@@ -62,6 +63,7 @@
           <tr><td>Altitud del punto de malla</td><td>Altitud que el modelo asigna al punto usado, frente a la altitud de referencia de la capital</td><td>Open-Meteo (elevación) y referencia cartográfica</td><td>Cada 6 h</td><td>m</td><td>Cuantifica el sesgo de representar un departamento por un punto</td></tr>
           <tr><td>Sensibilidad al ENSO</td><td>Correlación y pendiente de la anomalía mensual de lluvia frente al ONI, con rezagos de 0 a 3 meses; frecuencia de déficit y exceso con ONI ≥ +1</td><td>Derivado de las series 1991–2020 y del ONI</td><td>Se rehace al recalcular las normales</td><td>r, % por °C, p</td><td>p &lt; 0,05 orientativo (sin corrección por comparaciones múltiples); 30 años y 4–5 eventos; asociación, no causalidad</td></tr>
           <tr><td>Historial diario</td><td>ONI, TSM semanal, ICEN y anomalías por departamento, una fila por día</td><td>Derivado</td><td>Diario · la última corrida de cada día</td><td>—</td><td>Últimos 400 días; solo nivel departamental</td></tr>
+          <tr><td>Gasto público PP 0068</td><td>Presupuesto (PIM) y ejecución (devengado) del Programa Presupuestal 0068, reducción de vulnerabilidad y atención de emergencias por desastres, por departamento donde se ejecuta la meta, todos los niveles de gobierno, año fiscal en curso</td><td>MEF, Datos Abiertos (SIAF, archivo diario de gasto)</td><td>Diario · corte del último mes cargado</td><td>S/, %, S/ por habitante (censo 2017)</td><td>Capa de insumo, no de resultado; cubre todos los peligros, no solo El Niño; el avance % favorece a quien tiene poco PIM</td></tr>
           <tr><td>Lectura automática</td><td>Texto que interpreta el ONI, la TSM semanal, el ICEN y el mapa con reglas fijas: fase y tendencia de cada cuenca, coincidencia entre ambas, patrón regional, momento del año y resumen del mapa</td><td>Derivado · provisional</td><td>Cada 6 h</td><td>—</td><td>Tendencia ±0,3 en 3 meses; semanal frente a media ±0,5 °C; gradiente 1 °C; fases con los umbrales de NOAA (±0,5) y ENFEN (+0,4 / −1,0). No es pronóstico</td></tr>
         </tbody>
       </table></div>

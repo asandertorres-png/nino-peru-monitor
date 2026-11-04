@@ -30,6 +30,7 @@ scripts/fetch_oni.py          índice ONI y TSM semanal de la NOAA
 scripts/calcular_normales.py  normales 1991-2020 (se corre una sola vez)
 scripts/actualizar.py         construye data/estado.json (corre cada 6 horas)
 scripts/lectura.py            lectura automática del ENSO y del mapa (reglas fijas)
+scripts/gasto.py              gasto del PP 0068 por departamento (MEF, SIAF; corre a diario)
 docs/                         sitio publicado en GitHub Pages
 data/                         salidas en JSON, versionadas
 .github/workflows/            automatización diaria
