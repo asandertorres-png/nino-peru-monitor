@@ -295,6 +295,13 @@ Qué dice cada párrafo y con qué regla:
 6. **Sensibilidad** (solo si existe `sensibilidad*.json`). Unidades cuya lluvia
    del mes en curso se asocia significativamente con el ONI (p < 0,05), con
    signo. Hereda todas las advertencias de la sección anterior.
+7. **Gasto público** (solo si existe `gasto_pp0068.json`). PIM, devengado y
+   avance nacional del PP 0068 al mes de corte, lo devengado en ese mes, el
+   avance y el devengado por habitante de los cuatro departamentos de la
+   costa norte frente al nacional, y cuáles de los departamentos en alerta
+   moderada o alta ejecutan por debajo del promedio nacional. Cierra
+   recordando que es insumo, no resultado, y que el programa no separa el
+   gasto por El Niño (ver la sección del PP 0068).
 
 Las analogías históricas (1982-83, 1997-98, 2017) son las configuraciones
 clásicas, nombradas solo para orientar; no se afirma que el evento en curso

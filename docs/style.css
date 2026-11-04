@@ -280,3 +280,24 @@ footer p{margin:.35rem 0}
 .segmento label.deshabilitada input{cursor:not-allowed}
 .barras-mes{display:inline-block;vertical-align:middle}
 .segmento label[hidden]{display:none}
+
+/* regiones Nino en el mapa principal */
+.leaflet-bar.control-regiones{border:0;box-shadow:none;background:transparent}
+.control-regiones button{display:block;min-height:36px;padding:.42rem .75rem;background:rgba(13,15,18,.86);color:var(--tinta);
+  border:1px solid var(--linea);border-radius:999px;font:inherit;font-size:.78rem;font-weight:500;cursor:pointer;
+  backdrop-filter:blur(4px);touch-action:manipulation;-webkit-tap-highlight-color:transparent;user-select:none;
+  transition:transform 140ms var(--ease-out),background 120ms ease,color 120ms ease}
+.control-regiones button:active{transform:scale(.96)}
+.control-regiones button[aria-pressed="true"]{background:var(--tinta);color:var(--plano);border-color:var(--tinta)}
+@media (hover:hover) and (pointer:fine){.control-regiones button[aria-pressed="false"]:hover{background:var(--superficie-2)}}
+.region-nino{transition:fill-opacity 320ms var(--ease-out),stroke-width 120ms ease}
+.etq-region-mapa{display:inline-flex;flex-direction:column;align-items:center;gap:1px;transform:translate(-50%,-50%);
+  pointer-events:none;color:#fff;white-space:nowrap;text-shadow:0 0 2px #000,0 0 4px #000,0 1px 3px #000}
+.etq-region-mapa b{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:600}
+.etq-region-mapa .val{font-size:12.5px;font-weight:600;font-variant-numeric:tabular-nums}
+.btn-ver-regiones{margin:.5rem 0 0;padding:.4rem .85rem;border-radius:999px;border:1px solid var(--linea);background:var(--superficie-2);
+  color:var(--tinta);font:inherit;font-size:.78rem;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+  transition:transform 140ms var(--ease-out),background 120ms ease}
+.btn-ver-regiones:active{transform:scale(.96)}
+@media (hover:hover) and (pointer:fine){.btn-ver-regiones:hover{background:rgba(255,255,255,.08)}}
+@media (prefers-reduced-motion:reduce){.region-nino{transition:none}}

@@ -111,12 +111,13 @@ const geoCache = {};
 // citar o compartir. replaceState evita que el navegador salte al cambiar el hash.
 function leerHash() {
   const p = new URLSearchParams(location.hash.slice(1));
-  return { nivel: p.get("nivel"), capa: p.get("capa"), u: p.get("u") };
+  return { nivel: p.get("nivel"), capa: p.get("capa"), u: p.get("u"), enso: p.get("enso") === "1" };
 }
 function escribirHash(u) {
   const p = new URLSearchParams();
   p.set("nivel", nivelActual); p.set("capa", capaActual);
   if (u) p.set("u", u);
+  if (typeof regionesActivas !== "undefined" && regionesActivas) p.set("enso", "1");
   history.replaceState(null, "", "#" + p.toString());
 }
 let seleccionPendiente = leerHash().u;
@@ -174,6 +175,136 @@ mapa.on("zoomend", ajustarEtiquetas); ajustarEtiquetas();
 const leyenda = L.control({ position: "bottomleft" });
 leyenda.onAdd = () => { const d = L.DomUtil.create("div", "leyenda"); L.DomEvent.disableClickPropagation(d); return d; };
 leyenda.addTo(mapa);
+
+/* ---------- regiones Nino dentro del mapa principal ---------- */
+// Las mismas cajas del minimapa, en longitudes continuas hacia el oeste (Leaflet dibuja
+// mas alla de -180 sin cortes). Se activan con un boton: el mapa vuela al Pacifico
+// ecuatorial, cada region muestra su anomalia semanal y, al pasar o tocar, su detalle.
+const REGIONES_PRINCIPAL = {
+  nino4:  { nombre: "Niño 4",   bounds: [[-5, -200], [5, -150]], etqLat: 8,     papel: "Pacífico central-occidental", coords: "5°N–5°S, 160°E–150°W" },
+  nino34: { nombre: "Niño 3.4", bounds: [[-5, -170], [5, -120]], etqLat: -8,    papel: "región del ONI (NOAA)", coords: "5°N–5°S, 170°W–120°W" },
+  nino3:  { nombre: "Niño 3",   bounds: [[-5, -150], [5, -90]],  etqLat: 8,     papel: "Pacífico oriental", coords: "5°N–5°S, 150°W–90°W" },
+  nino12: { nombre: "Niño 1+2", bounds: [[-10, -90], [0, -80]],  etqLat: -13.5, papel: "región del ICEN (ENFEN): el Niño costero", coords: "0°–10°S, 90°W–80°W" }
+};
+const VISTA_ENSO = [[-30, -205], [20, -62]];
+const reducida = matchMedia("(prefers-reduced-motion: reduce)").matches;
+let regionesActivas = false, detalleRegionActivo = false;
+const capaRegiones = L.layerGroup();
+const rectPrincipal = {}, etqPrincipal = {};
+
+function construirRegiones() {
+  if (Object.keys(rectPrincipal).length) return;
+  L.polyline([[0, -205], [0, -60]], { color: "#f0efec", weight: 1, opacity: 0.35, dashArray: "2 6", interactive: false }).addTo(capaRegiones);
+  for (const [k, r] of Object.entries(REGIONES_PRINCIPAL)) {
+    const rect = L.rectangle(r.bounds, { color: "#f0efec", weight: 1.5, fillColor: NEUTRO, fillOpacity: 0, className: "region-nino" });
+    rect.on({
+      mouseover: e => { e.target.setStyle({ weight: 3 }); mostrarDetalleRegion(k); },
+      mouseout: e => { e.target.setStyle({ weight: 1.5 }); },
+      click: e => { mostrarDetalleRegion(k); volar(rect.getBounds().pad(0.5)); L.DomEvent.stopPropagation(e); }
+    });
+    if (CON_TOOLTIPS) rect.bindTooltip(() => tooltipRegion(k), { sticky: true, direction: "top", opacity: 1 });
+    rect.addTo(capaRegiones);
+    rectPrincipal[k] = rect;
+    etqPrincipal[k] = L.marker([r.etqLat, rect.getBounds().getCenter().lng], {
+      interactive: false, keyboard: false,
+      icon: L.divIcon({ className: "", iconSize: [0, 0], html: `<span class="etq-region-mapa"><b>${r.nombre}</b><span class="val">s/d</span></span>` })
+    }).addTo(capaRegiones);
+  }
+}
+const fmtAnom = v => v == null ? "s/d" : `${v > 0 ? "+" : ""}${v.toFixed(1)} °C`;
+function colorearRegiones() {
+  const reg = ultimoEstado?.tsm_semanal?.regiones, e = ESCALAS.anomalia_tmax_c;
+  for (const k of Object.keys(REGIONES_PRINCIPAL)) {
+    const v = reg?.[k]?.anomalia;
+    rectPrincipal[k].setStyle({ fillColor: v == null ? NEUTRO : e.colores[claseEscalonada(v, e)], fillOpacity: v == null ? 0.25 : 0.6 });
+    const el = etqPrincipal[k].getElement()?.querySelector(".val");
+    if (el) el.textContent = fmtAnom(v);
+  }
+}
+function volar(b) {
+  if (reducida) mapa.fitBounds(b, { padding: [10, 10] });
+  else mapa.flyToBounds(b, { padding: [10, 10], duration: 0.9 });
+}
+function alternarRegiones(activar) {
+  regionesActivas = activar == null ? !regionesActivas : !!activar;
+  const btn = document.getElementById("btn-regiones");
+  if (btn) btn.setAttribute("aria-pressed", String(regionesActivas));
+  document.querySelectorAll(".btn-ver-regiones").forEach(b => b.textContent = regionesActivas ? "Volver al Perú" : "Ver en el mapa principal");
+  if (regionesActivas) {
+    construirRegiones();
+    Object.values(rectPrincipal).forEach(r => r.setStyle({ fillOpacity: 0 }));
+    capaRegiones.addTo(mapa);
+    // entran con fundido: sin relleno en este cuadro, con su color en el siguiente (transicion CSS)
+    requestAnimationFrame(() => requestAnimationFrame(colorearRegiones));
+    volar(VISTA_ENSO);
+  } else {
+    mapa.removeLayer(capaRegiones);
+    if (capaGeo) volar(capaSeleccion ? capaSeleccion.getBounds().pad(1.2) : capaGeo.getBounds());
+    if (detalleRegionActivo) mostrarDetalle(null);
+  }
+  dibujarLeyenda();
+  escribirHash(claveSeleccion);
+}
+function tooltipRegion(k) {
+  const r = REGIONES_PRINCIPAL[k], v = ultimoEstado?.tsm_semanal?.regiones?.[k]?.anomalia;
+  return `${r.nombre} · <b>${fmtAnom(v)}</b> · ${r.papel}`;
+}
+function barrasSerie(valores, etiquetaIni, etiquetaFin, umbrales) {
+  // barras mensuales con signo (p. ej. la serie del ICEN) y lineas de umbral
+  if (!valores.length) return "";
+  const W = 300, H = 70, x0 = 4, x1 = W - 34, y0 = 6, y1 = H - 14;
+  const lo = Math.min(-1, ...valores), hi = Math.max(1, ...valores);
+  const y = v => y1 - ((v - lo) / (hi - lo)) * (y1 - y0), ancho = (x1 - x0) / valores.length;
+  const barras = valores.map((v, i) => `<rect x="${(x0 + i * ancho).toFixed(1)}" y="${Math.min(y(v), y(0)).toFixed(1)}" width="${Math.max(1, ancho - 1).toFixed(1)}" height="${Math.abs(y(v) - y(0)).toFixed(1)}" fill="${v >= 0 ? "#e66767" : "#3987e5"}"/>`).join("");
+  const lineas = (umbrales || []).map(u => `<line x1="${x0}" y1="${y(u).toFixed(1)}" x2="${x1}" y2="${y(u).toFixed(1)}" stroke="#898781" stroke-dasharray="2 3" stroke-width=".8"/>`).join("");
+  const ult = valores[valores.length - 1];
+  return `<svg viewBox="0 0 ${W} ${H}" class="spark" role="img" aria-label="Serie mensual">
+    <line x1="${x0}" y1="${y(0)}" x2="${x1}" y2="${y(0)}" stroke="#3f3f3b"/>${lineas}${barras}
+    <text x="${x1 + 6}" y="${(y(ult) + 3).toFixed(1)}" fill="#f0efec" font-size="9" style="font-variant-numeric:tabular-nums">${(ult > 0 ? "+" : "") + ult.toFixed(2)}</text>
+    <text x="${x0}" y="${H - 2}" fill="#898781" font-size="8">${etiquetaIni}</text>
+    <text x="${x1}" y="${H - 2}" fill="#898781" font-size="8" text-anchor="end">${etiquetaFin}</text></svg>`;
+}
+function mostrarDetalleRegion(k) {
+  const caja = document.getElementById("detalle"), r = REGIONES_PRINCIPAL[k];
+  const s = ultimoEstado?.tsm_semanal, reg = s?.regiones?.[k];
+  detalleRegionActivo = true;
+  let filas = `<dt>Anomalía semanal de TSM</dt><dd class="destacado">${fmtAnom(reg?.anomalia)}</dd>
+    <dt>TSM semanal</dt><dd>${reg?.tsm == null ? "s/d" : reg.tsm.toFixed(1) + " °C"}</dd>
+    <dt>Semana centrada</dt><dd>${fmtDia(s?.semana_centrada)}</dd>`;
+  let extra = "";
+  if (k === "nino34" && ultimoEstado?.oni) {
+    const o = ultimoEstado.oni;
+    filas += `<div class="sep"></div><dt>ONI ${o.trimestre} ${o.anio}</dt><dd class="destacado">${(o.oni > 0 ? "+" : "") + o.oni.toFixed(2)}</dd>
+      <dt>Estado (NOAA)</dt><dd>${(o.estado || "").replace("Nino", "Niño").replace("Nina", "Niña")}</dd>`;
+    extra = `<div id="detalle-analitica"></div>`;
+  }
+  if (k === "nino12" && ultimoEstado?.icen) {
+    const ic = ultimoEstado.icen, serie = (ic.serie || []).filter(p => p.icen != null);
+    filas += `<div class="sep"></div><dt>ICEN ${String(ic.mes).padStart(2, "0")}/${ic.anio}</dt><dd class="destacado">${(ic.icen > 0 ? "+" : "") + ic.icen.toFixed(2)} °C</dd>
+      <dt>Categoría ENFEN</dt><dd>${(ic.categoria || "").replace("calida", "cálida").replace("fria", "fría").replace("debil", "débil")}</dd>`;
+    if (serie.length > 1) {
+      const f = p => `${String(p.mes).padStart(2, "0")}/${p.anio}`;
+      extra = `<div class="analitica"><h4>ICEN, últimos ${serie.length} meses</h4>${barrasSerie(serie.map(p => p.icen), f(serie[0]), f(serie[serie.length - 1]), [0.4, -1.0])}
+        <p class="nota">Media móvil de tres meses de la anomalía en Niño 1+2. Líneas: +0,4 (cálida débil) y −1,0 (fría débil) del ENFEN; los últimos meses pueden ser preliminares.</p></div>`;
+    }
+  }
+  caja.innerHTML = `<h2>${r.nombre}</h2><p class="sub">Región Niño · ${r.papel}</p><dl>${filas}</dl>${extra}
+    <p class="nota" style="margin:.5rem 0 0">${r.coords}. Anomalía respecto de 1991–2020, NOAA/CPC.${k === "nino12" ? " Es la región que mide el Niño costero peruano; puede divergir del Pacífico central (Niño 3.4)." : ""}</p>`;
+  if (k === "nino34") window.analitica?.oniEn?.(document.getElementById("detalle-analitica"));
+}
+const controlRegiones = L.control({ position: "topright" });
+controlRegiones.onAdd = () => {
+  const d = L.DomUtil.create("div", "leaflet-bar control-regiones");
+  d.innerHTML = `<button id="btn-regiones" type="button" aria-pressed="false" title="Mostrar las regiones Niño del Pacífico ecuatorial en este mapa">Regiones Niño</button>`;
+  L.DomEvent.disableClickPropagation(d); L.DomEvent.disableScrollPropagation(d);
+  d.querySelector("button").addEventListener("click", () => alternarRegiones());
+  return d;
+};
+controlRegiones.addTo(mapa);
+document.querySelectorAll(".btn-ver-regiones").forEach(b => b.addEventListener("click", () => {
+  alternarRegiones();
+  if (regionesActivas) document.getElementById("mapa").scrollIntoView({ behavior: reducida ? "auto" : "smooth", block: "start" });
+}));
 
 /* ---------- color ---------- */
 const sinInfo = d => !d || d.sin_datos || d.sin_normal;
@@ -233,6 +364,12 @@ function dibujarLeyenda() {
     cuerpo += `<div class="sub-ley"><h4>${m.titulo} (mm)</h4>${franja(m)}
       <p class="nota">Zonas con normal mensual menor a ${umbralNormalBaja ?? "—"} mm: ahí el porcentaje no informa y se pinta el acumulado.</p></div>`;
   }
+  if (regionesActivas) {
+    const t = ESCALAS.anomalia_tmax_c;
+    cuerpo += capaActual === "anomalia_tmax_c"
+      ? `<p class="nota">Las regiones Niño del Pacífico usan esta misma escala (anomalía semanal de TSM).</p>`
+      : `<div class="sub-ley"><h4>Regiones Niño · anomalía semanal de TSM (°C)</h4>${franja(t)}</div>`;
+  }
   const esGasto = capaActual === "gasto_pp0068";
   if (registros.some(d => esGasto ? !gastoDe(d) : sinInfo(d))) cuerpo += `<div class="chip" style="margin-top:.45rem"><i class="sin-info"></i>Sin información</div>`;
   const nota = esGasto ? notaGasto() : e.nota;
@@ -253,6 +390,7 @@ function franja(e) {
 /* ---------- detalle ---------- */
 function mostrarDetalle(d) {
   const caja = document.getElementById("detalle");
+  detalleRegionActivo = false;
   if (!d) { caja.innerHTML = '<p class="vacio">Pasa el cursor o toca una unidad del mapa para ver su detalle.</p>'; return; }
   const f = (v, u, dec = 1) => v == null ? "s/d" : `${v.toFixed(dec)} ${u}`;
   const signo = (v, u, dec = 1) => v == null ? "s/d" : `${v > 0 ? "+" : ""}${v.toFixed(dec)} ${u}`;
@@ -367,6 +505,7 @@ function pintarCabecera(estado) {
   ultimoEstado = estado;
   pintarFrescura(estado);
   pintarEnso(estado);
+  if (regionesActivas) colorearRegiones();
   pintarLectura(estado.lectura);
   window.analitica?.cabecera();
 }
@@ -514,7 +653,8 @@ if (inicial.capa && ESCALAS[inicial.capa] && inicial.capa !== "precipitacion_mm"
 const nivelInicial = inicial.nivel === "provincia" ? "provincia" : "departamento";
 cargarNivel(nivelInicial).catch(() => cargarNivel("departamento")).then(() => {
   const r = document.querySelector(`input[name="nivel"][value="${nivelActual}"]`); if (r) r.checked = true;
-  if (!capaSeleccion) mapa.fitBounds(capaGeo.getBounds(), { padding: [10, 10] });
+  if (inicial.enso) alternarRegiones(true);
+  else if (!capaSeleccion) mapa.fitBounds(capaGeo.getBounds(), { padding: [10, 10] });
   else mapa.fitBounds(capaSeleccion.getBounds().pad(1.2));
 }).catch(err => {
   document.getElementById("detalle").innerHTML =

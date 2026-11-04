@@ -386,6 +386,66 @@ def parrafo_sensibilidad(sens, hoy, nivel, registros):
     return s + ";".join(partes) + ". Es asociación histórica, no causalidad, y con pocos eventos detrás."
 
 
+def millones(v):
+    if v is None:
+        return "s/d"
+    if abs(v) >= 1e9:
+        return f"{v / 1e9:.2f}".replace(".", ",") + " mil millones"
+    return f"{v / 1e6:,.0f}".replace(",", " ") + " millones"
+
+
+def parrafo_gasto(gasto, registros, nivel, hoy):
+    """Gasto publico en el PP 0068 (MEF) leido junto con la exposicion al evento."""
+    if not gasto or not gasto.get("departamentos"):
+        return None, None
+    t = gasto.get("total") or {}
+    if t.get("pim") is None or t.get("devengado") is None:
+        return None, None
+    deps = gasto["departamentos"]
+    corte = gasto.get("mes_corte")
+    s = (f"Gasto público: el Programa Presupuestal 0068 (reducción de vulnerabilidad y atención de emergencias por "
+         f"desastres, todos los peligros) tiene en {gasto.get('anio')} un PIM de S/ {millones(t['pim'])}, con "
+         f"S/ {millones(t['devengado'])} devengados ({num(t['avance_pct'], 1, signo=False)} %)")
+    if corte:
+        s += f" al cierre de {MESES[int(corte) - 1]}"
+    por_mes = gasto.get("por_mes") or {}
+    if corte and f"{int(corte):02d}" in por_mes:
+        s += f"; en {MESES[int(corte) - 1]} se devengaron S/ {millones(por_mes[f'{int(corte):02d}'].get('devengado'))}"
+    s += "."
+    claves = {"avance_nacional_pct": t.get("avance_pct"), "devengado_per_capita_nacional": t.get("devengado_per_capita")}
+
+    # costa norte: la zona mas expuesta a lluvias en fase calida
+    zona_de = {r["nombre"]: r.get("zona") for r in registros} if nivel == "departamento" else {}
+    costa = [(n, deps[n]) for n, z in zona_de.items() if z == "costa_norte" and deps.get(n) and not deps[n].get("sin_datos")]
+    if costa:
+        costa.sort(key=lambda x: (x[1].get("avance_pct") if x[1].get("avance_pct") is not None else -1))
+        detalle = ", ".join(f"{n} {num(d['avance_pct'], 0, signo=False)} %" for n, d in costa if d.get("avance_pct") is not None)
+        pc = [d.get("devengado_per_capita") for _, d in costa if d.get("devengado_per_capita") is not None]
+        s += (f" En la costa norte, la zona más expuesta a lluvias con Niño costero, el avance es {detalle}, frente a "
+              f"{num(t['avance_pct'], 0, signo=False)} % nacional")
+        if pc and t.get("devengado_per_capita") is not None:
+            s += (f"; el devengado por habitante va de S/ {num(min(pc), 0, signo=False)} a S/ {num(max(pc), 0, signo=False)}, "
+                  f"frente a S/ {num(t['devengado_per_capita'], 0, signo=False)} nacional")
+        s += "."
+        claves["costa_norte"] = {n: d.get("avance_pct") for n, d in costa}
+
+    # unidades en alerta que ejecutan por debajo del promedio nacional
+    if nivel == "departamento" and t.get("avance_pct") is not None:
+        en_alerta = [r["nombre"] for r in registros if (r.get("nivel_alerta") or 0) >= ALERTA_MINIMA]
+        rezagados = sorted((deps[n]["avance_pct"], n) for n in en_alerta
+                           if deps.get(n) and deps[n].get("avance_pct") is not None and deps[n]["avance_pct"] < t["avance_pct"])
+        if en_alerta:
+            if rezagados:
+                top = [f"{n} ({num(a, 0, signo=False)} %)" for a, n in rezagados[:3]]
+                s += (f" De los {len(en_alerta)} departamentos en alerta moderada o alta, {len(rezagados)} ejecutan por debajo "
+                      f"del promedio nacional: {lista(top)}{', entre otros' if len(rezagados) > 3 else ''}.")
+            else:
+                s += f" Los {len(en_alerta)} departamentos en alerta moderada o alta ejecutan al nivel del promedio nacional o por encima."
+            claves["en_alerta_rezagados"] = [n for _, n in rezagados]
+    s += " Es una capa de insumo (presupuesto y devengado), no de resultado, y el programa no distingue el gasto por El Niño."
+    return s, claves
+
+
 def titulo(claves):
     partes = []
     if claves.get("oni_fase") == "neutro":
@@ -408,7 +468,7 @@ def titulo(claves):
 
 
 # ---- entrada principal -------------------------------------------------------
-def lectura_automatica(oni_doc, registros=(), nivel="departamento", hoy=None, sensibilidad=None):
+def lectura_automatica(oni_doc, registros=(), nivel="departamento", hoy=None, sensibilidad=None, gasto=None):
     """Devuelve {"titulo", "parrafos", "nota", "claves", "generada", "metodo"} o lanza si falta el ONI."""
     hoy = hoy or datetime.now()
     claves = {}
@@ -429,6 +489,9 @@ def lectura_automatica(oni_doc, registros=(), nivel="departamento", hoy=None, se
     s = parrafo_sensibilidad(sensibilidad, hoy, nivel, registros)
     if s:
         parrafos.append(s)
+    s, k = parrafo_gasto(gasto, registros, nivel, hoy)
+    if s:
+        parrafos.append(s); claves["gasto"] = k
 
     return {
         "titulo": titulo(claves),
@@ -440,6 +503,16 @@ def lectura_automatica(oni_doc, registros=(), nivel="departamento", hoy=None, se
         "generada": hoy.isoformat(timespec="minutes"),
         "metodo": VERSION,
     }
+
+
+def cargar_gasto():
+    ruta = RAIZ / "data" / "gasto_pp0068.json"
+    if ruta.exists():
+        try:
+            return json.loads(ruta.read_text())
+        except ValueError:
+            return None
+    return None
 
 
 def cargar_sensibilidad(nivel):
@@ -461,7 +534,7 @@ def main():
     estado = json.loads(ruta_estado.read_text()) if ruta_estado.exists() else {}
     registros = estado.get("departamentos") or estado.get("provincias") or []
     hoy = datetime.fromisoformat(estado["actualizado"]) if estado.get("actualizado") else datetime.now()
-    lec = lectura_automatica(oni_doc, registros, nivel, hoy, cargar_sensibilidad(nivel))
+    lec = lectura_automatica(oni_doc, registros, nivel, hoy, cargar_sensibilidad(nivel), cargar_gasto())
     print(lec["titulo"].upper())
     for p in lec["parrafos"]:
         print("\n" + p)

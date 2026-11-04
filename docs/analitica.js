@@ -157,6 +157,10 @@
     cabecera() {
       traer("data/oni.json", true).then(o => { const el = document.getElementById("oni-grafico"); if (el) el.innerHTML = graficoOni(o); });
     },
+    // el mismo grafico del ONI en cualquier contenedor (detalle de la region Nino 3.4)
+    oniEn(el) {
+      if (el) traer("data/oni.json", true).then(o => { el.innerHTML = graficoOni(o); });
+    },
     // bloque resumen: por nivel cargado
     resumen(estado, nivel, lista) {
       const el = document.getElementById("resumen-cuerpo"); if (!el) return;

@@ -64,7 +64,7 @@
           <tr><td>Sensibilidad al ENSO</td><td>Correlación y pendiente de la anomalía mensual de lluvia frente al ONI, con rezagos de 0 a 3 meses; frecuencia de déficit y exceso con ONI ≥ +1</td><td>Derivado de las series 1991–2020 y del ONI</td><td>Se rehace al recalcular las normales</td><td>r, % por °C, p</td><td>p &lt; 0,05 orientativo (sin corrección por comparaciones múltiples); 30 años y 4–5 eventos; asociación, no causalidad</td></tr>
           <tr><td>Historial diario</td><td>ONI, TSM semanal, ICEN y anomalías por departamento, una fila por día</td><td>Derivado</td><td>Diario · la última corrida de cada día</td><td>—</td><td>Últimos 400 días; solo nivel departamental</td></tr>
           <tr><td>Gasto público PP 0068</td><td>Presupuesto (PIM) y ejecución (devengado) del Programa Presupuestal 0068, reducción de vulnerabilidad y atención de emergencias por desastres, por departamento donde se ejecuta la meta, todos los niveles de gobierno, año fiscal en curso</td><td>MEF, Datos Abiertos (SIAF, archivo diario de gasto)</td><td>Diario · corte del último mes cargado</td><td>S/, %, S/ por habitante (censo 2017)</td><td>Capa de insumo, no de resultado; cubre todos los peligros, no solo El Niño; el avance % favorece a quien tiene poco PIM</td></tr>
-          <tr><td>Lectura automática</td><td>Texto que interpreta el ONI, la TSM semanal, el ICEN y el mapa con reglas fijas: fase y tendencia de cada cuenca, coincidencia entre ambas, patrón regional, momento del año y resumen del mapa</td><td>Derivado · provisional</td><td>Cada 6 h</td><td>—</td><td>Tendencia ±0,3 en 3 meses; semanal frente a media ±0,5 °C; gradiente 1 °C; fases con los umbrales de NOAA (±0,5) y ENFEN (+0,4 / −1,0). No es pronóstico</td></tr>
+          <tr><td>Lectura automática</td><td>Texto que interpreta el ONI, la TSM semanal, el ICEN y el mapa con reglas fijas: fase y tendencia de cada cuenca, coincidencia entre ambas, patrón regional, momento del año, resumen del mapa y, si existen, sensibilidad del mes y gasto del PP 0068</td><td>Derivado · provisional</td><td>Cada 6 h</td><td>—</td><td>Tendencia ±0,3 en 3 meses; semanal frente a media ±0,5 °C; gradiente 1 °C; fases con los umbrales de NOAA (±0,5) y ENFEN (+0,4 / −1,0). No es pronóstico</td></tr>
         </tbody>
       </table></div>
       <div class="acciones"><span class="nota">Detalle completo, limitaciones y fuentes en <a href="METODOLOGIA.md">METODOLOGIA.md</a>.</span></div>
@@ -97,6 +97,7 @@
         <div id="mapa-enso" role="img" aria-label="Pacífico ecuatorial con las regiones Niño 4, 3.4, 3 y 1+2 coloreadas por su anomalía semanal de temperatura del mar"></div>
         <div id="enso-chips" class="chips-enso" aria-label="Anomalía por región, de oeste a este"></div>
         <p id="enso-mapa-nota" class="nota"></p>
+        <button type="button" class="btn-ver-regiones">Ver en el mapa principal</button>
       </div>
       <div class="lectura" id="enso-lectura" hidden aria-live="polite">
         <span class="etiqueta">Lectura automática</span>
