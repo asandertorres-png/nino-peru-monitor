@@ -5,7 +5,7 @@
  "fuente": "MEF, Portal de Datos Abiertos: Presupuesto y Ejecucion de Gasto (SIAF), archivo diario del anio",
  "url": "https://fs.datosabiertos.mef.gob.pe/datastorefiles/2026-Gasto-Diario.csv",
  "recurso": null,
- "descargado": "2026-11-04T13:59-05:00",
+ "descargado": "2026-11-05T14:04-05:00",
  "columnas_usadas": {
   "programa": "PROGRAMA_PPTO",
   "programa_nombre": "PROGRAMA_PPTO_NOMBRE",
@@ -23,25 +23,25 @@
  },
  "mes_corte": 11,
  "meses_en_archivo": {
-  "09": 18941,
-  "08": 17682,
+  "09": 18944,
+  "08": 17683,
   "07": 18338,
-  "06": 16435,
+  "06": 16436,
   "05": 17536,
-  "04": 16890,
-  "03": 17178,
-  "02": 14084,
-  "11": 1885,
-  "10": 18169,
-  "01": 8059,
-  "00": 54283
+  "04": 16889,
+  "03": 17175,
+  "02": 14083,
+  "11": 4918,
+  "10": 18177,
+  "01": 8058,
+  "00": 54715
  },
  "anios_en_archivo": {
-  "2026": 219480
+  "2026": 222952
  },
  "por_mes": {
   "00": {
-   "pim": 4848408709.0,
+   "pim": 4875569397.0,
    "devengado": 0.0
   },
   "01": {
@@ -82,52 +82,52 @@
   },
   "10": {
    "pim": 0.0,
-   "devengado": 378778786.82
+   "devengado": 379121340.86
   },
   "11": {
    "pim": 0.0,
-   "devengado": 4948569.01
+   "devengado": 24346589.76
   }
  },
  "controles": [],
- "filas_leidas": 9485591,
- "filas_pp0068": 219480,
+ "filas_leidas": 9619156,
+ "filas_pp0068": 222952,
  "poblacion_fuente": "INEI, Censos Nacionales 2017 (poblacion censada por departamento)",
  "unidad": "soles corrientes",
  "total": {
   "pia": 2187279465.0,
-  "pim": 4848408709.0,
-  "certificado": 4069587668.05,
-  "comprometido": 2744881700.57,
-  "devengado": 2433681901.56,
-  "girado": 2400167272.08,
-  "avance_pct": 50.2,
-  "devengado_per_capita": 82.83
+  "pim": 4875569397.0,
+  "certificado": 4088569570.59,
+  "comprometido": 2761813777.24,
+  "devengado": 2453422476.35,
+  "girado": 2419008714.97,
+  "avance_pct": 50.3,
+  "devengado_per_capita": 83.5
  },
  "por_nivel_gobierno": {
   "GOBIERNOS REGIONALES": {
    "pia": 407813538.0,
-   "pim": 848617288.0,
-   "certificado": 785125802.34,
-   "comprometido": 713443999.54,
-   "devengado": 628914929.44,
-   "girado": 618306020.97
+   "pim": 848535212.0,
+   "certificado": 786235912.34,
+   "comprometido": 716105459.84,
+   "devengado": 632434252.86,
+   "girado": 623334465.91
   },
   "GOBIERNOS LOCALES": {
    "pia": 261771941.0,
-   "pim": 1211389350.0,
-   "certificado": 1062760928.49,
-   "comprometido": 769132873.79,
-   "devengado": 636245138.51,
-   "girado": 619362800.29
+   "pim": 1226616144.0,
+   "certificado": 1068799926.17,
+   "comprometido": 780533252.28,
+   "devengado": 645305078.29,
+   "girado": 626547433.28
   },
   "GOBIERNO NACIONAL": {
    "pia": 1517693986.0,
-   "pim": 2788402071.0,
-   "certificado": 2221700937.22,
-   "comprometido": 1262304827.24,
-   "devengado": 1168521833.61,
-   "girado": 1162498450.82
+   "pim": 2800418041.0,
+   "certificado": 2233533732.08,
+   "comprometido": 1265175065.12,
+   "devengado": 1175683145.2,
+   "girado": 1169126815.78
   }
  },
  "otros": {
@@ -144,12 +144,12 @@
  "departamentos": {
   "Amazonas": {
    "pia": 10038335.0,
-   "pim": 24874680.0,
-   "certificado": 22798923.4,
-   "comprometido": 19499994.66,
-   "devengado": 18259761.67,
-   "girado": 18003225.61,
-   "filas": 4628,
+   "pim": 24941068.0,
+   "certificado": 22878946.17,
+   "comprometido": 19522925.9,
+   "devengado": 18344452.89,
+   "girado": 18149413.84,
+   "filas": 4695,
    "devengado_por_mes": {
     "00": 0.0,
     "01": 148785.77,
@@ -162,20 +162,20 @@
     "08": 3773420.47,
     "09": 1474754.89,
     "10": 1418598.58,
-    "11": 130394.88
+    "11": 215086.1
    },
-   "avance_pct": 73.4,
-   "pim_per_capita": 65.57,
-   "devengado_per_capita": 48.13
+   "avance_pct": 73.6,
+   "pim_per_capita": 65.74,
+   "devengado_per_capita": 48.35
   },
   "Ancash": {
    "pia": 38995073.0,
-   "pim": 278092849.0,
-   "certificado": 261959662.81,
-   "comprometido": 138541115.35,
-   "devengado": 104581223.13,
-   "girado": 102457112.27,
-   "filas": 14052,
+   "pim": 279613492.0,
+   "certificado": 263043186.4,
+   "comprometido": 139199286.21,
+   "devengado": 105523408.97,
+   "girado": 102961218.61,
+   "filas": 14311,
    "devengado_por_mes": {
     "00": 0.0,
     "01": 1417636.12,
@@ -188,20 +188,20 @@
     "08": 11012085.62,
     "09": 15384957.73,
     "10": 20240518.32,
-    "11": 1404409.46
+    "11": 2346595.3
    },
-   "avance_pct": 37.6,
-   "pim_per_capita": 256.66,
-   "devengado_per_capita": 96.52
+   "avance_pct": 37.7,
+   "pim_per_capita": 258.06,
+   "devengado_per_capita": 97.39
   },
   "Apurimac": {
    "pia": 23867347.0,
-   "pim": 67829310.0,
-   "certificado": 45695080.47,
-   "comprometido": 35514083.98,
-   "devengado": 29821308.26,
-   "girado": 27617835.05,
-   "filas": 7502,
+   "pim": 68899240.0,
+   "certificado": 45844621.62,
+   "comprometido": 36146009.71,
+   "devengado": 30807320.13,
+   "girado": 29040376.12,
+   "filas": 7630,
    "devengado_por_mes": {
     "00": 0.0,
     "01": 212325.97,
@@ -214,20 +214,20 @@
     "08": 5243526.05,
     "09": 7020464.81,
     "10": 4245030.31,
-    "11": 14108.0
+    "11": 1000119.87
    },
-   "avance_pct": 44.0,
-   "pim_per_capita": 167.17,
-   "devengado_per_capita": 73.5
+   "avance_pct": 44.7,
+   "pim_per_capita": 169.8,
+   "devengado_per_capita": 75.93
   },
   "Arequipa": {
    "pia": 42885762.0,
-   "pim": 276194733.0,
-   "certificado": 240621244.58,
-   "comprometido": 141101270.31,
-   "devengado": 124151965.61,
-   "girado": 119042360.12,
-   "filas": 12564,
+   "pim": 277661630.0,
+   "certificado": 242163102.9,
+   "comprometido": 142973138.18,
+   "devengado": 126590906.37,
+   "girado": 121565185.9,
+   "filas": 12835,
    "devengado_por_mes": {
     "00": 0.0,
     "01": 9122490.8,
@@ -239,21 +239,21 @@
     "07": 14893468.49,
     "08": 8670542.27,
     "09": 13810924.86,
-    "10": 15986826.4,
-    "11": 113865.19
+    "10": 16029546.4,
+    "11": 2510085.95
    },
-   "avance_pct": 45.0,
-   "pim_per_capita": 199.75,
-   "devengado_per_capita": 89.79
+   "avance_pct": 45.6,
+   "pim_per_capita": 200.81,
+   "devengado_per_capita": 91.55
   },
   "Ayacucho": {
    "pia": 20381347.0,
-   "pim": 76289806.0,
-   "certificado": 60905224.77,
-   "comprometido": 45840707.75,
-   "devengado": 42514727.71,
-   "girado": 42154344.77,
-   "filas": 10324,
+   "pim": 76435991.0,
+   "certificado": 61141820.27,
+   "comprometido": 46093584.8,
+   "devengado": 42777394.04,
+   "girado": 42450341.67,
+   "filas": 10486,
    "devengado_por_mes": {
     "00": 0.0,
     "01": 2122625.41,
@@ -266,20 +266,20 @@
     "08": 6861053.0,
     "09": 6337530.41,
     "10": 5415368.13,
-    "11": 33292.0
+    "11": 295958.33
    },
-   "avance_pct": 55.7,
-   "pim_per_capita": 123.81,
-   "devengado_per_capita": 69.0
+   "avance_pct": 56.0,
+   "pim_per_capita": 124.05,
+   "devengado_per_capita": 69.42
   },
   "Cajamarca": {
    "pia": 19247219.0,
-   "pim": 70477316.0,
-   "certificado": 62249650.11,
-   "comprometido": 45796727.46,
-   "devengado": 42816943.58,
-   "girado": 41752997.99,
-   "filas": 9756,
+   "pim": 71016130.0,
+   "certificado": 62658084.83,
+   "comprometido": 47630051.09,
+   "devengado": 44647337.3,
+   "girado": 43687572.29,
+   "filas": 9923,
    "devengado_por_mes": {
     "00": 0.0,
     "01": 409114.1,
@@ -291,21 +291,21 @@
     "07": 8279410.22,
     "08": 4417750.32,
     "09": 6701008.65,
-    "10": 4107289.87,
-    "11": 22579.96
+    "10": 4312039.87,
+    "11": 1648223.68
    },
-   "avance_pct": 60.8,
-   "pim_per_capita": 52.56,
-   "devengado_per_capita": 31.93
+   "avance_pct": 62.9,
+   "pim_per_capita": 52.96,
+   "devengado_per_capita": 33.29
   },
   "Callao": {
    "pia": 12082578.0,
-   "pim": 84025257.0,
-   "certificado": 67837726.64,
-   "comprometido": 49728750.71,
-   "devengado": 24967328.78,
-   "girado": 23636347.91,
-   "filas": 2797,
+   "pim": 83971345.0,
+   "certificado": 67847849.58,
+   "comprometido": 51653228.43,
+   "devengado": 27134080.58,
+   "girado": 24918399.32,
+   "filas": 2835,
    "devengado_por_mes": {
     "00": 0.0,
     "01": 360106.31,
@@ -318,20 +318,20 @@
     "08": 1120768.22,
     "09": 1861434.41,
     "10": 16297699.01,
-    "11": 125757.6
+    "11": 2292509.4
    },
-   "avance_pct": 29.7,
-   "pim_per_capita": 84.49,
-   "devengado_per_capita": 25.11
+   "avance_pct": 32.3,
+   "pim_per_capita": 84.44,
+   "devengado_per_capita": 27.28
   },
   "Cusco": {
    "pia": 194813529.0,
-   "pim": 288333566.0,
-   "certificado": 192985241.1,
-   "comprometido": 145176559.24,
-   "devengado": 133272628.95,
-   "girado": 130410209.94,
-   "filas": 17138,
+   "pim": 290077244.0,
+   "certificado": 193372977.26,
+   "comprometido": 145709192.91,
+   "devengado": 134056913.34,
+   "girado": 131492451.4,
+   "filas": 17430,
    "devengado_por_mes": {
     "00": 0.0,
     "01": 1027696.73,
@@ -343,21 +343,21 @@
     "07": 21831141.83,
     "08": 12924007.55,
     "09": 20897344.45,
-    "10": 15886169.47,
-    "11": 59649.27
+    "10": 15923969.47,
+    "11": 806133.66
    },
    "avance_pct": 46.2,
-   "pim_per_capita": 239.18,
-   "devengado_per_capita": 110.55
+   "pim_per_capita": 240.62,
+   "devengado_per_capita": 111.2
   },
   "Huancavelica": {
    "pia": 21709147.0,
-   "pim": 85351063.0,
-   "certificado": 61464613.76,
-   "comprometido": 51613031.02,
-   "devengado": 39000146.11,
-   "girado": 38382010.21,
-   "filas": 8928,
+   "pim": 85577867.0,
+   "certificado": 61620106.22,
+   "comprometido": 51715756.11,
+   "devengado": 39013339.67,
+   "girado": 38760597.44,
+   "filas": 9010,
    "devengado_por_mes": {
     "00": 0.0,
     "01": 361548.36,
@@ -370,20 +370,20 @@
     "08": 3437428.76,
     "09": 7874368.03,
     "10": 3038607.68,
-    "11": 99433.96
+    "11": 112627.52
    },
-   "avance_pct": 45.7,
-   "pim_per_capita": 245.52,
-   "devengado_per_capita": 112.19
+   "avance_pct": 45.6,
+   "pim_per_capita": 246.17,
+   "devengado_per_capita": 112.22
   },
   "Huanuco": {
    "pia": 21821361.0,
-   "pim": 67028671.0,
-   "certificado": 56560050.78,
-   "comprometido": 35485771.16,
-   "devengado": 31159147.25,
-   "girado": 30944216.73,
-   "filas": 9324,
+   "pim": 67141939.0,
+   "certificado": 56788681.19,
+   "comprometido": 35690749.89,
+   "devengado": 31304076.45,
+   "girado": 31095172.36,
+   "filas": 9408,
    "devengado_por_mes": {
     "00": 0.0,
     "01": 1455772.71,
@@ -395,21 +395,21 @@
     "07": 2446215.94,
     "08": 3698989.99,
     "09": 6047702.76,
-    "10": 4620229.27,
-    "11": 17712.6
+    "10": 4621789.27,
+    "11": 161081.8
    },
-   "avance_pct": 46.5,
-   "pim_per_capita": 92.96,
-   "devengado_per_capita": 43.21
+   "avance_pct": 46.6,
+   "pim_per_capita": 93.12,
+   "devengado_per_capita": 43.41
   },
   "Ica": {
    "pia": 134721542.0,
-   "pim": 486875846.0,
-   "certificado": 478380900.45,
-   "comprometido": 408936559.82,
-   "devengado": 373449315.21,
-   "girado": 372337137.58,
-   "filas": 5443,
+   "pim": 487204827.0,
+   "certificado": 478445964.55,
+   "comprometido": 409043870.65,
+   "devengado": 373844558.41,
+   "girado": 372693840.75,
+   "filas": 5506,
    "devengado_por_mes": {
     "00": 0.0,
     "01": 10196399.86,
@@ -421,21 +421,21 @@
     "07": 62919287.49,
     "08": 57738764.81,
     "09": 26298388.69,
-    "10": 35269631.13,
-    "11": 47469.0
+    "10": 35273351.13,
+    "11": 438992.2
    },
    "avance_pct": 76.7,
-   "pim_per_capita": 572.28,
-   "devengado_per_capita": 438.96
+   "pim_per_capita": 572.67,
+   "devengado_per_capita": 439.42
   },
   "Junin": {
    "pia": 47660158.0,
-   "pim": 165850267.0,
-   "certificado": 139145467.0,
-   "comprometido": 92776592.54,
-   "devengado": 66960631.04,
-   "girado": 65083473.8,
-   "filas": 12290,
+   "pim": 165974368.0,
+   "certificado": 139257605.95,
+   "comprometido": 93200161.56,
+   "devengado": 67888278.87,
+   "girado": 65682531.56,
+   "filas": 12465,
    "devengado_por_mes": {
     "00": 0.0,
     "01": 725832.37,
@@ -447,21 +447,21 @@
     "07": 8130498.29,
     "08": 4389997.89,
     "09": 11360086.89,
-    "10": 13870257.62,
-    "11": 59292.55
+    "10": 13878559.62,
+    "11": 978638.38
    },
-   "avance_pct": 40.4,
-   "pim_per_capita": 133.1,
-   "devengado_per_capita": 53.74
+   "avance_pct": 40.9,
+   "pim_per_capita": 133.2,
+   "devengado_per_capita": 54.48
   },
   "La Libertad": {
    "pia": 20314405.0,
-   "pim": 113637700.0,
-   "certificado": 94540038.38,
-   "comprometido": 35240419.74,
-   "devengado": 30096272.95,
-   "girado": 30009308.82,
-   "filas": 8295,
+   "pim": 113777900.0,
+   "certificado": 94956147.89,
+   "comprometido": 35716757.32,
+   "devengado": 30383639.08,
+   "girado": 30272960.86,
+   "filas": 8382,
    "devengado_por_mes": {
     "00": 0.0,
     "01": 286074.12,
@@ -474,20 +474,20 @@
     "08": 2034353.71,
     "09": 4042099.24,
     "10": 6755738.68,
-    "11": 14195.35
+    "11": 301561.48
    },
-   "avance_pct": 26.5,
-   "pim_per_capita": 63.91,
-   "devengado_per_capita": 16.93
+   "avance_pct": 26.7,
+   "pim_per_capita": 63.99,
+   "devengado_per_capita": 17.09
   },
   "Lambayeque": {
    "pia": 17201189.0,
-   "pim": 87819926.0,
-   "certificado": 77496532.81,
-   "comprometido": 44277838.02,
-   "devengado": 31996261.71,
-   "girado": 31509443.72,
-   "filas": 5097,
+   "pim": 89667147.0,
+   "certificado": 77799454.06,
+   "comprometido": 44490912.94,
+   "devengado": 34529719.95,
+   "girado": 33288123.55,
+   "filas": 5195,
    "devengado_por_mes": {
     "00": 0.0,
     "01": 342605.94,
@@ -500,20 +500,20 @@
     "08": 3774362.21,
     "09": 3155858.15,
     "10": 9410230.53,
-    "11": 20200.94
+    "11": 2553659.18
    },
-   "avance_pct": 36.4,
-   "pim_per_capita": 73.35,
-   "devengado_per_capita": 26.72
+   "avance_pct": 38.5,
+   "pim_per_capita": 74.89,
+   "devengado_per_capita": 28.84
   },
   "Lima": {
    "pia": 1167402146.0,
-   "pim": 1674219677.0,
-   "certificado": 1457244061.65,
-   "comprometido": 916992942.63,
-   "devengado": 864185920.73,
-   "girado": 860073637.34,
-   "filas": 36344,
+   "pim": 1685775856.0,
+   "certificado": 1469467412.85,
+   "comprometido": 920120041.66,
+   "devengado": 866099878.7,
+   "girado": 861253962.28,
+   "filas": 36964,
    "devengado_por_mes": {
     "00": 0.0,
     "01": 27858425.94,
@@ -525,21 +525,21 @@
     "07": 89984898.72,
     "08": 43352840.94,
     "09": 46346013.19,
-    "10": 155689140.19,
-    "11": 788778.85
+    "10": 155694602.58,
+    "11": 2697274.43
    },
-   "avance_pct": 51.6,
-   "pim_per_capita": 176.5,
-   "devengado_per_capita": 91.11
+   "avance_pct": 51.4,
+   "pim_per_capita": 177.72,
+   "devengado_per_capita": 91.31
   },
   "Loreto": {
    "pia": 16858067.0,
-   "pim": 34330223.0,
-   "certificado": 22799185.82,
-   "comprometido": 21902695.14,
-   "devengado": 19572584.98,
-   "girado": 19242407.77,
-   "filas": 4763,
+   "pim": 34676400.0,
+   "certificado": 22922088.71,
+   "comprometido": 22050436.58,
+   "devengado": 19621510.68,
+   "girado": 19264674.85,
+   "filas": 4845,
    "devengado_por_mes": {
     "00": 0.0,
     "01": 445424.26,
@@ -552,20 +552,20 @@
     "08": 1298574.84,
     "09": 3314633.52,
     "10": 1331109.03,
-    "11": 44322.0
+    "11": 93247.7
    },
-   "avance_pct": 57.0,
-   "pim_per_capita": 38.86,
-   "devengado_per_capita": 22.15
+   "avance_pct": 56.6,
+   "pim_per_capita": 39.25,
+   "devengado_per_capita": 22.21
   },
   "Madre de Dios": {
    "pia": 59280697.0,
-   "pim": 59563237.0,
-   "certificado": 11608941.88,
-   "comprometido": 7893845.87,
-   "devengado": 7260137.56,
-   "girado": 7220145.3,
-   "filas": 1787,
+   "pim": 59613237.0,
+   "certificado": 11623650.88,
+   "comprometido": 7922843.37,
+   "devengado": 7296380.7,
+   "girado": 7262479.4,
+   "filas": 1843,
    "devengado_por_mes": {
     "00": 0.0,
     "01": 162718.27,
@@ -578,20 +578,20 @@
     "08": 420575.05,
     "09": 1384594.44,
     "10": 586919.32,
-    "11": 8340.0
+    "11": 44583.14
    },
    "avance_pct": 12.2,
-   "pim_per_capita": 422.22,
-   "devengado_per_capita": 51.46
+   "pim_per_capita": 422.58,
+   "devengado_per_capita": 51.72
   },
   "Moquegua": {
    "pia": 11389577.0,
-   "pim": 75148601.0,
-   "certificado": 59717812.19,
-   "comprometido": 46698550.97,
-   "devengado": 41163269.96,
-   "girado": 40475695.1,
-   "filas": 4864,
+   "pim": 75283575.0,
+   "certificado": 59898368.93,
+   "comprometido": 46946716.97,
+   "devengado": 41474405.71,
+   "girado": 40595747.58,
+   "filas": 4947,
    "devengado_por_mes": {
     "00": 0.0,
     "01": 108354.1,
@@ -604,20 +604,20 @@
     "08": 5175434.98,
     "09": 7337186.67,
     "10": 4543449.39,
-    "11": 430995.77
+    "11": 742131.52
    },
-   "avance_pct": 54.8,
-   "pim_per_capita": 429.76,
-   "devengado_per_capita": 235.4
+   "avance_pct": 55.1,
+   "pim_per_capita": 430.53,
+   "devengado_per_capita": 237.18
   },
   "Pasco": {
    "pia": 18970451.0,
-   "pim": 57251393.0,
-   "certificado": 44608280.04,
-   "comprometido": 36329599.38,
-   "devengado": 32725184.75,
-   "girado": 32484082.73,
-   "filas": 4900,
+   "pim": 57244993.0,
+   "certificado": 45015036.19,
+   "comprometido": 37320019.75,
+   "devengado": 32907044.09,
+   "girado": 32645236.79,
+   "filas": 4976,
    "devengado_por_mes": {
     "00": 0.0,
     "01": 103985.82,
@@ -630,20 +630,20 @@
     "08": 2141187.85,
     "09": 1506370.6,
     "10": 10488849.33,
-    "11": 43701.06
+    "11": 225560.4
    },
-   "avance_pct": 57.2,
-   "pim_per_capita": 225.34,
-   "devengado_per_capita": 128.81
+   "avance_pct": 57.5,
+   "pim_per_capita": 225.32,
+   "devengado_per_capita": 129.52
   },
   "Piura": {
    "pia": 93328277.0,
-   "pim": 246490778.0,
-   "certificado": 226316128.22,
-   "comprometido": 118690430.59,
-   "devengado": 101745069.1,
-   "girado": 100100820.07,
-   "filas": 8091,
+   "pim": 246881865.0,
+   "certificado": 226721776.83,
+   "comprometido": 120629274.52,
+   "devengado": 104068635.81,
+   "girado": 101985241.57,
+   "filas": 8241,
    "devengado_por_mes": {
     "00": 0.0,
     "01": 1417275.5,
@@ -655,21 +655,21 @@
     "07": 8110442.32,
     "08": 9835051.31,
     "09": 14024084.73,
-    "10": 28118952.16,
-    "11": 1179159.44
+    "10": 28123407.16,
+    "11": 3498271.15
    },
-   "avance_pct": 41.3,
-   "pim_per_capita": 132.75,
-   "devengado_per_capita": 54.8
+   "avance_pct": 42.2,
+   "pim_per_capita": 132.96,
+   "devengado_per_capita": 56.05
   },
   "Puno": {
    "pia": 56954971.0,
-   "pim": 189314899.0,
-   "certificado": 114210813.15,
-   "comprometido": 73821060.54,
-   "devengado": 65759881.56,
-   "girado": 62682468.55,
-   "filas": 12808,
+   "pim": 189450347.0,
+   "certificado": 114558270.83,
+   "comprometido": 73905915.68,
+   "devengado": 65827962.18,
+   "girado": 63366564.82,
+   "filas": 12990,
    "devengado_por_mes": {
     "00": 0.0,
     "01": 812536.88,
@@ -682,20 +682,20 @@
     "08": 7114336.67,
     "09": 19131267.7,
     "10": 5431681.47,
-    "11": 3760.9
+    "11": 71841.52
    },
    "avance_pct": 34.7,
-   "pim_per_capita": 161.44,
-   "devengado_per_capita": 56.08
+   "pim_per_capita": 161.55,
+   "devengado_per_capita": 56.13
   },
   "San Martin": {
    "pia": 32679495.0,
-   "pim": 63173113.0,
-   "certificado": 53015315.31,
-   "comprometido": 48293654.58,
-   "devengado": 37647484.3,
-   "girado": 35921221.14,
-   "filas": 7420,
+   "pim": 68305298.0,
+   "certificado": 53267787.72,
+   "comprometido": 48643331.41,
+   "devengado": 37899465.06,
+   "girado": 37063966.6,
+   "filas": 7499,
    "devengado_por_mes": {
     "00": 0.0,
     "01": 856444.78,
@@ -708,20 +708,20 @@
     "08": 4352122.72,
     "09": 6269687.27,
     "10": 4237129.64,
-    "11": 72252.47
+    "11": 324233.23
    },
-   "avance_pct": 59.6,
-   "pim_per_capita": 77.67,
-   "devengado_per_capita": 46.29
+   "avance_pct": 55.5,
+   "pim_per_capita": 83.98,
+   "devengado_per_capita": 46.59
   },
   "Tacna": {
    "pia": 9444979.0,
-   "pim": 49346161.0,
-   "certificado": 42532988.47,
-   "comprometido": 38810202.32,
-   "devengado": 31960405.56,
-   "girado": 31555240.5,
-   "filas": 5149,
+   "pim": 49433194.0,
+   "certificado": 42335001.26,
+   "comprometido": 39243433.99,
+   "devengado": 32326347.74,
+   "girado": 31982197.22,
+   "filas": 5261,
    "devengado_por_mes": {
     "00": 0.0,
     "01": 203083.69,
@@ -734,20 +734,20 @@
     "08": 3465590.8,
     "09": 3548882.35,
     "10": 2653591.75,
-    "11": 163288.96
+    "11": 529231.14
    },
-   "avance_pct": 64.8,
-   "pim_per_capita": 149.84,
-   "devengado_per_capita": 97.05
+   "avance_pct": 65.4,
+   "pim_per_capita": 150.1,
+   "devengado_per_capita": 98.16
   },
   "Tumbes": {
    "pia": 76889564.0,
-   "pim": 163551777.0,
-   "certificado": 119008403.84,
-   "comprometido": 96302834.75,
-   "devengado": 93161644.69,
-   "girado": 91744682.62,
-   "filas": 2136,
+   "pim": 163556084.0,
+   "certificado": 119047065.08,
+   "comprometido": 96620288.57,
+   "devengado": 93564230.48,
+   "girado": 92126194.32,
+   "filas": 2171,
    "devengado_por_mes": {
     "00": 0.0,
     "01": 103354.39,
@@ -759,21 +759,21 @@
     "07": 16588608.86,
     "08": 17627704.77,
     "09": 29081115.09,
-    "10": 7875125.36,
-    "11": 1400.0
+    "10": 7908910.01,
+    "11": 370201.14
    },
-   "avance_pct": 57.0,
-   "pim_per_capita": 727.34,
-   "devengado_per_capita": 414.3
+   "avance_pct": 57.2,
+   "pim_per_capita": 727.36,
+   "devengado_per_capita": 416.09
   },
   "Ucayali": {
    "pia": 18342249.0,
-   "pim": 63337860.0,
-   "certificado": 55885380.42,
-   "comprometido": 49616462.04,
-   "devengado": 45452656.41,
-   "girado": 45326846.44,
-   "filas": 3076,
+   "pim": 63388360.0,
+   "certificado": 55894562.42,
+   "comprometido": 49625849.04,
+   "devengado": 45491189.15,
+   "girado": 45404263.87,
+   "filas": 3100,
    "devengado_por_mes": {
     "00": 0.0,
     "01": 145723.21,
@@ -786,11 +786,11 @@
     "08": 1404557.64,
     "09": 5573347.73,
     "10": 1260644.18,
-    "11": 50208.8
+    "11": 88741.54
    },
    "avance_pct": 71.8,
-   "pim_per_capita": 127.58,
-   "devengado_per_capita": 91.55
+   "pim_per_capita": 127.68,
+   "devengado_per_capita": 91.63
   }
  },
  "advertencias": [
