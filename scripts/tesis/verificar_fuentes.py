@@ -211,38 +211,68 @@ def bcrp_ipc_ciudades():
     ]
     re_ciudad = re.compile(r"\b(" + "|".join(CIUDADES_IPC) + r")\b", re.IGNORECASE)
     re_ipc = re.compile(r"\bIPC\b|precios al consumidor", re.IGNORECASE)
+    # "aliment" a secas daba otro falso positivo: coincide con "IPC Sin
+    # Alimentos y Energia", que es inflacion subyacente y EXCLUYE los
+    # alimentos, justo lo contrario de lo que la tesis necesita.
     re_alim = re.compile(r"aliment", re.IGNORECASE)
+    re_sin_alim = re.compile(r"(sin|no|excluy\w*|excl\.)\s+aliment", re.IGNORECASE)
 
-    con_ipc, por_ciudad, con_alimentos = [], [], []
+    from collections import Counter
+    con_ipc, por_ciudad, alim_real, alim_excluye = [], [], [], []
+    ciudades_vistas = Counter()
     for fila in filas[1:]:
         texto = " | ".join(fila[i] for i in cols if i < len(fila))
         if not re_ipc.search(texto):
             continue
-        con_ipc.append((fila[0] if fila else "?", texto))
-        if re_ciudad.search(texto):
-            por_ciudad.append((fila[0] if fila else "?", texto))
-            if re_alim.search(texto):
-                con_alimentos.append((fila[0] if fila else "?", texto))
+        cod = fila[0] if fila else "?"
+        con_ipc.append((cod, texto))
+        m = re_ciudad.search(texto)
+        if not m:
+            continue
+        por_ciudad.append((cod, texto))
+        ciudades_vistas[m.group(1).title()] += 1
+        if re_alim.search(texto):
+            (alim_excluye if re_sin_alim.search(texto) else alim_real).append((cod, texto))
 
     if not por_ciudad:
         return VACIO, (
-            f"{len(filas) - 1} series en el catalogo; {len(con_ipc)} son de IPC "
-            f"segun su nombre, y NINGUNA nombra una ciudad. El BCRP no "
-            f"republica el IPC por ciudad: hay que ir al INEI")
+            f"{len(filas) - 1} series; {len(con_ipc)} de IPC por nombre, y "
+            f"NINGUNA nombra una ciudad. El BCRP no republica el IPC por "
+            f"ciudad: hay que ir al INEI")
 
-    muestra = "\n       ".join(f"{c}  {d[:95]}" for c, d in por_ciudad[:8])
-    extra = ""
-    if con_alimentos:
-        m2 = "\n       ".join(f"{c}  {d[:95]}" for c, d in con_alimentos[:6])
-        extra = (f"\n     De esas, {len(con_alimentos)} mencionan alimentos:"
-                 f"\n       {m2}")
+    distintas = sorted(ciudades_vistas)
+    resumen_c = ", ".join(f"{c} ({n})" for c, n in ciudades_vistas.most_common())
+
+    # El veredicto depende de cuantas ciudades DISTINTAS hay, no de cuantas
+    # series. Una sola ciudad significa la serie nacional de referencia.
+    if len(distintas) <= 1:
+        veredicto = (
+            f"SOLO {len(distintas)} ciudad en todo el catalogo: {resumen_c}. "
+            f"El BCRP publica el IPC de esa plaza como referencia nacional, no "
+            f"un panel de 26 ciudades. Los indicadores 7 y 8 NO salen del BCRP: "
+            f"hay que ir a los boletines del INEI")
+        estado_final = VACIO
+    elif not alim_real:
+        veredicto = (
+            f"{len(distintas)} ciudades distintas: {resumen_c}. Pero NINGUNA "
+            f"serie desagrega alimentos; las {len(alim_excluye)} que mencionan "
+            f"la palabra son del tipo 'Sin Alimentos y Energia', que los "
+            f"EXCLUYEN. Hay IPC general por ciudad, no por grupo de gasto: se "
+            f"activa el plan B del protocolo")
+        estado_final = VACIO
     else:
-        extra = ("\n     NINGUNA menciona alimentos: habria IPC por ciudad pero "
-                 "no desagregado por grupo de gasto, que es lo que la tesis "
-                 "necesita (indicadores 7 y 8)")
+        m3 = "\n       ".join(f"{c}  {d[:95]}" for c, d in alim_real[:8])
+        veredicto = (
+            f"{len(distintas)} ciudades distintas: {resumen_c}. Y {len(alim_real)} "
+            f"series desagregan alimentos de verdad (descartando las "
+            f"{len(alim_excluye)} del tipo 'Sin Alimentos'):\n       {m3}")
+        estado_final = OK
 
-    return OK, (f"{len(con_ipc)} series de IPC por nombre; {len(por_ciudad)} "
-                f"nombran una ciudad. Ejemplos:\n       {muestra}{extra}")
+    muestra = "\n       ".join(f"{c}  {d[:95]}" for c, d in por_ciudad[:5])
+    return estado_final, (
+        f"{len(con_ipc)} series de IPC por nombre, {len(por_ciudad)} nombran "
+        f"alguna ciudad.\n     {veredicto}\n     Muestra de las que nombran "
+        f"ciudad:\n       {muestra}")
 
 
 def inei_portal():
