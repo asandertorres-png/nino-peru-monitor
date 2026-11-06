@@ -163,29 +163,86 @@ def bcrp_api():
 
 
 def bcrp_ipc_ciudades():
-    """Indicadores 7 y 8: buscar en el catalogo del BCRP series de IPC por ciudad."""
+    """Indicadores 7 y 8: buscar en el catalogo del BCRP series de IPC por ciudad.
+
+    La primera version de esta funcion buscaba las palabras clave en la fila
+    COMPLETA y con coincidencia de subcadena. Dio 188 falsos positivos por dos
+    razones: "precios al consumidor" aparece en la METODOLOGIA de series que no
+    son IPC, como el tipo de cambio real, que se calcula con ratios de IPC; y
+    "ica" es subcadena de "estadistica", "metodologica" y "Republica", de modo
+    que casi toda fila coincidia con la ciudad de Ica.
+
+    Esta version busca solo en las columnas de categoria, grupo y nombre de la
+    serie --no en descripcion ni metodologia-- y exige que el nombre de la
+    ciudad aparezca como palabra completa.
+    """
+    import csv
+    import io
+    import re
+
     estado, cuerpo = _pedir(
         "https://estadisticas.bcrp.gob.pe/estadisticas/series/metadata")
     if estado != OK:
         return estado, cuerpo
+
     lineas = [l for l in cuerpo.splitlines() if l.strip()]
-    if len(lineas) < 10:
-        return VACIO, f"catalogo con {len(lineas)} lineas"
+    if len(lineas) < 3:
+        return VACIO, f"catalogo con {len(lineas)} lineas; parece una respuesta de error"
 
-    ciudades = ["cusco", "cuzco", "arequipa", "trujillo", "chiclayo", "piura",
-                "huancayo", "iquitos", "puno", "tacna", "ica", "chimbote"]
-    con_ipc = [l for l in lineas if "ipc" in l.lower()
-               or "precios al consumidor" in l.lower()]
-    por_ciudad = [l for l in con_ipc if any(c in l.lower() for c in ciudades)]
+    sep = max((";", ",", "\t"), key=lambda s: lineas[0].count(s))
+    filas = list(csv.reader(io.StringIO(cuerpo), delimiter=sep))
+    if not filas:
+        return VACIO, "el catalogo no se pudo leer como tabla"
 
-    if por_ciudad:
-        muestra = [l.strip()[:110] for l in por_ciudad[:5]]
-        return OK, (f"{len(con_ipc)} series de IPC, de las cuales "
-                    f"{len(por_ciudad)} nombran una ciudad. Ejemplos:\n       "
-                    + "\n       ".join(muestra))
-    return VACIO, (f"{len(lineas) - 1} series en el catalogo y {len(con_ipc)} de IPC, "
-                   f"pero NINGUNA nombra una de las ciudades buscadas. "
-                   f"Indica que el BCRP no republica el IPC por ciudad")
+    cabecera = [h.strip().lower() for h in filas[0]]
+    # Solo categoria, grupo y nombre de la serie. Descripcion y metodologia
+    # quedan fuera a proposito: ahi estaba el falso positivo.
+    cols = [i for i, h in enumerate(cabecera)
+            if any(k in h for k in ("categor", "grupo", "nombre"))]
+    if not cols:
+        cols = [1, 2, 3]  # posiciones del formato documentado
+
+    CIUDADES_IPC = [
+        "Lima", "Arequipa", "Trujillo", "Chiclayo", "Piura", "Cusco", "Cuzco",
+        "Huancayo", "Iquitos", "Puno", "Tacna", "Ica", "Chimbote", "Cajamarca",
+        "Ayacucho", "Abancay", "Huaraz", "Huanuco", "Huánuco", "Moquegua",
+        "Moyobamba", "Pucallpa", "Puerto Maldonado", "Tumbes", "Chachapoyas",
+        "Cerro de Pasco", "Huancavelica", "Callao", "Tarapoto",
+    ]
+    re_ciudad = re.compile(r"\b(" + "|".join(CIUDADES_IPC) + r")\b", re.IGNORECASE)
+    re_ipc = re.compile(r"\bIPC\b|precios al consumidor", re.IGNORECASE)
+    re_alim = re.compile(r"aliment", re.IGNORECASE)
+
+    con_ipc, por_ciudad, con_alimentos = [], [], []
+    for fila in filas[1:]:
+        texto = " | ".join(fila[i] for i in cols if i < len(fila))
+        if not re_ipc.search(texto):
+            continue
+        con_ipc.append((fila[0] if fila else "?", texto))
+        if re_ciudad.search(texto):
+            por_ciudad.append((fila[0] if fila else "?", texto))
+            if re_alim.search(texto):
+                con_alimentos.append((fila[0] if fila else "?", texto))
+
+    if not por_ciudad:
+        return VACIO, (
+            f"{len(filas) - 1} series en el catalogo; {len(con_ipc)} son de IPC "
+            f"segun su nombre, y NINGUNA nombra una ciudad. El BCRP no "
+            f"republica el IPC por ciudad: hay que ir al INEI")
+
+    muestra = "\n       ".join(f"{c}  {d[:95]}" for c, d in por_ciudad[:8])
+    extra = ""
+    if con_alimentos:
+        m2 = "\n       ".join(f"{c}  {d[:95]}" for c, d in con_alimentos[:6])
+        extra = (f"\n     De esas, {len(con_alimentos)} mencionan alimentos:"
+                 f"\n       {m2}")
+    else:
+        extra = ("\n     NINGUNA menciona alimentos: habria IPC por ciudad pero "
+                 "no desagregado por grupo de gasto, que es lo que la tesis "
+                 "necesita (indicadores 7 y 8)")
+
+    return OK, (f"{len(con_ipc)} series de IPC por nombre; {len(por_ciudad)} "
+                f"nombran una ciudad. Ejemplos:\n       {muestra}{extra}")
 
 
 def inei_portal():
